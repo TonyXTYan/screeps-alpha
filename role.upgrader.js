@@ -1,3 +1,4 @@
+var creepHarvest = require('creep.harvest');
 var roleUpgrader = {
 
     /** @param {Creep} creep **/
@@ -6,6 +7,7 @@ var roleUpgrader = {
         // + ', ' + creep.store.getFreeCapacity() + ', ' + creep.room.controller)
         // console.log(creep.memory.upgrading === undefined)
 
+        // creep.say('hey')
 
 
         if(creep.memory.upgrading === undefined) {
@@ -30,18 +32,22 @@ var roleUpgrader = {
 
 	    if(creep.memory.upgrading) {
             // creep.memory.stationaryWorking = true
+            creep.memory.harvestTargetSourceId = undefined
+            creep.memory.harvestTargetSourceIndex = undefined
+
             if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                 creep.memory.stationaryWorking = false
                 creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
             }
         } else { // not upgrading, so harvest
-            var sources = creep.room.find(FIND_SOURCES);
-            // creep.stationaryWorking = true
-            // console.log(creep.harvest(sources[0]))
-            if(creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
-                creep.stationaryWorking = false
-                creep.moveTo(sources[1], {visualizePathStyle: {stroke: '#ffaa00'}});
-            }
+            // var sources = creep.room.find(FIND_SOURCES);
+            // // creep.stationaryWorking = true
+            // // console.log(creep.harvest(sources[0]))
+            // if(creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
+            //     // creep.stationaryWorking = false
+            //     creep.moveTo(sources[1], {visualizePathStyle: {stroke: '#ffaa00'}});
+            // }
+            creepHarvest.run(creep)
         }
 
 

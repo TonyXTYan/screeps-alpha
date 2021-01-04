@@ -21,11 +21,12 @@ module.exports.loop = function () {
     //     }
     // }
 
+
     console.log('Current game time is: ' + Game.time + ' -------------------------------')
 
 
     creepMemoryManagement.run()
-
+    
     creepPopulationControl.check()
 
 
