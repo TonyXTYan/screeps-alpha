@@ -26,9 +26,9 @@ var creepPopulationControl = {
         })
         // console.log(extensionStructures.length + ', ' + extensionStructures[0].store.getCapacity(RESOURCE_ENERGY))
 
-        var totalEnergyCapacity = creepRoleBalance.countEnergy(spawn).capacity
+        var totalEnergyAvailable = creepRoleBalance.countEnergy(spawn).available
 
-        creepRoleBalance.balanceSpec(specification['harvester'], totalEnergyCapacity)
+        creepRoleBalance.balanceSpec(specification['harvester'], totalEnergyAvailable)
 
 
         var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
@@ -45,45 +45,46 @@ var creepPopulationControl = {
         // console.log('test' + test)
 
 
+        let energy = Math.max(totalEnergyAvailable, 300)
+
         if(harvesters.length < 2) {
             var newName = 'Harvester' + Game.time;
-            var bodyParts = creepRoleBalance.balanceSpec(specification.harvester, totalEnergyCapacity)
-            // console.log(parts)
+            var bodyParts = creepRoleBalance.balanceSpec(specification.harvester, energy)
             var o = Game.spawns[spawnName].spawnCreep(bodyParts, newName, {memory: {role: 'harvester'}});
             // Game.spawns['Spawn1'].spawnCreep([WORK, MOVE, CARRY], 'Harvester0B', {memory: {role: 'harvester'}})
 
-            if (o == ERR_NOT_ENOUGH_ENERGY) {
-                o = Game.spawns[spawnName].spawnCreep([WORK, CARRY, MOVE], newName, {memory: {role: 'harvester'}});
-            }
+            // if (o == ERR_NOT_ENOUGH_ENERGY) {
+            //     o = Game.spawns[spawnName].spawnCreep([WORK, CARRY, MOVE], newName, {memory: {role: 'harvester'}});
+            // }
 
             console.log('Spawning new harvester: ' + newName + ', returned: ' + o);
         }
 
         if(builders.length < 1) {
             var newName = 'Builder' + Game.time;
-            var bodyParts = creepRoleBalance.balanceSpec(specification.builder, totalEnergyCapacity)
+            var bodyParts = creepRoleBalance.balanceSpec(specification.builder, energy)
             let o = Game.spawns[spawnName].spawnCreep(bodyParts, newName, {memory: {role: 'builder'}})
             // Game.spawns['Spawn1'].spawnCreep([WORK, MOVE, CARRY], 'Builder0B', {memory: {role: 'builder'}})
-            if (o == ERR_NOT_ENOUGH_ENERGY) {
-                o = Game.spawns[spawnName].spawnCreep([WORK, CARRY, MOVE], newName, {memory: {role: 'builder'}});
-            }
+            // if (o == ERR_NOT_ENOUGH_ENERGY) {
+            //     o = Game.spawns[spawnName].spawnCreep([WORK, CARRY, MOVE], newName, {memory: {role: 'builder'}});
+            // }
             console.log('Spawning new builder: ' + newName + ', returned: ' + o);
         }
 
         if (upgraders.length < 1) {
             var newName = 'Upgrader' + Game.time
-            var bodyParts = creepRoleBalance.balanceSpec(specification.upgrader, totalEnergyCapacity)
+            var bodyParts = creepRoleBalance.balanceSpec(specification.upgrader, energy)
             let o = Game.spawns[spawnName].spawnCreep(bodyParts, newName, {memory: {role: 'upgrader', upgrading: false}} );
             // Game.spawns['Spawn1'].spawnCreep([WORK, MOVE, CARRY], 'Upgrader0A', {memory: {role: 'upgrader'}})
-            if (o == ERR_NOT_ENOUGH_ENERGY) {
-                o = Game.spawns[spawnName].spawnCreep([WORK, CARRY, MOVE], newName, {memory: {role: 'upgrader'}});
-            }
+            // if (o == ERR_NOT_ENOUGH_ENERGY) {
+            //     o = Game.spawns[spawnName].spawnCreep([WORK, CARRY, MOVE], newName, {memory: {role: 'upgrader'}});
+            // }
             console.log('Spawning new upgrader: ' + newName + ', returned: ' + o)
         }
 
-        if ((doctors.length < 1) && (totalEnergyCapacity >= 500)) {
+        if ((doctors.length < 1) && (totalEnergyAvailable >= 500)) {
             var newName = 'Doctor' + Game.time
-            let bodyParts = creepRoleBalance.balanceSpec(specification.doctor, totalEnergyCapacity)
+            let bodyParts = creepRoleBalance.balanceSpec(specification.doctor, totalEnergyAvailable)
             let o = Game.spawns[spawnName].spawnCreep(bodyParts, newName, {memory: {role: 'doctor'}})
             console.log('Spawning new doctor: ' + newName + ', returned: ' + o)
         }
