@@ -40,9 +40,12 @@ var creepPopulationControl = {
 
         const specification = {
             // ratio of parts desired
-            "harvester":    [1,1,1,0,0,0,0,0],
-            "builder":      [1,1,1,0,0,0,0,0],
-            "upgrader":     [1,1,1,0,0,0,0,0]
+            // [MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, CLAIM, TOUGH]
+            // [50,   100,  50,    80,     150,           250,  600,   10   ]
+            "harvester":    [1,1,1,0, 0,0,0,0],
+            "builder":      [1,1,1,0, 0,0,0,0],
+            "upgrader":     [1,1,1,0, 0,0,0,0],
+            "doctor":       [2,1,1,0, 0,1,0,0] // so min energy 500
         }
 
         var room = Game.spawns[spawnName].room
@@ -53,45 +56,49 @@ var creepPopulationControl = {
         })
         // console.log(extensionStructures.length + ', ' + extensionStructures[0].store.getCapacity(RESOURCE_ENERGY))
 
-        var totalEnergyAvailable = 300
+        var totalEnergyCapacity = 300
         for (var i in extensionStructures) {
             // console.log(extension)
-            totalEnergyAvailable += extensionStructures[i].store.getCapacity(RESOURCE_ENERGY)
+            totalEnergyCapacity += extensionStructures[i].store.getCapacity(RESOURCE_ENERGY)
         }
-        // console.log(totalEnergyAvailable)
-
+        // console.log(totalEnergyCapacity)
         // console.log(Object.keys(specification)[0])
 
 
-        creepPopulationControl.balance(specification['harvester'], totalEnergyAvailable)
+        creepPopulationControl.balance(specification['harvester'], totalEnergyCapacity)
 
 
         var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
-        // console.log('Have ' + harvesters.length + ' Harvesters');
-
         var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
-        // console.log('Have ' + builders.length + ' Builders')
-
         var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
+        var doctors = _.filter(Game.creeps, (creep) => creep.memory.role == 'doctor');
+
         // console.log('Have ' + upgraders.length + ' Upgraders')
         console.log('Have ' + 'harvester: ' + harvesters.length
-                            + ' builders: ' + builders.length
-                            + ' upgraders: ' + upgraders.length)
+                            + ', builders: ' + builders.length
+                            + ', upgraders: ' + upgraders.length
+                            + ', doctors: ' + doctors.length
+                    )
         // console.log('test' + test)
 
 
         if(harvesters.length < 2) {
             var newName = 'Harvester' + Game.time;
-            var bodyParts = creepPopulationControl.balance(specification.harvester, totalEnergyAvailable)
+            var bodyParts = creepPopulationControl.balance(specification.harvester, totalEnergyCapacity)
             // console.log(parts)
-            let o = Game.spawns[spawnName].spawnCreep(bodyParts, newName, {memory: {role: 'harvester'}});
+            var o = Game.spawns[spawnName].spawnCreep(bodyParts, newName, {memory: {role: 'harvester'}});
             // Game.spawns['Spawn1'].spawnCreep([WORK, MOVE, CARRY], 'Harvester0B', {memory: {role: 'harvester'}})
+
+            if (o == ERR_NOT_ENOUGH_ENERGY) {
+                o = Game.spawns[spawnName].spawnCreep([WORK, CARRY, MOVE], newName, {memory: {role: 'harvester'}});
+            }
+
             console.log('Spawning new harvester: ' + newName + ', returned: ' + o);
         }
 
         if(builders.length < 1) {
             var newName = 'Builder' + Game.time;
-            var bodyParts = creepPopulationControl.balance(specification.builder, totalEnergyAvailable)
+            var bodyParts = creepPopulationControl.balance(specification.builder, totalEnergyCapacity)
             let o = Game.spawns[spawnName].spawnCreep(bodyParts, newName, {memory: {role: 'builder'}})
             // Game.spawns['Spawn1'].spawnCreep([WORK, MOVE, CARRY], 'Builder0B', {memory: {role: 'builder'}})
             console.log('Spawning new builder: ' + newName + ', returned: ' + o);
@@ -99,12 +106,18 @@ var creepPopulationControl = {
 
         if (upgraders.length < 1) {
             var newName = 'Upgrader' + Game.time
-            var bodyParts = creepPopulationControl.balance(specification.upgrader, totalEnergyAvailable)
+            var bodyParts = creepPopulationControl.balance(specification.upgrader, totalEnergyCapacity)
             let o = Game.spawns[spawnName].spawnCreep(bodyParts, newName, {memory: {role: 'upgrader', upgrading: false}} );
             // Game.spawns['Spawn1'].spawnCreep([WORK, MOVE, CARRY], 'Upgrader0A', {memory: {role: 'upgrader'}})
             console.log('Spawning new upgrader: ' + newName + ', returned: ' + o)
         }
 
+        if ((doctors.length < 1) && (totalEnergyCapacity >= 500)) {
+            var newName = 'Doctor' + Game.time
+            let bodyParts = creepPopulationControl.balance(specification.doctor, totalEnergyCapacity)
+            let o = Game.spawns[spawnName].spawnCreep(bodyParts, newName, {memory: {role: 'doctor'}})
+            console.log('Spawning new doctor: ' + newName + ', returned: ' + o)
+        }
 
 
 

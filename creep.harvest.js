@@ -11,7 +11,7 @@ var creepHarvest = {
         let targetThisTick = Game.getObjectById(harvestTargetSourceId)
 
         if(creep.harvest(targetThisTick) == ERR_NOT_IN_RANGE) {
-            let attempt = creep.moveTo(targetThisTick, {visualizePathStyle: {stroke: '#ffe883'}});
+            let attempt = creep.moveTo(targetThisTick, {visualizePathStyle: {stroke: '#3d2a22'}});
             // creep.say('▶️ to ' + harvestTargetSource)
 
             // let source = sources[harvestTargetSource]

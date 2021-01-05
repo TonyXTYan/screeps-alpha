@@ -37,7 +37,7 @@ var roleUpgrader = {
 
             if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                 creep.memory.stationaryWorking = false
-                creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
+                creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#d9d9d9'}});
             }
         } else { // not upgrading, so harvest
             creepHarvest.run(creep)

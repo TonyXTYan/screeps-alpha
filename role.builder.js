@@ -1,5 +1,6 @@
 // var checkedOutSource = 0
 var creepHarvest = require('creep.harvest');
+
 var roleBuilder = {
 
     /** @param {Creep} creep **/
@@ -26,7 +27,7 @@ var roleBuilder = {
 
             if(targets.length) { // if(length != 0)
                 if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
+                    creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffb752'}});
                     // creep.say('↘️ To ' + targets[0].)
                 }
             } else {
