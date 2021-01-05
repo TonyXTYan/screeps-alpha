@@ -3,86 +3,74 @@ var creepHarvest = require('creep.harvest');
 
 var roleDoctor = {
 
-    repairTargets: function(creep) {
-        return creep.room.find(FIND_STRUCTURES, {
-            filter: (structure) => {
-                return ((structure.structureType == STRUCTURE_EXTENSION ||
-                        structure.structureType == STRUCTURE_SPAWN ||
-                        structure.structureType == STRUCTURE_ROAD ||
-                        structure.structureType == STRUCTURE_CONTAINER ||
-                        structure.structureType == STRUCTURE_RAMPART ||
-                        structure.structureType == STRUCTURE_WALL ||
-                        structure.structureType == STRUCTURE_TOWER) &&
-                       (structure.hits < structure.hitsMax))
-            }
+    repairTargetToRepair: function(creep) {
+        return creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (structure) => { return (structure.hits < structure.hitsMax) }
         })
     },
 
     repairJob: function(creep) {
-        var repairTargets = roleDoctor.repairTargets(creep)
-        if (repairTargets.length > 0) {
-            let repairCode = creep.repair(repairTargets[0])
+        var repairTarget = roleDoctor.repairTargetToRepair(creep)
+        // console.log(repairTarget)
+        if (repairTarget) {
+            let repairCode = creep.repair(repairTarget)
             if (repairCode == ERR_NOT_IN_RANGE) {
                 creep.say('🩹')
-                creep.moveTo(repairTargets[0], {visualizePathStyle: {stroke: '#b0f566'}})
+                creep.moveTo(repairTarget, {visualizePathStyle: {stroke: '#b0f566'}})
             } else if (repairCode != OK) {
-                console.log('deal with this (return code, reapir): ' + repairCode)
+                console.log('role.doctor: for creep ' + creep.name + 'repair return code: ' + repairCode)
             }
             return true
         } else { // no repair required
+            console.log('all repaired ' + repairTarget)
             return false
         }
     },
 
     run: function(creep) {
 
-        let healTargets = creep.room.find(FIND_MY_CREEPS, {
-            filter: (c) => { return c.hits < c.hitsMax }
-        })
+        if(creep.memory.repairing === undefined) {
+            creep.memory.repairing = creep.store.getUsedCapacity() > 30
+        }
 
-        let repairTargets = roleDoctor.repairTargets(creep)
+	    if(creep.memory.repairing && creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+            creep.memory.repairing = false;
+            creep.say('🔄');
+	    }
+	    if(!creep.memory.repairing && creep.store.getFreeCapacity() == 0) {
+	        creep.memory.repairing = true;
+	        creep.say('🩹');
+	    }
 
-        // console.log('we have a doctor here, ' + healTargets.length + ', ' + repairTargets.length)
+        if (creep.memory.repairing) {
+            let healTargets = creep.room.find(FIND_MY_CREEPS, {
+                filter: (c) => { return c.hits < c.hitsMax }
+            })
 
-        if (creep.store.getFreeCapacity(RESOURCE_ENERGY) > 0){
-            creepHarvest.run(creep)
-        } else { // have energy
             if(healTargets.length > 0) { // && creep.store.getFreeCapacity() > 0) {
                 let transferCode = creep.heal(healTargets[0])
                 if(transferCode == ERR_NOT_IN_RANGE) {
                     // creep.say('⚡️')
                     creep.moveTo(healTargets[0], {visualizePathStyle: {stroke: '#65fd62'}});
                 } else {
-                    console.log('deal with this (return code, heal): ' + transferCode)
+                    console.log('role.doctor: heal return code: ' + transferCode)
                 }
 
             }
-            else if (repairTargets.length > 0) {
-                let repairCode = creep.repair(repairTargets[0])
-                if (repairCode == ERR_NOT_IN_RANGE) {
-                    // creep.say('🩹')
-                    creep.moveTo(repairTargets[0], {visualizePathStyle: {stroke: '#b0f566'}})
-                } else {
-                    console.log('deal with this (return code, reapir): ' + repairCode)
-                }
-            }
-            else { // no more target
+            else if (!roleDoctor.repairJob(creep)) {
                 var counter = 0
                 for (let name in Game.creeps) {
                     let creep = Game.creeps[name]
-                    if (creep.memory.role == 'harvester') { counter++ }
+                    if (creep.memory.role == 'doctor') { counter++ }
                 }
 
                 if (counter <= 2) {
                     console.log('doctor job done, so moving it to Spawn 1')
                     creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#fafafa'}}) // just move out of the way
-                } else {
-                    console.log(creep.name + ' not doing anything, erasing his memory💾')
-                    creep.memory = undefined
                 }
-
-
             }
+        } else {
+            creepHarvest.run(creep)
         }
 
     }

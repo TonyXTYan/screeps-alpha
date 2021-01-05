@@ -3,31 +3,57 @@ var roleHarvester = require('role.harvester');
 
 var creepRoleBalance = {
 
+
+    /**
+     * trySpawn - Try spawn something
+     *
+     * @param  {type} spawn description
+     * @return {type}       description
+     */
     trySpawn: function(spawn) {
         if (spawn.memory.full === undefined) { spawn.memory.full = -1 }
 
         var result = creepRoleBalance.countEnergy(spawn)
+
         var totalEnergyAvailable = result.available
         var totalEnergyCapacity = result.capacity
 
         if (totalEnergyAvailable == totalEnergyCapacity) {
-            if (spawn.memory.full < 0) {
-                spawn.memory.full = Game.time
-            }
+            if (spawn.memory.full < 0) { spawn.memory.full = Game.time }
 
-            if (spawn.memory.full + 20 < Game.time) { // ready to spawn new creep
+            // wait this many ticks before spawn
+            const waitTicks = Object.keys(Game.creeps).length * 10 + 50
+
+            if (spawn.memory.full + waitTicks < Game.time) { // ready to spawn new creep
                 var body = creepRoleBalance.balanceSpec([1,1,1,0, 0,0,0,0], totalEnergyCapacity)
                 let result = spawn.spawnCreep(body, 'Creep'+Game.time)
                 console.log('Spawn was ' + result)
                 spawn.memory.full = -1
             } else {
-                console.log('👍🏻Ready to spawn a new Creep in ' + (spawn.memory.full + 20 - Game.time) + ' ticks')
+                console.log('👍🏻Ready to spawn a new Creep in ' + (spawn.memory.full + waitTicks - Game.time) + ' ticks')
             }
         } else {
             console.log('Have energy of ' + totalEnergyAvailable + ' out of ' + totalEnergyCapacity)
+            spawn.memory.full = -1
         }
     },
 
+    specification: {
+        // ratio of the body parts desired in a new spawn
+        // [MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, CLAIM, TOUGH]
+        // [50,   100,  50,    80,     150,           250,  600,   10   ]
+        "harvester":    [1,1,1,0, 0,0,0,0],
+        "builder":      [1,1,1,0, 0,0,0,0],
+        "upgrader":     [1,1,1,0, 0,0,0,0],
+        "doctor":       [2,1,1,0, 0,1,0,0] // so min energy 500
+    },
+
+
+    /**
+     * countEnergy - Count how much energy can this spawn spawn
+     * @param  {type} spawn description
+     * @return {type}       description
+     */
     countEnergy: function(spawn) {
         var extensionStructures = spawn.room.find(FIND_STRUCTURES, {
             filter: (structure) => {
@@ -45,6 +71,14 @@ var creepRoleBalance = {
         return {'available': totalEnergyAvailable, 'capacity': totalEnergyCapacity}
     },
 
+
+    /**
+     * balanceSpec - Try to balance the specification given with given energy levels
+     *
+     * @param  {type} spec   description
+     * @param  {type} energy description
+     * @return {type}        description
+     */
     balanceSpec: function(spec, energy) {
         // var sum = spec.reduce((a, b) => a + b, 0)
         const bodyPartName = [MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, CLAIM, TOUGH]
@@ -53,67 +87,62 @@ var creepRoleBalance = {
         var weighted = []
         var weightedSum = 0
         for (i in spec){
-            // console.log(i)
             var c = spec[i] * bodyPartCost[i]
             weighted[i] = c
             weightedSum += c
         }
         var scale = energy / weightedSum
 
-        // var parts = weighted.map((c) => c * scale)
-
         var parts = []
         for (i in spec) {
             var count = Math.floor(weighted[i] * scale / bodyPartCost[i])
-            // console.log(count + ' and ' + Array(count).fill(0))
             for (c in Array(count).fill(0)) {
                 // console.log(c)
                 parts.push(bodyPartName[i])
             }
         }
-
-        // console.log(weighted + ' and ' + scale + ' also ' +  parts)
-        // counts = spec.map((c) => Math.floor(c / sum))
         return parts
     },
 
+
+    /**
+     * creepsType - Find how many each type of screeps in the room
+     *
+     * @param  {type} room description
+     * @return {type}      description
+     */
     creepsType: function(room) {
         var harvester = []
         var builder = []
         var upgrader = []
+        var doctor = []
         for (let name in Game.creeps) {
             let creep = Game.creeps[name]
             let role = creep.memory.role
             if (role === undefined) { continue }
-            if (role == 'harvester') { harvester.push(name) }
+            else if (role == 'harvester') { harvester.push(name) }
             else if (role == 'builder') { builder.push(name) }
             else if (role == 'upgrader') { upgrader.push(name) }
+            else if (role == 'doctor') { doctor.push(name) }
+            else { continue }
         }
-        return {'harvester': harvester, 'builder': builder, 'upgrader': upgrader}
+        return {'harvester': harvester, 'builder': builder, 'upgrader': upgrader, 'doctor': doctor}
     },
 
+
+    /**
+     * balanceBuilderUpgrader - balance between builder and upgrader population
+     *
+     * @param  {type} room description
+     * @return {type}      description
+     */
     balanceBuilderUpgrader: function(room) {
         let types = creepRoleBalance.creepsType(room)
         // var harvester = types.harvester
         var builder = types.builder
         var upgrader = types.upgrader
-        // for (let name in Game.creeps) {
-        //     let creep = Game.creeps[name]
-        //     let role = creep.memory.role
-        //     if (role === undefined) { continue }
-        //     if (role == 'harvester') { harvester.push(name) }
-        //     else if (role == 'builder') { builder.push(name) }
-        //     else if (role == 'upgrader') { upgrader.push(name) }
-        // }
 
         var targets = room.find(FIND_CONSTRUCTION_SITES);
-        // console.log(targets.length)
-
-        // console.log([harvester, builder, upgrader])
-
-        // let sum = builder.length + upgrader.length
-        // let delta = builder.length - upgrader.length
-        // console.log('delta: ' + delta + ', constructions: ' + targets.length)
 
         if (builder.length > targets.length && builder.length > 1 || (builder.length > 2 && upgrader.length == 0)) { // too much builder
             console.log('Too much builder (more than one per construction), changing one to upgrader')
@@ -126,12 +155,17 @@ var creepRoleBalance = {
             creep.say('♿️')
             creep.memory.role = 'builder'
         } else {
-            // console.log('hey hey?')
-            // console.log('no change ' + builder.length + ', ' + upgrader.length)
             // we're good
         }
     },
 
+
+    /**
+     * balanceUpgraderHarvester - balance between upgrader and harvester population
+     *
+     * @param  {type} room description
+     * @return {type}      description
+     */
     balanceUpgraderHarvester: function(room) {
         let types = creepRoleBalance.creepsType(room)
         var harvester = types.harvester
@@ -157,21 +191,21 @@ var creepRoleBalance = {
 
             // let totalCreeps = harvester.length + upgrader.length
 
-            console.log('used: ' + usedCapacity + ', total: ' + totalCapacity + ', Eratio: ' + ratio)
+            console.log('filled: ' + usedCapacity + ', total: ' + totalCapacity + ', Eratio: ' + ratio)
 
             if ((ratio < 0.5) &&
                 (upgrader.length > 1) &&
                 ((upgrader.length / harvester.length) > (ratio * 1.1))
             ) {
-                console.log('Too much upgrader (need more harvester), changing one to harvester')
                 let creep = Game.creeps[upgrader[0]]
+                console.log('Too much upgrader (need more harvester), changing ' + creep.name + ' one to harvester')
                 creep.say('♿️')
                 creep.memory.role = 'harvester'
             } else if (
                 (ratio > 0.95) &&
                 (harvester.length > 3)
             ) {
-                console.log('Too much harvester (need more upgrader), changing one to upgrader')
+                console.log('Too much harvester (need more upgrader), changing ' + creep.name + ' to upgrader')
                 let creep = Game.creeps[harvester[0]]
                 creep.say('♿️')
                 creep.memory.role = 'upgrader'

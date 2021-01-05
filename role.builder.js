@@ -4,11 +4,17 @@ var roleDoctor = require('role.doctor');
 
 var roleBuilder = {
 
-    /** @param {Creep} creep **/
+    /**
+     * run - description
+     *
+     * @param  {type} creep description
+     * @return {type}       description
+     */
     run: function(creep) {
 
-        // console.log(creep.store.getUsedCapacity())
-        // console.log(c)
+        if(creep.memory.building === undefined) {
+            creep.memory.building = creep.store.getUsedCapacity() > 30
+        }
 
 	    if(creep.memory.building && creep.store.getUsedCapacity() == 0) {
             creep.memory.building = false;
@@ -21,20 +27,17 @@ var roleBuilder = {
 
 	    if(creep.memory.building) {
 	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-            // console.log(targets.length)
 
             creep.memory.harvestTargetSourceId = undefined
             creep.memory.harvestTargetSourceIndex = undefined
 
-            if(targets.length > 0) { // if(length != 0)
+            if(targets.length > 0) { // have construction site
                 if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffb752'}});
                     // creep.say('↘️ To ' + targets[0].)
                 }
-            } else if (!roleDoctor.repairJob(creep)) {
-                // console.log('finally')
-                // console.log(creep.name + ' not doing anything, erasing his memory💾 TODO')
-                // delete creep.memory
+            } else if (!roleDoctor.repairJob(creep)) { // else if try repair something
+                // nothing to repair
                 var counter = 0
                 for (let name in Game.creeps) {
                     let creep = Game.creeps[name]
@@ -49,12 +52,11 @@ var roleBuilder = {
                     creep.memory = undefined
                 }
             } else {
-                let reapitTargets = roleDoctor.repairTargets(creep)
-                console.log('role.builder this should not happen ' + reapitTargets.length)
+                // builder went repaired something
             }
 
 	    }
-	    else { // not building
+	    else { // not building, so go harvest
             creepHarvest.run(creep)
 	    }
 	}

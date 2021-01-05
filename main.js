@@ -14,28 +14,24 @@ module.exports.loop = function () {
 
     console.log('✅ Current game time is: ' + Game.time + ' -------------------------------')
 
-    // console.log('test sync 2')
-
     let spawn = Game.spawns['Spawn1']
     let room = spawn.room
 
     creepRoleBalance.trySpawn(spawn)
-
     creepRoleBalance.balanceBuilderUpgrader(room)
-
     creepRoleBalance.balanceUpgraderHarvester(room)
 
     towerBasics.run(room)
 
     creepMemoryManagement.run()
-
     creepPopulationControl.check()
 
     // creepPopulationControl.check.balance()
 
-
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
+        if (creep.spawning) { return }
+
         if (creep.memory.role == 'builder') {
             roleBuilder.run(creep);
         }
