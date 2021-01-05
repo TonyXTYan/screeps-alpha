@@ -7,7 +7,10 @@ var creepHarvest = {
         // console.log(sources[0], sources2[2])
 
         if (creep.memory.harvestTargetSourceIndex === undefined) {creep.memory.harvestTargetSourceIndex = 0}
-        if (creep.memory.harvestTargetSourceId === undefined) { creep.memory.harvestTargetSourceId = sourcesClosest.id }
+        if (creep.memory.harvestTargetSourceId === undefined) {
+            if (sourcesClosest === undefined || sourcesClosest == null ) { creep.memory.harvestTargetSourceId = sources[0].id }
+            else { creep.memory.harvestTargetSourceId = sourcesClosest.id }
+        }
         var harvestTargetSourceId = creep.memory.harvestTargetSourceId
         var harvestTargetSourceIndex = creep.memory.harvestTargetSourceIndex
 
