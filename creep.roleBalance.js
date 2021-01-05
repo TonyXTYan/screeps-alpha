@@ -27,13 +27,13 @@ var creepRoleBalance = {
             if (spawn.memory.full + waitTicks < Game.time) { // ready to spawn new creep
                 var body = creepRoleBalance.balanceSpec([1,1,1,0, 0,0,0,0], totalEnergyCapacity)
                 let result = spawn.spawnCreep(body, 'Creep'+Game.time)
-                console.log('Spawn was ' + result)
+                console.log('creep.roleBalane: Spawn was ' + result)
                 spawn.memory.full = -1
             } else {
-                console.log('👍🏻Ready to spawn a new Creep in ' + (spawn.memory.full + waitTicks - Game.time) + ' ticks')
+                console.log('creep.roleBalane: 👍🏻Ready to spawn a new Creep in ' + (spawn.memory.full + waitTicks - Game.time) + ' ticks')
             }
         } else {
-            console.log('Have energy of ' + totalEnergyAvailable + ' out of ' + totalEnergyCapacity)
+            console.log('creep.roleBalane: Have energy of ' + totalEnergyAvailable + ' out of ' + totalEnergyCapacity)
             spawn.memory.full = -1
         }
     },
@@ -145,12 +145,12 @@ var creepRoleBalance = {
         var targets = room.find(FIND_CONSTRUCTION_SITES);
 
         if (builder.length > targets.length && builder.length > 1 || (builder.length > 2 && upgrader.length == 0)) { // too much builder
-            console.log('Too much builder (more than one per construction), changing one to upgrader')
+            console.log('creep.roleBalane: Too much builder (more than one per construction), changing one to upgrader')
             let creep = Game.creeps[builder[0]]
             creep.say('♿️')
             creep.memory.role = 'upgrader'
         } else if (builder.length < targets.length && upgrader.length > 1) { // too much upgrader
-            console.log('Too much upgrader (need more builder on constructions), changing one to builder')
+            console.log('creep.roleBalane: Too much upgrader (need more builder on constructions), changing one to builder')
             let creep = Game.creeps[upgrader[0]]
             creep.say('♿️')
             creep.memory.role = 'builder'
@@ -191,21 +191,21 @@ var creepRoleBalance = {
 
             // let totalCreeps = harvester.length + upgrader.length
 
-            console.log('filled: ' + usedCapacity + ', total: ' + totalCapacity + ', Eratio: ' + ratio)
+            console.log('creep.roleBalane: filled: ' + usedCapacity + ', total: ' + totalCapacity + ', Eratio: ' + ratio)
 
             if ((ratio < 0.5) &&
                 (upgrader.length > 1) &&
                 ((upgrader.length / harvester.length) > (ratio * 1.1))
             ) {
                 let creep = Game.creeps[upgrader[0]]
-                console.log('Too much upgrader (need more harvester), changing ' + creep.name + ' one to harvester')
+                console.log('creep.roleBalane: Too much upgrader (need more harvester), changing ' + creep.name + ' one to harvester')
                 creep.say('♿️')
                 creep.memory.role = 'harvester'
             } else if (
                 (ratio > 0.95) &&
                 (harvester.length > 3)
             ) {
-                console.log('Too much harvester (need more upgrader), changing ' + creep.name + ' to upgrader')
+                console.log('creep.roleBalane: Too much harvester (need more upgrader), changing ' + creep.name + ' to upgrader')
                 let creep = Game.creeps[harvester[0]]
                 creep.say('♿️')
                 creep.memory.role = 'upgrader'
@@ -213,7 +213,7 @@ var creepRoleBalance = {
 
 
         } else {
-            console.log('creep.roleBalance: thisi is bad')
+            console.log('creep.roleBalane: creep.roleBalance: thisi is bad')
         }
 
 

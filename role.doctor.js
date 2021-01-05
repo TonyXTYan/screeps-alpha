@@ -22,7 +22,7 @@ var roleDoctor = {
             }
             return true
         } else { // no repair required
-            console.log('all repaired ' + repairTarget)
+            console.log('role.doctor: ' + creep.name + 'all repaired ' + repairTarget)
             return false
         }
     },
@@ -65,7 +65,7 @@ var roleDoctor = {
                 }
 
                 if (counter <= 2) {
-                    console.log('doctor job done, so moving it to Spawn 1')
+                    console.log('role.doctor: doctor job done, so moving it to Spawn 1')
                     creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#fafafa'}}) // just move out of the way
                 }
             }

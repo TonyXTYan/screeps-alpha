@@ -21,7 +21,7 @@ var creepHarvest = {
         if (creep.room.memory.sources === undefined) {
             creep.room.memory.sources = new Map();
             creep.room.memory.sources[targetThisTick.id] = [8, 1, Game.time] // [max, current, last check on max]
-            console.log('⚠️ room.sources initialised')
+            console.log('creep.Harvester: ⚠️ room.sources initialised')
         }
         if (creep.room.memory.sources[targetThisTick.id] === undefined) {
             creep.room.memory.sources[targetThisTick.id] = [8, 1, Game.time]
@@ -37,7 +37,7 @@ var creepHarvest = {
 
             if (attempt == ERR_NO_PATH) {
                 creep.say('🚦');
-                console.log('congested')
+                console.log('creep.Harvester: ' + creep.name + ' report congested')
                 creepHarvest.findOtherOption(creep, attempt) // cannot find path to this target, find another one
             }
 
@@ -79,7 +79,7 @@ var creepHarvest = {
             harvestTargetSourceId = sources[harvestTargetSourceIndex].id
             creep.memory.harvestTargetSourceIndex = harvestTargetSourceIndex
             creep.memory.harvestTargetSourceId = harvestTargetSourceId
-            console.log(creep.name + ' will harvest index ' + harvestTargetSourceIndex + ' which is ' + creep.memory.harvestTargetSourceId)
+            console.log('creep.Harvester: ' + creep.name + ' will harvest index ' + harvestTargetSourceIndex + ' which is ' + creep.memory.harvestTargetSourceId)
 
             var counter = 0
             for(var name in Game.creeps) {

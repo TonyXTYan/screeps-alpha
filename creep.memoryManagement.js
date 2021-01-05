@@ -12,7 +12,7 @@ var creepMemoryManagement = {
         for(var name in Memory.creeps) {
             if(!Game.creeps[name]) {
                 delete Memory.creeps[name]; // Free the memory of dead creeps
-                console.log('Clearing non-existing creep memory:', name);
+                console.log('creep.MemoryManagement: Clearing non-existing creep memory:', name);
             }
         }
 
@@ -34,7 +34,7 @@ var creepMemoryManagement = {
                 // console.log(num)
                 let role = dictKey[num]
                 creep.memory.role = role
-                console.log(name + ' have been assigned ' + role)
+                console.log('creep.MemoryManagement: ' + name + ' have been assigned ' + role)
             }
         }
 

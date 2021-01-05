@@ -12,7 +12,7 @@ var towerBasics = require('tower.basics');
 
 module.exports.loop = function () {
 
-    console.log('✅ Current game time is: ' + Game.time + ' -------------------------------')
+    console.log('main: ✅ Current game time is: ' + Game.time + ' -------------------------------')
 
     let spawn = Game.spawns['Spawn1']
     let room = spawn.room

@@ -21,7 +21,8 @@ var creepPopulationControl = {
         var upgraders  = roles.upgrader // _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
         var doctors    = roles.doctor // _.filter(Game.creeps, (creep) => creep.memory.role == 'doctor');
 
-        console.log('Have ' + 'harvester: ' + harvesters.length
+        console.log('creep.populationControl: Have ' + 'harvester: '
+                            + harvesters.length
                             + ', builders: ' + builders.length
                             + ', upgraders: ' + upgraders.length
                             + ', doctors: ' + doctors.length
@@ -36,28 +37,28 @@ var creepPopulationControl = {
             var newName = 'Harvester' + Game.time;
             var bodyParts = creepRoleBalance.balanceSpec(specification.harvester, energy)
             var o = spawn.spawnCreep(bodyParts, newName, {memory: {role: 'harvester'}});
-            console.log('Spawning new harvester: ' + newName + ', returned: ' + o);
+            console.log('creep.populationControl: Spawning new harvester: ' + newName + ', returned: ' + o);
         }
 
         if(builders.length < 1) {
             var newName = 'Builder' + Game.time;
             var bodyParts = creepRoleBalance.balanceSpec(specification.builder, energy)
             let o = spawn.spawnCreep(bodyParts, newName, {memory: {role: 'builder'}})
-            console.log('Spawning new builder: ' + newName + ', returned: ' + o);
+            console.log('creep.populationControl: Spawning new builder: ' + newName + ', returned: ' + o);
         }
 
         if (upgraders.length < 1) {
             var newName = 'Upgrader' + Game.time
             var bodyParts = creepRoleBalance.balanceSpec(specification.upgrader, energy)
             let o = spawn.spawnCreep(bodyParts, newName, {memory: {role: 'upgrader', upgrading: false}} );
-            console.log('Spawning new upgrader: ' + newName + ', returned: ' + o)
+            console.log('creep.populationControl: Spawning new upgrader: ' + newName + ', returned: ' + o)
         }
 
         if ((doctors.length < 1) && (totalEnergyAvailable >= 500)) {
             var newName = 'Doctor' + Game.time
             let bodyParts = creepRoleBalance.balanceSpec(specification.doctor, totalEnergyAvailable)
             let o = spawn.spawnCreep(bodyParts, newName, {memory: {role: 'doctor'}})
-            console.log('Spawning new doctor: ' + newName + ', returned: ' + o)
+            console.log('creep.populationControl: Spawning new doctor: ' + newName + ', returned: ' + o)
         }
 
 

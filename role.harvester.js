@@ -56,14 +56,16 @@ var roleHarvester = {
                     var target = extension
                 }
 
+                // console.log(creep.name + ' going to ' + target)
+
                 let transferCode = creep.transfer(target, RESOURCE_ENERGY)
                 if(transferCode == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
                 } else if (transferCode != OK) {
-                    console.log('deal with this (return code, transfer): ' + transferCode)
+                    console.log('role.harvester: transfer return code): ' + transferCode)
                 }
 
-            } else if (!roleDoctor.repairJob(creep)) { // no repair job
+            } else if (!roleDoctor.repairJob(creep)) { // no repair job`
                 var counter = 0
                 for (let name in Game.creeps) {
                     let creep = Game.creeps[name]
@@ -71,7 +73,7 @@ var roleHarvester = {
                 }
 
                 if (counter <= 2) {
-                    console.log('last harvester, so moving it to Spawn 1')
+                    console.log('role.harvester: last harvester, so moving it to Spawn 1')
                     creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#fafafa'}}) // just move out of the way
                 } else {
                     console.log(creep.name + ' not doing anything, erasing his memory💾')
@@ -80,7 +82,7 @@ var roleHarvester = {
 
 
             } else {
-                console.log('role.harvester this should not happen')
+                console.log('role.harvester: this should not happen (no repair job?)')
             }
         }
 	}

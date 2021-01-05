@@ -45,10 +45,10 @@ var roleBuilder = {
                 }
 
                 if (counter <= 1) {
-                    console.log('last builder, so moving it to Spawn 1')
+                    console.log('role.builder: last builder, ' + creep.name + ' so moving it to Spawn 1')
                     creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#fafafa'}}) // just move out of the way
                 } else {
-                    console.log(creep.name + ' not doing anything, erasing his memory💾')
+                    console.log('role.builder: ' +creep.name + ' not doing anything, erasing his memory💾')
                     creep.memory = undefined
                 }
             } else {
