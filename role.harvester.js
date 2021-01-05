@@ -15,6 +15,14 @@ var roleHarvester = {
         });
     },
 
+    energyTargetExtensions: function(creep) {
+        return creep.room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return ((structure.structureType == STRUCTURE_EXTENSION) && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0))
+            }
+        })
+    },
+
     /** @param {Creep} creep **/
     run: function(creep) {
 	    if(creep.store.getFreeCapacity() > 0) {
@@ -30,10 +38,18 @@ var roleHarvester = {
             // console.log(energyTargets.length + ' and ' + repairTargets.length)
 
             if(energyTargets.length > 0) { // && creep.store.getFreeCapacity() > 0) {
-                let transferCode = creep.transfer(energyTargets[0], RESOURCE_ENERGY)
+                let extensions = roleHarvester.energyTargetExtensions(creep)
+                // console.log(extensions.length)
+                var target = energyTargets[0]
+                if (extensions.length > 0) {
+                    creep.say('🟡')
+                    var target = extensions[0]
+                }
+
+                let transferCode = creep.transfer(target, RESOURCE_ENERGY)
                 if(transferCode == ERR_NOT_IN_RANGE) {
                     // creep.say('⚡️')
-                    creep.moveTo(energyTargets[0], {visualizePathStyle: {stroke: '#ffffff'}});
+                    creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
                 } else if (transferCode != OK) {
                     console.log('deal with this (return code, transfer): ' + transferCode)
                 }
