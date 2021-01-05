@@ -3,6 +3,18 @@ var roleDoctor = require('role.doctor');
 
 var roleHarvester = {
 
+    energyTargets: function(creep) {
+        return creep.room.find(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return ((structure.structureType == STRUCTURE_EXTENSION ||
+                            structure.structureType == STRUCTURE_SPAWN ||
+                            structure.structureType == STRUCTURE_CONTAINER ||
+                            structure.structureType == STRUCTURE_TOWER) &&
+                           (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0))
+                }
+        });
+    },
+
     /** @param {Creep} creep **/
     run: function(creep) {
 	    if(creep.store.getFreeCapacity() > 0) {
@@ -11,17 +23,9 @@ var roleHarvester = {
             creep.memory.harvestTargetSourceId = undefined
             creep.memory.harvestTargetSourceIndex = undefined
 
-            var energyTargets = creep.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return ((structure.structureType == STRUCTURE_EXTENSION ||
-                                structure.structureType == STRUCTURE_SPAWN ||
-                                structure.structureType == STRUCTURE_CONTAINER ||
-                                structure.structureType == STRUCTURE_TOWER) &&
-                               (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0))
-                    }
-            });
+            var energyTargets = roleHarvester.energyTargets(creep)
 
-            var repairTargets = roleDoctor.repairTargets(creep)
+            // var repairTargets = roleDoctor.repairTargets(creep)
 
             // console.log(energyTargets.length + ' and ' + repairTargets.length)
 
@@ -30,21 +34,12 @@ var roleHarvester = {
                 if(transferCode == ERR_NOT_IN_RANGE) {
                     // creep.say('⚡️')
                     creep.moveTo(energyTargets[0], {visualizePathStyle: {stroke: '#ffffff'}});
-                } else {
+                } else if (transferCode != OK) {
                     console.log('deal with this (return code, transfer): ' + transferCode)
                 }
 
-            }
-            else if (repairTargets.length > 0) {
-                let repairCode = creep.repair(repairTargets[0])
-                if (repairCode == ERR_NOT_IN_RANGE) {
-                    // creep.say('🩹')
-                    creep.moveTo(repairTargets[0], {visualizePathStyle: {stroke: '#b0f566'}})
-                } else {
-                    console.log('deal with this (return code, reapir): ' + repairCode)
-                }
-            }
-            else { // no more target
+            } else if (!roleDoctor.repairJob(creep)) { // no repair job
+            // else { // no more target
                 var counter = 0
                 for (let name in Game.creeps) {
                     let creep = Game.creeps[name]
@@ -60,6 +55,8 @@ var roleHarvester = {
                 }
 
 
+            } else {
+                console.log('role.harvester this should not happen')
             }
         }
 	}

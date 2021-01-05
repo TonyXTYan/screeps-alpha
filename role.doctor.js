@@ -18,6 +18,22 @@ var roleDoctor = {
         })
     },
 
+    repairJob: function(creep) {
+        var repairTargets = roleDoctor.repairTargets(creep)
+        if (repairTargets.length > 0) {
+            let repairCode = creep.repair(repairTargets[0])
+            if (repairCode == ERR_NOT_IN_RANGE) {
+                creep.say('🩹')
+                creep.moveTo(repairTargets[0], {visualizePathStyle: {stroke: '#b0f566'}})
+            } else if (repairCode != OK) {
+                console.log('deal with this (return code, reapir): ' + repairCode)
+            }
+            return true
+        } else { // no repair required
+            return false
+        }
+    },
+
     run: function(creep) {
 
         let healTargets = creep.room.find(FIND_MY_CREEPS, {
@@ -35,7 +51,7 @@ var roleDoctor = {
                 let transferCode = creep.heal(healTargets[0])
                 if(transferCode == ERR_NOT_IN_RANGE) {
                     // creep.say('⚡️')
-                    creep.moveTo(healTargets[0], {visualizePathStyle: {stroke: '#ffffff'}});
+                    creep.moveTo(healTargets[0], {visualizePathStyle: {stroke: '#65fd62'}});
                 } else {
                     console.log('deal with this (return code, heal): ' + transferCode)
                 }

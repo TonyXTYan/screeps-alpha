@@ -2,6 +2,7 @@ var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleDoctor = require('role.doctor');
+var roleManual = require('role.manual');
 
 var creepRoleBalance = require('creep.roleBalance');
 var creepPopulationControl = require('creep.populationControl');
@@ -16,12 +17,15 @@ module.exports.loop = function () {
     // console.log('test sync 2')
 
     let spawn = Game.spawns['Spawn1']
+    let room = spawn.room
 
     creepRoleBalance.trySpawn(spawn)
 
-    creepRoleBalance.balanceBuilderUpgrader(spawn.room)
+    creepRoleBalance.balanceBuilderUpgrader(room)
 
-    towerBasics.run(spawn.room)
+    creepRoleBalance.balanceUpgraderHarvester(room)
+
+    towerBasics.run(room)
 
     creepMemoryManagement.run()
 
@@ -44,6 +48,11 @@ module.exports.loop = function () {
         if (creep.memory.role == 'doctor') {
             roleDoctor.run(creep)
         }
+        if (creep.memory.role == 'manual') {
+            roleManual.run(creep)
+        }
     }
+
+    // console.clear();
 
 }

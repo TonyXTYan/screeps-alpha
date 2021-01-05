@@ -16,7 +16,9 @@ var creepMemoryManagement = {
             0: 'builder',
             1: 'harvester',
             2: 'upgrader'
+            // 3: 'doctor'
         }
+
         for(var name in Game.creeps) {
             var creep = Game.creeps[name]
             // console.log(name)

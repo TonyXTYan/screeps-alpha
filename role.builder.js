@@ -1,5 +1,6 @@
 // var checkedOutSource = 0
 var creepHarvest = require('creep.harvest');
+var roleDoctor = require('role.doctor');
 
 var roleBuilder = {
 
@@ -25,12 +26,12 @@ var roleBuilder = {
             creep.memory.harvestTargetSourceId = undefined
             creep.memory.harvestTargetSourceIndex = undefined
 
-            if(targets.length) { // if(length != 0)
+            if(targets.length > 0) { // if(length != 0)
                 if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffb752'}});
                     // creep.say('↘️ To ' + targets[0].)
                 }
-            } else {
+            } else if (!roleDoctor.repairJob(creep)) {
                 // console.log('finally')
                 // console.log(creep.name + ' not doing anything, erasing his memory💾 TODO')
                 // delete creep.memory
@@ -47,6 +48,9 @@ var roleBuilder = {
                     console.log(creep.name + ' not doing anything, erasing his memory💾')
                     creep.memory = undefined
                 }
+            } else {
+                let reapitTargets = roleDoctor.repairTargets(creep)
+                console.log('role.builder this should not happen ' + reapitTargets.length)
             }
 
 	    }

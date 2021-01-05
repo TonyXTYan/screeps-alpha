@@ -11,17 +11,33 @@ var roleManual = {
         //     });
         // }
 
-        target = [31,17]
+        // target = [31,17]
+        //
+        // creep.room.find(FIND_SOURCES, {
+        //     filter: (structure) => {
+        //         return (structure.structureType == STRUCTURE_WALL)
+        //     }
+        // })
+        //
+        // creep.harvest()
 
-        creep.room.find(FIND_SOURCES, {
-            filter: (structure) => {
-                return (structure.structureType == STRUCTURE_WALL)
-            }
-        })
+        console.log('🦾 manual')
 
-        creep.harvest()
-
-
+        // let containersTest = creep.room.find(FIND_STRUCTURES, {
+        //     filter: (structure) => {
+        //         return structure.structureType == STRUCTURE_CONTAINER
+        //     }
+        // })
+        //
+        // console.log(containersTest.length + ' is ' + containersTest)
+        //
+        // let code = creep.withdraw(containersTest[0], RESOURCE_ENERGY)
+        //
+        // if (code == ERR_NOT_IN_RANGE) {
+        //     creep.moveTo(containersTest[0], {visualizePathStyle: { stroke: '#ff0000'}})
+        // } else  {
+        //     console.log('code: ' + code)
+        // }
 
 	}
 };
