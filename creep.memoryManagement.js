@@ -50,7 +50,7 @@ var creepMemoryManagement = {
                     }
                 }
                 room.memory.sources[source] = [spec[0], counter, spec[2]]
-                console.log(source + ' and ' + spec + ' new ' + room.memory.sources[source])
+                console.log(source + ' old ' + spec + ' new ' + room.memory.sources[source]) // TODO
             }
 
 

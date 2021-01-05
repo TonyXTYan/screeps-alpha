@@ -20,43 +20,37 @@ var roleBuilder = {
 	    if(creep.memory.building) {
 	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
             // console.log(targets.length)
-            
+
             creep.memory.harvestTargetSourceId = undefined
             creep.memory.harvestTargetSourceIndex = undefined
 
-            if(targets.length) {
+            if(targets.length) { // if(length != 0)
                 if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
                     // creep.say('↘️ To ' + targets[0].)
                 }
+            } else {
+                // console.log('finally')
+                // console.log(creep.name + ' not doing anything, erasing his memory💾 TODO')
+                // delete creep.memory
+                var counter = 0
+                for (let name in Game.creeps) {
+                    let creep = Game.creeps[name]
+                    if (creep.memory.role == 'builder') { counter++ }
+                }
+
+                if (counter <= 1) {
+                    console.log('last builder, so moving it to Spawn 1')
+                    creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#fafafa'}}) // just move out of the way
+                } else {
+                    console.log(creep.name + ' not doing anything, erasing his memory💾')
+                    creep.memory = undefined
+                }
             }
+
 	    }
 	    else { // not building
             creepHarvest.run(creep)
-	        // var sources = creep.room.find(FIND_SOURCES);
-            //
-            // if (creep.memory.harvestTargetSource === undefined) {
-            //     creep.memory.harvestTargetSource = 0
-            // }
-            // var harvestTargetSource = creep.memory.harvestTargetSource
-            //
-            // if(creep.harvest(sources[harvestTargetSource]) == ERR_NOT_IN_RANGE) {
-            //     // console.log(creep.moveTo(sources[0]))
-            //     // checkedOutSource = 0
-            //     let attempt = creep.moveTo(sources[harvestTargetSource], {visualizePathStyle: {stroke: '#ffaa00'}});
-            //     // checkedOutSource ++
-            //
-            //     if (attempt == ERR_NO_PATH) {
-            //         // checkedOutSource ++
-            //         harvestTargetSource = (harvestTargetSource + 1) % sources.length
-            //         console.log(creep.name + ' now checking out ' + harvestTargetSource)
-            //         creep.memory.harvestTargetSource = harvestTargetSource
-            //     }
-            //
-            //     // if (attempt == ERR_NO_PATH && sources[1] !== undefined) {
-            //     //     creep.moveTo(sources[1], {visualizePathStyle: {stroke: '#ffaa00'}});
-            //     // }
-            // }
 	    }
 	}
 };

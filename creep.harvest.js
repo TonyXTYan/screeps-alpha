@@ -34,7 +34,7 @@ var creepHarvest = {
             // if (creep.memory.harvestTargetSource)
 
             if (attempt == ERR_NO_PATH) {
-                creep.say('🚦Congested');
+                creep.say('🚦Blocked');
                 harvestTargetSourceIndex = (harvestTargetSourceIndex + 1) % sources.length
                 harvestTargetSourceId = sources[harvestTargetSourceIndex].id
                 creep.memory.harvestTargetSourceIndex = harvestTargetSourceIndex

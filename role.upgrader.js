@@ -40,13 +40,6 @@ var roleUpgrader = {
                 creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
             }
         } else { // not upgrading, so harvest
-            // var sources = creep.room.find(FIND_SOURCES);
-            // // creep.stationaryWorking = true
-            // // console.log(creep.harvest(sources[0]))
-            // if(creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
-            //     // creep.stationaryWorking = false
-            //     creep.moveTo(sources[1], {visualizePathStyle: {stroke: '#ffaa00'}});
-            // }
             creepHarvest.run(creep)
         }
 

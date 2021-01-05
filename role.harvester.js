@@ -5,17 +5,6 @@ var roleHarvester = {
     /** @param {Creep} creep **/
     run: function(creep) {
 	    if(creep.store.getFreeCapacity() > 0) {
-            // var sources = creep.room.find(FIND_SOURCES);
-            // if (creep.memory.harvestTargetSource === undefined) { creep.memory.harvestTargetSource = 0 }
-            // var harvestTargetSource = creep.memory.harvestTargetSource
-            // if(creep.harvest(sources[harvestTargetSource]) == ERR_NOT_IN_RANGE) {
-            //     let attempt = creep.moveTo(sources[harvestTargetSource], {visualizePathStyle: {stroke: '#ffaa00'}});
-            //     if (attempt == ERR_NO_PATH) {
-            //         harvestTargetSource = (harvestTargetSource + 1) % sources.length
-            //         console.log(creep.name + ' now checking out ' + harvestTargetSource)
-            //         creep.memory.harvestTargetSource = harvestTargetSource
-            //     }
-            // }
             creepHarvest.run(creep)
         } else {
             creep.memory.harvestTargetSourceId = undefined
@@ -35,9 +24,22 @@ var roleHarvester = {
                     creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
                     // creep.say('↘️ to ' + targets[0].name)
                 }
-            } else {
-                // console.log('move out of the way')
-                creep.moveTo(29,17, {visualizePathStyle: {stroke: '#fafafa'}}) // just move out of the way
+            } else { // no more target
+                var counter = 0
+                for (let name in Game.creeps) {
+                    let creep = Game.creeps[name]
+                    if (creep.memory.role == 'harvester') { counter++ }
+                }
+
+                if (counter <= 2) {
+                    console.log('last harvester, so moving it to Spawn 1')
+                    creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#fafafa'}}) // just move out of the way
+                } else {
+                    console.log(creep.name + ' not doing anything, erasing his memory💾')
+                    creep.memory = undefined
+                }
+
+
             }
         }
 	}
