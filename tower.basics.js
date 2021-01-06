@@ -15,9 +15,11 @@ var towerBasics = {
             let tower = towers[index]
             // console.log(tower);
             var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+            let energyRatio = (tower.store.getUsedCapacity(RESOURCE_ENERGY) / tower.store.getCapacity(RESOURCE_ENERGY))
+
             if(closestHostile) {
                 tower.attack(closestHostile);
-            } else {
+            } else if (energyRatio > 0.1){
                 var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
                     filter: roleDoctor.repairStructureFilter
                 });
@@ -54,7 +56,7 @@ var towerBasics = {
                 } else if(closestDamagedStructure) {
                     let repairCode = tower.repair(closestDamagedStructure);
                     // console.log('tower.basics: ' + tower + ' repair just ' + closestDamagedStructure + ' returned: ' + repairCode)
-                } else if(closestAbsoluteDamagedStructure) {
+                } else if(closestAbsoluteDamagedStructure && (energyRatio > 0.5)) {
                     let repairCode = tower.repair(closestAbsoluteDamagedStructure)
                     // console.log('tower.basics: ' + tower + ' repair abs ' + closestAbsoluteDamagedStructure + ' returned: ' + repairCode)
                 } else {
