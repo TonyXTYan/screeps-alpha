@@ -47,6 +47,8 @@ var towerBasics = {
                     tower.repair(closestDamagedStructure);
                 } else if(closestAbsoluteDamagedStructure) {
                     tower.repair(closestAbsoluteDamagedStructure)
+                } else {
+                    console.log('rower.basics: ' + tower + ' is idle')
                 }
             }
 
