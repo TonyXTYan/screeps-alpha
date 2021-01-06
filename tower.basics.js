@@ -28,7 +28,7 @@ var towerBasics = {
 
                 var closestUrgentDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
                     filter: (structure) => {
-                        return structure.hits < 500 // ||
+                        return ((structure.hits < 900) && structure.hitsMax > 900) // ||
                               // (structure.hits / structure.hitsMax < 0.001)
                     }
                 })
