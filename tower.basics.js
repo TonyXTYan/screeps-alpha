@@ -22,10 +22,31 @@ var towerBasics = {
                     filter: roleDoctor.repairStructureFilter
                 });
 
+                var closestAbsoluteDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+                    filter: (structure) => { structure.hits < structure.hitsMax }
+                });
+
+                var closestUrgentDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return structure.hits < 500 // ||
+                              // (structure.hits / structure.hitsMax < 0.001)
+                    }
+                })
+
+                var closestDamagedCreep = tower.pos.findClosestByRange(FIND_MY_CREEPS, {
+                    filter: (creep) => { return creep.hits < creep.hitsMax }
+                })
+
                 // console.log('tower.basis: ' + closestDamagedStructure)
 
-                if(closestDamagedStructure) {
+                if (closestDamagedCreep) {
+                    tower.repair(closestDamagedCreep)
+                } else if(closestUrgentDamagedStructure) {
+                    tower.repair(closestUrgentDamagedStructure)
+                } else if(closestDamagedStructure) {
                     tower.repair(closestDamagedStructure);
+                } else if(closestAbsoluteDamagedStructure) {
+                    tower.repair(closestAbsoluteDamagedStructure)
                 }
             }
 

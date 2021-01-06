@@ -4,14 +4,12 @@ var creepHarvest = require('creep.harvest');
 var roleDoctor = {
 
     repairStructureFilter: function(structure) {
-        // (structure) => {
-            // console.log(structure)
-            if (structure.structureType == STRUCTURE_WALL) {
-                return structure.hits < 10 * 1000
-            } else {
-                return (structure.hits < structure.hitsMax)
-            }
-        // }
+        // return structure.hits < 10 * 1000
+        if (structure.structureType == STRUCTURE_WALL) {
+            return structure.hits < 10 * 1000
+        } else {
+            return (structure.hits < structure.hitsMax)
+        }
     },
 
     repairTargetToRepair: function(creep) {
