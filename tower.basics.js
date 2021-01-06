@@ -1,3 +1,5 @@
+var roleDoctor = require('role.doctor');
+
 var towerBasics = {
 
     run: function(room) {
@@ -15,14 +17,18 @@ var towerBasics = {
             var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
             if(closestHostile) {
                 tower.attack(closestHostile);
+            } else {
+                var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+                    filter: roleDoctor.repairStructureFilter
+                });
+
+                // console.log('tower.basis: ' + closestDamagedStructure)
+
+                if(closestDamagedStructure) {
+                    tower.repair(closestDamagedStructure);
+                }
             }
 
-            var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                filter: (structure) => structure.hits < structure.hitsMax
-            });
-            if(closestDamagedStructure) {
-                tower.repair(closestDamagedStructure);
-            }
 
         }
     }

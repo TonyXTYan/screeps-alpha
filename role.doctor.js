@@ -3,15 +3,26 @@ var creepHarvest = require('creep.harvest');
 
 var roleDoctor = {
 
+    repairStructureFilter: function(structure) {
+        // (structure) => {
+            // console.log(structure)
+            if (structure.structureType == STRUCTURE_WALL) {
+                return structure.hits < 10 * 1000
+            } else {
+                return (structure.hits < structure.hitsMax)
+            }
+        // }
+    },
+
     repairTargetToRepair: function(creep) {
         return creep.pos.findClosestByPath(FIND_STRUCTURES, {
-            filter: (structure) => { return (structure.hits < structure.hitsMax) }
+            filter: roleDoctor.repairStructureFilter
         })
     },
 
     repairJob: function(creep) {
         var repairTarget = roleDoctor.repairTargetToRepair(creep)
-        // console.log(repairTarget)
+        // console.log('role.doctor.repairJob: ' + repairTarget)
         if (repairTarget) {
             let repairCode = creep.repair(repairTarget)
             if (repairCode == ERR_NOT_IN_RANGE) {
