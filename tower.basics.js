@@ -23,7 +23,7 @@ var towerBasics = {
                 });
 
                 var closestAbsoluteDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                    filter: (structure) => { structure.hits < structure.hitsMax }
+                    filter: (structure) => { return structure.hits < structure.hitsMax }
                 });
 
                 var closestUrgentDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
@@ -41,14 +41,18 @@ var towerBasics = {
 
                 if (closestDamagedCreep) {
                     tower.repair(closestDamagedCreep)
+                    console.log('tower.basics: ' + tower + ' repair ' + closestDamagedCreep)
                 } else if(closestUrgentDamagedStructure) {
                     tower.repair(closestUrgentDamagedStructure)
+                    console.log('tower.basics: ' + tower + ' repair ' + closestUrgentDamagedStructure)
                 } else if(closestDamagedStructure) {
                     tower.repair(closestDamagedStructure);
+                    console.log('tower.basics: ' + tower + ' repair ' + closestDamagedStructure)
                 } else if(closestAbsoluteDamagedStructure) {
                     tower.repair(closestAbsoluteDamagedStructure)
+                    console.log('tower.basics: ' + tower + ' repair ' + closestAbsoluteDamagedStructure)
                 } else {
-                    console.log('rower.basics: ' + tower + ' is idle')
+                    console.log('tower.basics: ' + tower + ' is idle')
                 }
             }
 
