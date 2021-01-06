@@ -40,17 +40,17 @@ var towerBasics = {
                 // console.log('tower.basis: ' + closestDamagedStructure)
 
                 if (closestDamagedCreep) {
-                    tower.repair(closestDamagedCreep)
-                    console.log('tower.basics: ' + tower + ' repair ' + closestDamagedCreep)
+                    let repairCode = tower.repair(closestDamagedCreep)
+                    console.log('tower.basics: ' + tower + ' repair ' + closestDamagedCreep + ' returned: ' + repairCode)
                 } else if(closestUrgentDamagedStructure) {
-                    tower.repair(closestUrgentDamagedStructure)
-                    console.log('tower.basics: ' + tower + ' repair ' + closestUrgentDamagedStructure)
+                    let repairCode = tower.repair(closestUrgentDamagedStructure)
+                    console.log('tower.basics: ' + tower + ' repair ' + closestUrgentDamagedStructure + ' returned: ' + repairCode)
                 } else if(closestDamagedStructure) {
-                    tower.repair(closestDamagedStructure);
-                    console.log('tower.basics: ' + tower + ' repair ' + closestDamagedStructure)
+                    let repairCode = tower.repair(closestDamagedStructure);
+                    console.log('tower.basics: ' + tower + ' repair ' + closestDamagedStructure + ' returned: ' + repairCode)
                 } else if(closestAbsoluteDamagedStructure) {
-                    tower.repair(closestAbsoluteDamagedStructure)
-                    console.log('tower.basics: ' + tower + ' repair ' + closestAbsoluteDamagedStructure)
+                    let repairCode = tower.repair(closestAbsoluteDamagedStructure)
+                    console.log('tower.basics: ' + tower + ' repair ' + closestAbsoluteDamagedStructure + ' returned: ' + repairCode)
                 } else {
                     console.log('tower.basics: ' + tower + ' is idle')
                 }
