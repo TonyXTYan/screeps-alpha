@@ -26,9 +26,13 @@ var towerBasics = {
                     filter: (structure) => { return structure.hits < structure.hitsMax }
                 });
 
+                var closestVeryUrgentDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+                    filter: (structure) => { return (structure.hits < 500) && (structure.hitsMax > 500)}
+                })
+
                 var closestUrgentDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
                     filter: (structure) => {
-                        return ((structure.hits < 900) && structure.hitsMax > 900) // ||
+                        return ((structure.hits < 10 * 1000) && structure.hitsMax > 10 * 1000) // ||
                               // (structure.hits / structure.hitsMax < 0.001)
                     }
                 })
@@ -42,6 +46,8 @@ var towerBasics = {
                 if (closestDamagedCreep) {
                     let repairCode = tower.repair(closestDamagedCreep)
                     // console.log('tower.basics: ' + tower + ' repair creep ' + closestDamagedCreep + ' returned: ' + repairCode)
+                } else if(closestVeryUrgentDamagedStructure){
+                    let repairCode = tower.repair(closestVeryUrgentDamagedStructure)
                 } else if(closestUrgentDamagedStructure) {
                     let repairCode = tower.repair(closestUrgentDamagedStructure)
                     // console.log('tower.basics: ' + tower + ' repair urgent ' + closestUrgentDamagedStructure + ' returned: ' + repairCode)
@@ -52,7 +58,7 @@ var towerBasics = {
                     let repairCode = tower.repair(closestAbsoluteDamagedStructure)
                     // console.log('tower.basics: ' + tower + ' repair abs ' + closestAbsoluteDamagedStructure + ' returned: ' + repairCode)
                 } else {
-                    // console.log('tower.basics: ' + tower + ' is idle')
+                    console.log('tower.basics: ' + tower + ' is idle')
                 }
             }
 
