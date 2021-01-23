@@ -40,23 +40,23 @@ var creepMemoryManagement = {
 
 
         // Checking the source properties // TODO
-        for (var name in Memory.rooms){
-            var room = Game.rooms[name]
-            for (var source in room.memory.sources) {
-                var spec = room.memory.sources[source]
-                // console.log(spec[0])
-
-                var counter = 0
-                for(var name in Game.creeps) {
-                    var c = Game.creeps[name];
-                    if (c.memory.harvestTargetSourceId == source) {
-                        counter ++
-                    }
-                }
-                room.memory.sources[source] = [spec[0], counter, spec[2]]
-                // console.log(source + ' old ' + spec + ' new ' + room.memory.sources[source]) // TODO
-            }
-        }
+        // for (var name in Memory.rooms){
+        //     var room = Game.rooms[name]
+        //     for (var source in room.memory.sources) {
+        //         var spec = room.memory.sources[source]
+        //         // console.log(spec[0])
+        //
+        //         var counter = 0
+        //         for(var name in Game.creeps) {
+        //             var c = Game.creeps[name];
+        //             if (c.memory.harvestTargetSourceId == source) {
+        //                 counter ++
+        //             }
+        //         }
+        //         room.memory.sources[source] = [spec[0], counter, spec[2]]
+        //         // console.log(source + ' old ' + spec + ' new ' + room.memory.sources[source]) // TODO
+        //     }
+        // }
     }
 }
 
