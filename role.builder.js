@@ -26,14 +26,14 @@ var roleBuilder = {
 	    }
 
 	    if(creep.memory.building) {
-	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+	        var target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
 
             creep.memory.harvestTargetSourceId = undefined
             creep.memory.harvestTargetSourceIndex = undefined
 
-            if(targets.length > 0) { // have construction site
-                if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffb752'}});
+            if(target) { // have construction site
+                if(creep.build(target) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target, {visualizePathStyle: {stroke: '#ffb752'}});
                     // creep.say('↘️ To ' + targets[0].)
                 }
             } else if (!roleDoctor.repairJob(creep)) { // else if try repair something

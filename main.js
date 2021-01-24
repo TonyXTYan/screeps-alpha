@@ -29,6 +29,8 @@ module.exports.loop = function () {
 
     // creepPopulationControl.check.balance()
 
+    console.log('sync test 1')
+
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
         if (creep.spawning) { return }
