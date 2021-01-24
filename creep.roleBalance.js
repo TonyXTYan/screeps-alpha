@@ -205,8 +205,8 @@ var creepRoleBalance = {
                 (ratio > 0.95) &&
                 (harvester.length > 3)
             ) {
-                console.log('creep.roleBalane: Too much harvester (need more upgrader), changing ' + creep.name + ' to upgrader')
                 let creep = Game.creeps[harvester[0]]
+                console.log('creep.roleBalane: Too much harvester (need more upgrader), changing ' + creep.name + ' to upgrader')
                 creep.say('♿️')
                 creep.memory.role = 'upgrader'
             }
