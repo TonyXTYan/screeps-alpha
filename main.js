@@ -12,10 +12,8 @@ var towerBasics = require('tower.basics');
 
 module.exports.loop = function () {
 
-
     if (Game.time % 7 == 0) {
         console.log("<script>angular.element(document.getElementsByClassName('fa fa-trash ng-scope')[0].parentNode).scope().Console.clear()</script>")
-        // console.log('odd')
     }
 
     console.log('main: ✅ Current game time is: ' + Game.time + ' --------------------------------------------------')
@@ -35,7 +33,7 @@ module.exports.loop = function () {
 
     // creepPopulationControl.check.balance()
 
-    console.log('sync test 4')
+    console.log('sync test 10')
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
