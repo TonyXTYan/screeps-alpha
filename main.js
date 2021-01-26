@@ -1,6 +1,6 @@
 var utility = require('utility');
 var creepController = require('creep.controller');
-var contractScheduler = require('contract.scheduler');
+var jobScheduler = require('job.scheduler');
 var spawnController = require('spawn.controller');
 
 module.exports.loop = function () {
@@ -10,7 +10,7 @@ module.exports.loop = function () {
 
     var numberFormatter = Intl.NumberFormat('en-US')
     var stats = ("✅ Tick: " + Game.time + " ---------------------------------------------------------------------\n")
-    let startCpuTime = performance.now()
+    // let startCpuTime = performance.now()
     stats += ('CPU tickLimit: ' + Game.cpu.tickLimit + ', bucket: ' + Game.cpu.bucket + '\n')
     stats += ('Flags: ' + Object.keys(Game.flags).length + '\n')
     stats += ('Creeps: ' + Object.keys(Game.creeps).length + '\n')
@@ -20,6 +20,10 @@ module.exports.loop = function () {
     stats += ('Memory: ' + numberFormatter.format(RawMemory.get().length) + ' bytes\n')
 
     console.log(stats)
+
+    if (Game.cpu.bucket >= 10000) {
+        console.log('Game.cpu.generatePixel: returned ' + Game.cpu.generatePixel())
+    }
 
     // console.log(utility.countExclusionZones())
 
@@ -32,7 +36,7 @@ module.exports.loop = function () {
 
 
     utility.initialSetupEnvironmentCheck()
-    contractScheduler.run()
+    jobScheduler.run()
 
     for(var name in Game.spawns) {
         let spawn = Game.spawns[name]
@@ -43,7 +47,7 @@ module.exports.loop = function () {
 
 
 
-    let finalCpuTime = performance.now()
-    let deltaCpuTime = finalCpuTime - startCpuTime
-    console.log('⏺Finished execution in ' + numberFormatter.format(1000 * deltaCpuTime) + 'ns\n\n')
+    // let finalCpuTime = performance.now()
+    // let deltaCpuTime = finalCpuTime - startCpuTime
+    console.log('⏺Finished execution')
 }
