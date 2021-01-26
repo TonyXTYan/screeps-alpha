@@ -30,8 +30,8 @@ module.exports.loop = function () {
     // }
 
 
-    contractScheduler.run()
     utility.initialSetupEnvironmentCheck()
+    contractScheduler.run()
 
     for(var name in Game.spawns) {
         let spawn = Game.spawns[name]

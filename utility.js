@@ -1,34 +1,30 @@
 var utility = {
 
-    // resetMemory: function() {
-        // console.log('💣 Reset Memeory Called!')
-
-        // let default = {"creeps":{},"spawns":{},"rooms":{},"flags":{}}
-        // RawMemory.set("{'creeps':{},'spawns':{},'rooms':{},'flags':{}}");
-        // Memory = JSON.parse(RawMemory.get());
-        // RawMemory.
-
-        // Memory.creeps = {}
-
-        // RawMemory.set("{}");
-        //
-        // Memory.creeps = {};
-        // Memory.spawns = {};
-        // Memory.rooms = {};
-        // Memory.flags = {};
-    // },
-
-    initialSetupEnvironmentCheck: function() {
-        for(var name in Game.rooms) {
+    runForAllRooms: function(func) {
+        // FIXME: pileup these functions and execut them in one go (maybe?)
+        for (name in Game.rooms) {
             let room = Game.rooms[name]
-            // console.log(room)
-            utility.initialSetupEnvironmentCheckForRoom(room)
+            func(room)
         }
     },
 
+    initialSetupEnvironmentCheck: function() {
+        utility.runForAllRooms(utility.initialSetupEnvironmentCheckForRoom)
+        // for(var name in Game.rooms) {
+        //     let room = Game.rooms[name]
+        //     // console.log(room)
+        //     utility.initialSetupEnvironmentCheckForRoom(room)
+        // }
+    },
+
     initialSetupEnvironmentCheckForRoom: function(room) {
+        console.log('utility.initialSetupEnvironmentCheckForRoom: called')
         if (room.memory.sourceChecked === undefined) {
             utility.computeSourcePropertyInRoom(room)
+        }
+        if (Memory.myUsername === undefined) {
+            // console.log(Game.spawns[Object.keys(Game.spawns)[0]])
+            Memory.myUsername = Game.spawns[Object.keys(Game.spawns)[0]].owner.username
         }
     },
 
@@ -64,20 +60,12 @@ var utility = {
             room.memory.source[source.id] = freeSpace
         }
         room.memory.sourceChecked = Game.time
+    },
+
+    resetMemory: function() {
+
     }
+
 }
 
 module.exports = utility;
-
-// Object.assign(exports, {
-//     // ROOM_WIDTH: 50,
-//     // ROOM_HEIGHT: 50,
-//     // ROOM_WIDTH_INDEX_MAX: 49,
-//     // ROOM_HEIGHT_INDEX_MAX: 49,
-//
-//     // SOURCE_PROPERTY_CHECKED: 1000
-//
-//     // TERRAIN_WALL: 'wall',
-//     // TERRAIN_PLAIN: 'plain'
-//
-// })
