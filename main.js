@@ -12,8 +12,23 @@ var towerBasics = require('tower.basics');
 
 module.exports.loop = function () {
 
-    console.log('main: ✅ Current game time is: ' + Game.time + ' -------------------------------')
+    // console.log('main: ✅ Current game time is: ' + Game.time + ' -------------------------------')
     // console.log('test sync 3')
+    var numberFormatter = Intl.NumberFormat('en-US')
+    var stats = ("✅ Tick: " + Game.time + " ---------------------------------------------------------------------\n")
+    // let startCpuTime = performance.now()
+    stats += ('CPU tickLimit: ' + Game.cpu.tickLimit + ', bucket: ' + Game.cpu.bucket + '\n')
+    stats += ('Flags: ' + Object.keys(Game.flags).length + '\n')
+    stats += ('Creeps: ' + Object.keys(Game.creeps).length + '\n')
+    stats += ('Spawns: ' + Object.keys(Game.spawns).length + '\n')
+    stats += ('Structures: ' + Object.keys(Game.structures).length + '\n')
+    stats += ('Constructions: ' + Object.keys(Game.constructionSites).length + '\n')
+    stats += ('Memory: ' + numberFormatter.format(RawMemory.get().length) + ' bytes\n')
+
+    console.log(stats)
+    if (Game.cpu.bucket >= 10000) {
+        console.log('Generate a Pixel returns: ' + Game.cpu.generatePixel())
+    }
 
     let spawn = Game.spawns['Spawn1']
     let room = spawn.room
@@ -29,7 +44,7 @@ module.exports.loop = function () {
 
     // creepPopulationControl.check.balance()
 
-    console.log('sync test 1')
+    // console.log('sync test 1')
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
