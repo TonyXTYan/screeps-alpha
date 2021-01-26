@@ -30,7 +30,8 @@ module.exports.loop = function () {
     // }
 
 
-
+    contractScheduler.run()
+    utility.initialSetupEnvironmentCheck()
 
     for(var name in Game.spawns) {
         let spawn = Game.spawns[name]
@@ -39,7 +40,9 @@ module.exports.loop = function () {
 
 
 
+
+
     let finalCpuTime = performance.now()
     let deltaCpuTime = finalCpuTime - startCpuTime
-    console.log('⏺Finished execution in ' + numberFormatter.format(1000 * deltaCpuTime) + 'ns')
+    console.log('⏺Finished execution in ' + numberFormatter.format(1000 * deltaCpuTime) + 'ns\n\n')
 }
