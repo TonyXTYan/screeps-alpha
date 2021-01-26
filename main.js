@@ -1,6 +1,6 @@
 var utility = require('utility');
 var creepController = require('creep.controller');
-var taskScheduler = require('task.scheduler');
+var contractScheduler = require('contract.scheduler');
 var spawnController = require('spawn.controller');
 
 module.exports.loop = function () {
@@ -29,7 +29,11 @@ module.exports.loop = function () {
     //     var creep = Game.creeps[name];
     // }
 
-    for(var spawn in Game.spawns) {
+
+
+
+    for(var name in Game.spawns) {
+        let spawn = Game.spawns[name]
         spawnController.run(spawn)
     }
 
