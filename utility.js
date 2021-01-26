@@ -64,6 +64,18 @@ var utility = {
 
     resetMemory: function() {
 
+    },
+
+
+    countExclusionZones: function() {
+        var accum = 0
+        for (name in Game.flags) {
+            // console.log(name)
+            if (name == 'exclusion_zone') {
+                accum++
+            }
+        }
+        return accum
     }
 
 }

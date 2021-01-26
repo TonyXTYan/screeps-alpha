@@ -5,8 +5,8 @@ var spawnController = {
 
     run: function(spawn) {
         // var log = ""
-        console.log(' ')
-        console.log("Spawn is " + spawn.name + ' in room ' + spawn.room.name)
+        // console.log(' ')
+        console.log("spawnController: called on " + spawn.name + ' in room ' + spawn.room.name)
         // console.log("Spawn hits: " + spawn.hits + ' of ' + spawn.hitsMax)
         // console.log("Spawn energy: " + spawn.store.getUsedCapacity(RESOURCE_ENERGY) + ' of ' + spawn.store.getCapacity(RESOURCE_ENERGY))
 

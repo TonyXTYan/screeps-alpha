@@ -12,7 +12,7 @@ module.exports.loop = function () {
     var stats = ("✅ Tick: " + Game.time + " ---------------------------------------------------------------------\n")
     let startCpuTime = performance.now()
     stats += ('CPU tickLimit: ' + Game.cpu.tickLimit + ', bucket: ' + Game.cpu.bucket + '\n')
-    // stats += ('Flags: ' + Object.keys(Game.flags).length + '\n')
+    stats += ('Flags: ' + Object.keys(Game.flags).length + '\n')
     stats += ('Creeps: ' + Object.keys(Game.creeps).length + '\n')
     stats += ('Spawns: ' + Object.keys(Game.spawns).length + '\n')
     stats += ('Structures: ' + Object.keys(Game.structures).length + '\n')
@@ -21,6 +21,7 @@ module.exports.loop = function () {
 
     console.log(stats)
 
+    // console.log(utility.countExclusionZones())
 
     // let spawn = Game.spawns['Spawn1']
     // let room = spawn.room
