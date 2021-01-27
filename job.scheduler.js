@@ -11,7 +11,7 @@ var jobScheduler = {
         // console.log(JOBS.BUILD === JOBS.BUILD)
         // console.log(JOBS.BUILD === JOBS.ATTACK)
 
-        if (Game.time % 3 == 0) { // FIXME: here
+        if (Game.time % CONSTANTS.FREQ_MID == 0) { // FIXME: here
             searchJobsUtility.runAll()
         }
 
@@ -38,13 +38,6 @@ var jobScheduler = {
     searchJobs: searchJobsUtility,
 
     removeJob: function(job) {
-        // if (job.removedCallBack === undefined) {
-        //     console.log('jobScheduler.removeJob: forced id = ' + job.id)
-        //     Memory.jobs[job.id] = undefined
-        // } else {
-        //     console.log('jobScheduler.removeJob: calledBack id = ' + job.id)
-        //     job.removedCallBack(job)
-        // }
         let code = jobCallBack.removing(job)
         if (code == 0) {
             // console.log('jobScheduler.removeJob: peacefully ' + job.id + ' with code: ' + code)
@@ -78,49 +71,49 @@ module.exports = jobScheduler
 let JOBS = {
     // GET RESOURCES
     // harvest energy from source or minerals from deposits.
-    HARVEST:        { id: 100, parts: [WORK] },
+    HARVEST:        100, //{ id: 100, parts: [WORK] },
     // // harvest and drop immediately to container
-    HARVEST_PURE:   { id: 101, parts: [WORK] },
-    WITHDRAW:       { id: 104, parts: [] },
-    PICKUP:         { id: 106, parts: [CARRY] }, //
-    DISMANTLE:      { id: 108, parts: [WORK] }, //
+    HARVEST_PURE:   101, //{ id: 101, parts: [WORK] },
+    WITHDRAW:       104, //{ id: 104, parts: [] },
+    PICKUP:         106, //{ id: 106, parts: [CARRY] }, //
+    DISMANTLE:      108, //{ id: 108, parts: [WORK] }, //
 
     // PUT RESOURCES
-    BUILD:          { id: 110, parts: [WORK, CARRY] },
-    UPGRADE_RC:     { id: 112, parts: [WORK, CARRY] },
-    TRANSFER:       { id: 114, parts: [CARRY] },
-    DROP:           { id: 116, parts: [CARRY] }, // Drop on top of ground or container
+    BUILD:          110, //{ id: 110, parts: [WORK, CARRY] },
+    UPGRADE_RC:     112, //{ id: 112, parts: [WORK, CARRY] },
+    TRANSFER:       114, //{ id: 114, parts: [CARRY] },
+    DROP:           116, //{ id: 116, parts: [CARRY] }, // Drop on top of ground or container
 
     // CREEP OR TOWER ish
-    ATTACK:         { id: 120, parts: [ATTACK] },
+    ATTACK:         120, //{ id: 120, parts: [ATTACK] },
     // ATTACK_RANGED:  { }
-    ATTACK_MASS:    { id: 121, parts: [RANGED_ATTACK] },
-    HEAL:           { id: 124, parts: [HEAL] }, // heal creeps
-    REPAIR:         { id: 126, parts: [WORK, CARRY] }, // repair structure
+    ATTACK_MASS:    121, //{ id: 121, parts: [RANGED_ATTACK] },
+    HEAL:           124, //{ id: 124, parts: [HEAL] }, // heal creeps
+    REPAIR:         126, //{ id: 126, parts: [WORK, CARRY] }, // repair structure
 
     // TRANSPORT
-    MOVE:           { id: 130, parts: [MOVE] },
+    MOVE:           130, //{ id: 130, parts: [MOVE] },
     // PULLER: {id: , parts: []}, // TODO: check this
     // PULLED: {id: , parts: []},
 
     // OTHER
-    CLAIM:          { id: 180, parts: [CLAIM] },
-    RESERVE_RC:     { id: 184, parts: [CLAIM] },
+    CLAIM:          180, //{ id: 180, parts: [CLAIM] },
+    RESERVE_RC:     184, //{ id: 184, parts: [CLAIM] },
 
     // SPAWN ACTION
-    SPAWN:          { id: 200 },
-    RECYCLE:        { id: 210 },
-    RENEW:          { id: 220 },
+    SPAWN:          200, //{ id: 200 },
+    RECYCLE:        210, //{ id: 210 },
+    RENEW:          200, //{ id: 220 },
 
     // ROOM CONTROLLER
-    SAFE_MODE:      { id: 300 },
-    UNCLAIM:        { id: 301 },
+    SAFE_MODE:      300, //{ id: 300 },
+    UNCLAIM:        301, //{ id: 301 },
 
     // OTHER STUFF
-    LINK_TRANSFER:  { id: 400 },
+    LINK_TRANSFER:  400, //{ id: 400 },
 
-    CPU_PIXEL:      { id: 500 },
-    CPU_UNLOCK:     { id: 510 }
+    CPU_PIXEL:      500, //{ id: 500 },
+    CPU_UNLOCK:     510, //{ id: 510 }
 
 }
 
@@ -134,23 +127,23 @@ var memoryValidation = {
 var jobCallBack = {
     created: function(job) {
         switch(job.jobTypeId) {
-            case (JOBS.HARVEST.id):
-            case (JOBS.HARVEST_PURE.id): {
+            case (JOBS.HARVEST):
+            case (JOBS.HARVEST_PURE): {
                 let target = Game.getObjectById(job.target)
                 target.room.memory.sources[job.target].jobsLinked.push(job.id)
                 return 0
             };
-            case (JOBS.TRANSFER.id): {
+            case (JOBS.TRANSFER): {
                 let structure = Game.getObjectById(job.structure)
                 structure.room.memory.structures[job.structure].jobLinked = job.id
                 return 0
             }
-            case (JOBS.BUILD.id): {
+            case (JOBS.BUILD): {
                 let site = Game.getObjectById(job.site)
                 site.room.memory.constructions[job.site].jobLinked = job.id
                 return 0
             }
-            case (JOBS.UPGRADE_RC.id): {
+            case (JOBS.UPGRADE_RC): {
                 let controller = Game.getObjectById(job.controller)
                 controller.room.memory.controllerJobs.push(job.id)
                 return 0
@@ -163,11 +156,11 @@ var jobCallBack = {
         // console.log('jobCallBacks.validateCallBack: called on job id ' + job.id)
         // console.log(JOBS.HARVEST.id == job.)
         switch(job.jobTypeId) {
-            case (JOBS.HARVEST.id):
-            case (JOBS.HARVEST_PURE.id):
-            case (JOBS.TRANSFER.id):
-            case (JOBS.BUILD.id):
-            case (JOBS.UPGRADE_RC.id):
+            case (JOBS.HARVEST):
+            case (JOBS.HARVEST_PURE):
+            case (JOBS.TRANSFER):
+            case (JOBS.BUILD):
+            case (JOBS.UPGRADE_RC):
             {
                 if (job.deadline + 10 < Game.time && job.assignedTo === undefined) {
                     // console.log('jobCallBacks.validate: ' + job.id)
@@ -175,12 +168,8 @@ var jobCallBack = {
                 }
                 return 0
             };
-            // case (JOBS.TRANSFER.id): {
-            //     return 4
-            // }
-            default: {
-                return -1
-            }
+            default: return -1
+
         }
     },
 
@@ -195,8 +184,8 @@ var jobCallBack = {
         // don't touch Memory.jobs, that's done after this function
         // console.log('jobCallBack.removed: on ' + job.id )
         switch(job.jobTypeId){
-            case (JOBS.HARVEST.id):
-            case (JOBS.HARVEST_PURE.id): {
+            case (JOBS.HARVEST):
+            case (JOBS.HARVEST_PURE): {
                 // console.log('here hehe')
                 let target = Game.getObjectById(job.target)
                 // console.log(target)
@@ -210,17 +199,17 @@ var jobCallBack = {
                 // searchJobsUtility.energyRelated.postJobForSourcesIn()
                 return 0
             };
-            case (JOBS.TRANSFER.id): {
+            case (JOBS.TRANSFER): {
                 let structure = Game.getObjectById(job.structure)
                 structure.room.memory.structures[structure.id].jobLinked = undefined
                 return 0
             };
-            case (JOBS.BUILD.id): {
+            case (JOBS.BUILD): {
                 let site = Game.getObjectById(job.site)
                 site.room.memory.constructions[site.id].jobLinked = undefined
                 return 0
             };
-            case (JOBS.UPGRADE_RC.id): {
+            case (JOBS.UPGRADE_RC): {
                 let controller = Game.getObjectById(job.controller)
                 let array = controller.room.memory.controllerJobs
                 let replacement = utility.general.arrayDeleteOne(array, job.id)
@@ -235,8 +224,7 @@ var jobCallBack = {
 var searchJobsUtility = {
     runAll: function() {
         utility.runForAllRooms(searchJobsUtility.energyRelated.run)
-        // searchJobsUtility.searchEnergyRelated.run()
-        // utility.runForAllRooms(searchJobsUtility.)
+        searchJobsUtility.spawnsRelated.run()
     },
 
     energyRelated:  {
@@ -277,9 +265,9 @@ var searchJobsUtility = {
                     let name = jobsLinked[i]
                     let jobTypeId = name.split('_')[1]
                     // console.log(jobTypeId)
-                    if (jobTypeId == JOBS.HARVEST.id) {
+                    if (jobTypeId == JOBS.HARVEST) {
                         harvestExistingCount++
-                    } else if (jobTypeId == JOBS.HARVEST_PURE.id ) {
+                    } else if (jobTypeId == JOBS.HARVEST_PURE ) {
                         harvestExistingPureCount++
                     } else {
                         console.log('jobScheduler.checkAndPostJob: in correct placement of job ' + name)
@@ -315,7 +303,7 @@ var searchJobsUtility = {
                 // just normal energy jobs
                 for(var freeSpaceJobIndex = 0; freeSpaceJobIndex < freeSpaceJobCount; freeSpaceJobIndex++) {
                     var harvestJob = harvestJobTemplate()
-                    harvestJob.jobTypeId = JOBS.HARVEST.id
+                    harvestJob.jobTypeId = JOBS.HARVEST
                     // console.log('id = ', harvestJob.jobTypeId)
                     jobScheduler.postJob(harvestJob)
                     // room.memory.sources[source.id].jobsLinked[0]++
@@ -325,7 +313,7 @@ var searchJobsUtility = {
                 // container coordination jobs
                 for(var containerJobIndex = 0; containerJobIndex < containerJobCount; containerJobIndex++) {
                     var harvestJob = harvestJobTemplate()
-                    harvestJob.jobTypeId = JOBS.HARVEST_PURE.id
+                    harvestJob.jobTypeId = JOBS.HARVEST_PURE
                     // console.log('container ', room.sources[source.id].containersNearby[containerJobIndex])
                     // console.log('id = ', harvestJob.jobTypeId)
                     harvestJob.container = containersNearby[containerJobIndex]
@@ -355,7 +343,7 @@ var searchJobsUtility = {
                 // console.log(structure)
                 if (room.memory.structures[structure.id] === undefined) { room.memory.structures[structure.id] = {} }
                 if (room.memory.structures[structure.id].jobLinked !== undefined ) { continue }
-                var job = new Contract(JOBS.TRANSFER.id)
+                var job = new Contract(JOBS.TRANSFER)
                 // job.deadline = Game.time + 200 + utility.general.getRandomInt(-30, 30)
                 job.structure = structure.id
                 job.resource = RESOURCE_ENERGY
@@ -374,7 +362,7 @@ var searchJobsUtility = {
                 let site = constructions[i]
                 if (room.memory.constructions[site.id] === undefined) { room.memory.constructions[site.id] = {} }
                 if (room.memory.constructions[site.id].jobLinked !== undefined) { continue }
-                var job = new Contract(JOBS.BUILD.id)
+                var job = new Contract(JOBS.BUILD)
                 // console.log(room.memory.constructions[site.id].jobLined)
                 // job.deadline = Game.time + utility.general.getRandomInt(12, 20)
                 job.site = site.id
@@ -394,7 +382,7 @@ var searchJobsUtility = {
             if (jobsScheduledCount > level) { return }
 
             // console.log(level)
-            var job = new Contract(JOBS.UPGRADE_RC.id)
+            var job = new Contract(JOBS.UPGRADE_RC)
             job.controller = controller.id
             jobScheduler.postJob(job)
         }
@@ -402,13 +390,46 @@ var searchJobsUtility = {
 
 
     },
+
+    spawnsRelated: {
+        run: function() {
+            console.log('jobScheduler.spawnsRelated: called 🏩')
+            for (i in Game.spawns) {
+                let spawn = Game.spawns[i]
+                // console.log(spawn)
+                searchJobsUtility.spawnsRelated.findJobsMySpawn(spawn)
+            }
+            // TODO: enemy spawn
+        },
+
+        findJobsMySpawn: function(spawn) {
+            // if (!spawn.my) { console.log('❗️❗️jobScheduler.findJobsMySpawn: NOT MINE'); return }
+            let energy = utility.countEnergy(spawn)
+            console.log('jobScheduler.findJobsMySpawn: called on ' + spawn.name, ' E:', energy.available + ',', energy.capacity + ')')
+            function starterActions() {
+                
+            }
+
+            if (spawn.room.controller.level < 5) {
+                starterActions()
+            } else {
+                console.log('❗️❗️jobScheduler.findJobsMySpawn: HAVE NOT IMPLEMENT THIS YOU LAZY!')
+                starterActions()
+            }
+
+        },
+
+    }
+
 }
 
 var structureFilter = {
     hasFreeEnergyCapacity: function(structure) {
         if (structure.store === undefined) { return false }
         else { return (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0) }
-     },
+    },
+
+    isExtension: function(structure) { return structure.structureType == STRUCTURE_EXTENSION; }
 
     // ownerIsMe: function(structure) { return structure.owner == Memory.myUsername }
 }

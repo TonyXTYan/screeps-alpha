@@ -1,3 +1,5 @@
+var CONSTANTS = require('constants')
+
 var utility = {
 
     runForAllRooms: function(func) {
@@ -10,19 +12,15 @@ var utility = {
 
     initialSetupEnvironmentCheck: function() {
         utility.runForAllRooms(utility.initialSetupEnvironmentCheckForRoom)
-        // for(var name in Game.rooms) {
-        //     let room = Game.rooms[name]
-        //     // console.log(room)
-        //     utility.initialSetupEnvironmentCheckForRoom(room)
-        // }
     },
 
     initialSetupEnvironmentCheckForRoom: function(room) {
         console.log('utility.initialSetupEnvironmentCheckForRoom: called')
+        utility.basicMemoryCheck()
         Memory.jobsCreatedThisTick = 0
         if (room.memory.sourcesChecked === undefined) {
             utility.computeSourcePropertyInRoom(room)
-        } else if (room.memory.sourcesChecked + 10 < Game.time) { //FIXME: schedule
+        } else if (room.memory.sourcesChecked + CONSTANTS.FREQ_LOW < Game.time) { //FIXME: schedule
             utility.computeSourcePropertyInRoom(room)
         }
 
@@ -92,7 +90,18 @@ var utility = {
     },
 
     resetMemory: function() {
+        Memory = undefined
+        Memory.creeps = {};
+        Memory.spawns = {};
+        Memory.rooms = {};
+        Memory.flags = {};
+    },
 
+    basicMemoryCheck: function() {
+        if (Memory.creeps === undefined) { Memory.creeps = {} }
+        if (Memory.spawns === undefined) { Memory.spawns = {} }
+        if (Memory.rooms  === undefined) { Memory.rooms = {} }
+        if (Memory.flags  === undefined) { Memory.flags = {} }
     },
 
 
@@ -105,6 +114,23 @@ var utility = {
             }
         }
         return accum
+    },
+
+    /**
+     * countEnergy - Count how much energy can this spawn spawn
+     * @param  {type} spawn description
+     * @return {type}       description
+     */
+    countEnergy: function(spawn) {
+        var extensionStructures = spawn.room.find(FIND_MY_STRUCTURES, { filter: structureFilter.isExtension })
+        var totalEnergyAvailable = spawn.store.getUsedCapacity(RESOURCE_ENERGY)
+        var totalEnergyCapacity = 300
+        for (var i in extensionStructures) {
+            // console.log(extension)
+            totalEnergyAvailable += extensionStructures[i].store.getUsedCapacity(RESOURCE_ENERGY)
+            totalEnergyCapacity += extensionStructures[i].store.getCapacity(RESOURCE_ENERGY)
+        }
+        return {available: totalEnergyAvailable, capacity: totalEnergyCapacity}
     },
 
     general: {
