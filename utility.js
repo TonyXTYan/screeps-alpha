@@ -33,6 +33,7 @@ var utility = {
 
         if (Memory.jobs === undefined) { Memory.jobs = {} }
 
+        // if (Mem)
     },
 
 

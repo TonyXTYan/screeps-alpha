@@ -4,7 +4,7 @@ var jobScheduler = require('job.scheduler');
 var spawnController = require('spawn.controller');
 
 module.exports.loop = function () {
-    // if (Game.time % 3 == 0) {
+    // if (Game.time % 5 == 0) {
     //     console.log("<script>angular.element(document.getElementsByClassName('fa fa-trash ng-scope')[0].parentNode).scope().Console.clear()</script>")
     // }
 
@@ -15,8 +15,8 @@ module.exports.loop = function () {
     // stats += ('Flags: ' + Object.keys(Game.flags).length + '\n')
     // stats += ('Creeps: ' + Object.keys(Game.creeps).length + '\n')
     // stats += ('Spawns: ' + Object.keys(Game.spawns).length + '\n')
-    // stats += ('Structures: ' + Object.keys(Game.structures).length + '\n')
-    // stats += ('Constructions: ' + Object.keys(Game.constructionSites).length + '\n')
+    stats += ('Structures: ' + Object.keys(Game.structures).length + '\n')
+    stats += ('Constructions: ' + Object.keys(Game.constructionSites).length + '\n')
     if (Memory.jobs !== undefined) { stats += ('Jobs: ' + Object.keys(Memory.jobs).length + '\n') }
     stats += ('Memory: ' + numberFormatter.format(RawMemory.get().length) + ' bytes\n')
 
