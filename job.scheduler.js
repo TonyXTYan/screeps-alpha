@@ -137,11 +137,7 @@ var jobCallBack = {
             case (JOBS.HARVEST.id):
             case (JOBS.HARVEST_PURE.id): {
                 let target = Game.getObjectById(job.target)
-                // var list =
                 target.room.memory.sources[job.target].jobsLinked.push(job.id)
-                // set.add(job.id)
-                // console.log(set instanceof Set)
-                // console.log(target)
                 return 0
             };
             case (JOBS.TRANSFER.id): {
@@ -154,6 +150,11 @@ var jobCallBack = {
                 site.room.memory.constructions[job.site].jobLinked = job.id
                 return 0
             }
+            case (JOBS.UPGRADE_RC.id): {
+                let controller = Game.getObjectById(job.controller)
+                controller.room.memory.controllerJobs.push(job.id)
+                return 0
+            };
             default: return -1
         }
     },
@@ -166,6 +167,7 @@ var jobCallBack = {
             case (JOBS.HARVEST_PURE.id):
             case (JOBS.TRANSFER.id):
             case (JOBS.BUILD.id):
+            case (JOBS.UPGRADE_RC.id):
             {
                 if (job.deadline + 10 < Game.time && job.assignedTo === undefined) {
                     // console.log('jobCallBacks.validate: ' + job.id)
@@ -218,6 +220,13 @@ var jobCallBack = {
                 site.room.memory.constructions[site.id].jobLinked = undefined
                 return 0
             };
+            case (JOBS.UPGRADE_RC.id): {
+                let controller = Game.getObjectById(job.controller)
+                let array = controller.room.memory.controllerJobs
+                let replacement = utility.general.arrayDeleteOne(array, job.id)
+                controller.room.memory.controllerJobs = replacement
+                return 0
+            };
             default: return -1
         }
     }
@@ -238,7 +247,7 @@ var searchJobsUtility = {
             searchJobsUtility.energyRelated.postJobForSourcesIn(room)
             searchJobsUtility.energyRelated.postJobForStructuresIn(room)
             searchJobsUtility.energyRelated.postJobForConstructionsIn(room)
-            // searchJobsUtility.energyRelated.postJobControllerUpgrade(room)
+            searchJobsUtility.energyRelated.postJobControllerUpgrade(room)
         },
 
         postJobForSourcesIn: function(room) {
@@ -376,7 +385,18 @@ var searchJobsUtility = {
         },
 
         postJobControllerUpgrade: function(room) {
+            let controller = room.controller
+            if (! controller.my) { return }
+            console.log('jobScheduler.postJobControllerUpgrade: called on ' + controller.id + ' in room ' + room.name)
+            if (room.memory.controllerJobs === undefined) { room.memory.controllerJobs = [] }
+            let jobsScheduledCount = room.memory.controllerJobs.length
+            let level = controller.level
+            if (jobsScheduledCount > level) { return }
 
+            // console.log(level)
+            var job = new Contract(JOBS.UPGRADE_RC.id)
+            job.controller = controller.id
+            jobScheduler.postJob(job)
         }
 
 
