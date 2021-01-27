@@ -19,9 +19,10 @@ var utility = {
 
     initialSetupEnvironmentCheckForRoom: function(room) {
         console.log('utility.initialSetupEnvironmentCheckForRoom: called')
-        if (room.memory.sourceChecked === undefined) {
+        Memory.jobsCreatedThisTick = 0
+        if (room.memory.sourcesChecked === undefined) {
             utility.computeSourcePropertyInRoom(room)
-        } else if (room.memory.sourceChecked + 3 < Game.time) { //FIXME: schedule
+        } else if (room.memory.sourcesChecked + 10 < Game.time) { //FIXME: schedule
             utility.computeSourcePropertyInRoom(room)
         }
 
@@ -29,6 +30,9 @@ var utility = {
             // console.log(Game.spawns[Object.keys(Game.spawns)[0]])
             Memory.myUsername = Game.spawns[Object.keys(Game.spawns)[0]].owner.username
         }
+
+        if (Memory.jobs === undefined) { Memory.jobs = {} }
+
     },
 
 
@@ -69,7 +73,7 @@ var utility = {
             return [spaceCounter, containersNearby]
         }
 
-        room.memory.source = {}
+        room.memory.sources = {}
         for (name in sources) {
             let source = sources[name]
             let result = calculate(source)
@@ -77,9 +81,9 @@ var utility = {
             let spaceCounter = result[0]
             let containersNearby = result[1]
             // console.log(source + ' at ' + source.pos + ' has space ' + freeSpace)
-            room.memory.source[source.id] = { spaceCounter: spaceCounter, containersNearby: containersNearby }
+            room.memory.sources[source.id] = { spaceCounter: spaceCounter, containersNearby: containersNearby }
         }
-        room.memory.sourceChecked = Game.time
+        room.memory.sourcesChecked = Game.time
     },
 
     resetMemory: function() {
