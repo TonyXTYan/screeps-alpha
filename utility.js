@@ -73,7 +73,8 @@ var utility = {
             return [spaceCounter, containersNearby]
         }
 
-        room.memory.sources = {}
+        if (room.memory.sources === undefined) { room.memory.sources = {} }
+
         for (name in sources) {
             let source = sources[name]
             let result = calculate(source)
@@ -81,7 +82,10 @@ var utility = {
             let spaceCounter = result[0]
             let containersNearby = result[1]
             // console.log(source + ' at ' + source.pos + ' has space ' + freeSpace)
-            room.memory.sources[source.id] = { spaceCounter: spaceCounter, containersNearby: containersNearby }
+            // room.memory.sources[source.id] = { spaceCounter: spaceCounter, containersNearby: containersNearby }
+            if (room.memory.sources[source.id] === undefined) { room.memory.sources[source.id] = {} }
+            room.memory.sources[source.id].spaceCounter = spaceCounter
+            room.memory.sources[source.id].containersNearby = containersNearby
         }
         room.memory.sourcesChecked = Game.time
     },
@@ -100,6 +104,21 @@ var utility = {
             }
         }
         return accum
+    },
+
+    general: {
+        arrayDeleteOne: function(array, value) {
+            var index = array.indexOf(value);
+            if (index > -1) {
+                array.splice(index, 1);
+            }
+            return array;
+        },
+        getRandomInt: function(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
     }
 
 }

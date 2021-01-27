@@ -18,7 +18,7 @@ module.exports.loop = function () {
     // stats += ('Structures: ' + Object.keys(Game.structures).length + '\n')
     // stats += ('Constructions: ' + Object.keys(Game.constructionSites).length + '\n')
     if (Memory.jobs !== undefined) { stats += ('Jobs: ' + Object.keys(Memory.jobs).length + '\n') }
-    // stats += ('Memory: ' + numberFormatter.format(RawMemory.get().length) + ' bytes\n')
+    stats += ('Memory: ' + numberFormatter.format(RawMemory.get().length) + ' bytes\n')
 
     console.log(stats)
 

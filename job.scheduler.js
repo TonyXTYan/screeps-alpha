@@ -24,14 +24,11 @@ var jobScheduler = {
             let job = Memory.jobs[id]
             if (job.deadline < Game.time) {
                 // console.log('job: ' + id + ' outdated')
-                if (job.validateCallBack === undefined) {
-                    console.log('jobScheduler.validateRoutine: FORCED REMOVE due to validateCallBack undefined ⚠️⚠️⚠️⚠️⚠️⚠️⚠️' )
-                    jobScheduler.removeJob(job)
-                } else if (job.deadline + 2000 > Game.time) { // FIXME: task manager
-                    console.log('jobScheduler.validateRoutine: FORCED timeout remove ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️' )
+                if (job.deadline + 3000 < Game.time) {
+                    console.log('❗️jobScheduler.validateRoutine: timeout forced removed ' + job.id )
                     jobScheduler.removeJob(job)
                 } else {
-                    job.validateCall()
+                    jobCallBack.validate(job)
                 }
             }
         }
@@ -41,25 +38,39 @@ var jobScheduler = {
     searchJobs: searchJobsUtility,
 
     removeJob: function(job) {
-        if (job.removedCallBack === undefined) {
+        // if (job.removedCallBack === undefined) {
+        //     console.log('jobScheduler.removeJob: forced id = ' + job.id)
+        //     Memory.jobs[job.id] = undefined
+        // } else {
+        //     console.log('jobScheduler.removeJob: calledBack id = ' + job.id)
+        //     job.removedCallBack(job)
+        // }
+        let code = jobCallBack.removing(job)
+        if (code == -1) {
             console.log('jobScheduler.removeJob: forced id = ' + job.id)
             Memory.jobs[job.id] = undefined
+        } else if (job.deadline + 3000 < Game.time) {
+            console.log('jobScheduler.removeJob: VERY FORCED id = ' + job.id)
+            Memory.jobs[job.id] = undefined
         } else {
-            console.log('jobScheduler.removeJob: calledBack id = ' + job.id)
-            job.removedCallBack(job)
+            // console.log('jobScheduler.removeJob: peacefully ' + job.id + ' with code: ' + code)
+            Memory.jobs[job.id] = undefined
         }
     },
 
     postJob: function(job){
-        let id = Game.time + '_' + job.kind.id + '_' + Memory.jobsCreatedThisTick
+        let id = Game.time + '_' + job.jobTypeId + '_' + Memory.jobsCreatedThisTick
         Memory.jobsCreatedThisTick++
         job.id = id
         Memory.jobs[id] = job
-        console.log(job.validateCallBack === undefined)
-        console.log(Memory.jobs[id].validateCallBack === undefined)
-        console.log('jobScheduler.postJob: id = ' + id)
-    }
+        let code = jobCallBack.created(job)
+        if (code != 0) {
+            console.log('jobScheduler.postJob: id = ' + id + ', callBack code: ' + code)
+        }
+    },
 
+
+    memoryValidation: memoryValidation
 }
 
 module.exports = jobScheduler
@@ -67,52 +78,122 @@ module.exports = jobScheduler
 let JOBS = {
     // GET RESOURCES
     // harvest energy from source or minerals from deposits.
-    HARVEST:        { id: 0, parts: [WORK] },
+    HARVEST:        { id: 100, parts: [WORK] },
     // // harvest and drop immediately to container
-    HARVEST_PURE:   { id: 1, parts: [WORK] },
-    WITHDRAW:       { id: 4, parts: [] },
-    PICKUP:         { id: 6, parts: [CARRY] }, //
-    DISMANTLE:      { id: 8, parts: [WORK] }, //
+    HARVEST_PURE:   { id: 101, parts: [WORK] },
+    WITHDRAW:       { id: 104, parts: [] },
+    PICKUP:         { id: 106, parts: [CARRY] }, //
+    DISMANTLE:      { id: 108, parts: [WORK] }, //
 
     // PUT RESOURCES
-    BUILD:          { id: 10, parts: [WORK, CARRY] },
-    UPGRADE_RC:     { id: 12, parts: [WORK, CARRY] },
-    TRANSFER:       { id: 14, parts: [CARRY] },
-    DROP:           { id: 16, parts: [CARRY] }, // Drop on top of ground or container
+    BUILD:          { id: 110, parts: [WORK, CARRY] },
+    UPGRADE_RC:     { id: 112, parts: [WORK, CARRY] },
+    TRANSFER:       { id: 114, parts: [CARRY] },
+    DROP:           { id: 116, parts: [CARRY] }, // Drop on top of ground or container
 
     // CREEP OR TOWER ish
-    ATTACK:         { id: 20, parts: [ATTACK] },
+    ATTACK:         { id: 120, parts: [ATTACK] },
     // ATTACK_RANGED:  { }
-    ATTACK_MASS:    { id: 21, parts: [RANGED_ATTACK] },
-    HEAL:           { id: 24, parts: [HEAL] }, // heal creeps
-    REPAIR:         { id: 26, parts: [WORK, CARRY] }, // repair structure
+    ATTACK_MASS:    { id: 121, parts: [RANGED_ATTACK] },
+    HEAL:           { id: 124, parts: [HEAL] }, // heal creeps
+    REPAIR:         { id: 126, parts: [WORK, CARRY] }, // repair structure
 
     // TRANSPORT
-    MOVE:           { id: 30, parts: [MOVE] },
+    MOVE:           { id: 130, parts: [MOVE] },
     // PULLER: {id: , parts: []}, // TODO: check this
     // PULLED: {id: , parts: []},
 
     // OTHER
-    CLAIM:          { id: 80, parts: [CLAIM] },
-    RESERVE_RC:     { id: 84, parts: [CLAIM] },
+    CLAIM:          { id: 180, parts: [CLAIM] },
+    RESERVE_RC:     { id: 184, parts: [CLAIM] },
 
     // SPAWN ACTION
-    SPAWN:          { id: 100 },
-    RECYCLE:        { id: 110 },
-    RENEW:          { id: 120 },
+    SPAWN:          { id: 200 },
+    RECYCLE:        { id: 210 },
+    RENEW:          { id: 220 },
 
     // ROOM CONTROLLER
-    SAFE_MODE:      { id: 200 },
-    UNCLAIM:        { id: 201 },
+    SAFE_MODE:      { id: 300 },
+    UNCLAIM:        { id: 301 },
 
     // OTHER STUFF
-    LINK_TRANSFER:  { id: 300 },
+    LINK_TRANSFER:  { id: 400 },
 
-    CPU_PIXEL:      { id: 400 },
-    CPU_UNLOCK:     { id: 410 }
+    CPU_PIXEL:      { id: 500 },
+    CPU_UNLOCK:     { id: 510 }
 
 }
 
+
+var memoryValidation = {
+    checkSourceHarvestJobs: function() {
+
+    }
+}
+
+var jobCallBack = {
+    created: function(job) {
+        switch(job.jobTypeId) {
+            case (JOBS.HARVEST.id):
+            case (JOBS.HARVEST_PURE.id): {
+                let target = Game.getObjectById(job.target)
+                // var list =
+                target.room.memory.sources[job.target].jobsLinked.push(job.id)
+                // set.add(job.id)
+                // console.log(set instanceof Set)
+                // console.log(target)
+                return 0
+            };
+            default: return -1
+        }
+    },
+
+    validate: function(job) {
+        // console.log('jobCallBacks.validateCallBack: called on job id ' + job.id)
+        // console.log(JOBS.HARVEST.id == job.)
+        switch(job.jobTypeId) {
+            case (JOBS.HARVEST.id):
+            case (JOBS.HARVEST_PURE.id): {
+                if (job.deadline + 10 < Game.time && job.assignedTo === undefined) {
+                    // console.log('jobCallBacks.validate: ' + job.id)
+                    jobScheduler.removeJob(job)
+                }
+                return 0
+            };
+            default: {
+                return -1
+            }
+        }
+    },
+
+    assigned: function(job) {
+
+    },
+    completed: function(job) {
+
+    },
+    removing: function(job) {
+        // console.log('jobCallBack.removed: on ' + job.id )
+        switch(job.jobTypeId){
+            case (JOBS.HARVEST.id):
+            case (JOBS.HARVEST_PURE.id): {
+                // console.log('here hehe')
+                let target = Game.getObjectById(job.target)
+                // console.log(target)
+                // console.log(target.room)
+                // console.log(target.room.memory)
+                let array = target.room.memory.sources[target.id].jobsLinked
+                let replacement = utility.general.arrayDeleteOne(array, job.id)
+                target.room.memory.sources[target.id].jobsLinked = replacement
+                // let replacement =
+
+                // searchJobsUtility.energyRelated.postJobForSourcesIn()
+                return 0
+            };
+            default: return -1
+        }
+    }
+}
 
 var searchJobsUtility = {
     runAll: function() {
@@ -124,15 +205,7 @@ var searchJobsUtility = {
         run: function(room) {
             // get: harvest, withdraw
             // put: build, upgrade, transfer
-            console.log('searchJobsUtility.energyRelated: in room ' + room.name)
-
-            // console.log(room instanceof Room)
-            // console.log(room.controller.owner.username)
-            // console.log(searchJobsUtility.energyTargets(room).length)
-
-            // console.log(room.find(FIND_MY_STRUCTURES).length) // this does not include container
-            // console.log(room.find(FIND_MY_CONSTRUCTION_SITES).length)
-            // console.log(room.find(FIND_SOURCES).length)
+            // console.log('searchJobsUtility.energyRelated: in room ' + room.name)
             searchJobsUtility.energyRelated.postJobForSourcesIn(room)
 
         },
@@ -143,106 +216,84 @@ var searchJobsUtility = {
             let sources = room.find(FIND_SOURCES)
             // console.log(sources)
 
-            function postJob(source) {
-                // console.log(room.memory.sources)
+            function checkAndPostJob(source) {
+                // console.log(source)
                 // console.log(room.memory.sources[source.id].spaceCounter)
 
-                if (room.memory.source[source.id].jobs === undefined) { room.memory.source[source.id].jobs = 0 }
-
+                if (room.memory.sources[source.id].jobsLinked === undefined) {
+                    console.log('created jobsLinked')
+                    room.memory.sources[source.id].jobsLinked = []
+                }
                 let freeSpace = room.memory.sources[source.id].spaceCounter
+                let jobsLinked = room.memory.sources[source.id].jobsLinked
 
-                if (room.memory.source[source.id].jobs >= freeSpace) { return }
+                var harvestExistingCount = 0
+                var harvestExistingPureCount = 0
+                for (i in jobsLinked) {
+                    // let job = Memory.jobs[jobsLinked[i]]
+                    // console.log(job.jobTypeId, job.id)
+                    let name = jobsLinked[i]
+                    let jobTypeId = name.split('_')[1]
+                    // console.log(jobTypeId)
+                    if (jobTypeId == JOBS.HARVEST.id) {
+                        harvestExistingCount++
+                    } else if (jobTypeId == JOBS.HARVEST_PURE.id ) {
+                        harvestExistingPureCount++
+                    } else {
+                        console.log('jobScheduler.checkAndPostJob: in correct placement of job ' + name)
+                    }
+                }
+
+                // console.log('existing counts ', harvestExistingCount, harvestExistingPureCount)
 
                 let containersNearby = room.memory.sources[source.id].containersNearby
-
                 // console.log('checking to post jobs for: ' + source + ' has ' + freeSpace + ', ' + containersNearby.length)
 
-                let totalJobCount = freeSpace
-                let containerJobCount = containersNearby.length
-                let freeSpaceJobCount = totalJobCount - containerJobCount
 
-                // console.log(containerJobCount, freeSpaceJobCount)
+                let totalJobCount = freeSpace
+                let containerJobCount = Math.max(0, containersNearby.length - harvestExistingPureCount)
+                let freeSpaceJobCount = Math.max(0, (totalJobCount - containersNearby.length) - harvestExistingCount)
 
                 let jobEnergyShare = source.energy / totalJobCount
                 // console.log(jobEnergyShare)
 
 
-
                 function harvestJobTemplate() {
-                    var validateCallBack = function(harvestJob) {
-                        console.log('harvestJob.validateCall: called when ' + Game.time)
-                        if (Game.time > harvestJob.deadline) {
-                            jobScheduler.removeJob(harvestJob)
-                        }
-                    }
-
-                    function assignedCallBack(harvestJob) {
-                        // check if need and have slots to post a new job
-                        console.log('harvestJob.assignedCallBack: called by ' + harvestJob.assignedTo)
-                    }
-
-                    function finishedCallBack(harvestJob) {
-                        // check if need (and can) post a new job
-                        console.log('harvestJob.finishedCallBack: called by ' + harvestJob.assignedTo)
-                        removedCallBack(harvestJob)
-                    }
-
-                    function removedCallBack(harvestJob) {
-                        // called when Game.time is after the deadline
-                        console.log('harvestJob.removedCallBack: called ' + Game.time)
-
-                    }
                     var harvestJob = new Contract()
-                    harvestJob.deadline = Game.time + 20
+                    harvestJob.deadline = Game.time + 200 + utility.general.getRandomInt(-30,30)
                     harvestJob.target = source.id
                     harvestJob.amount = jobEnergyShare
-
-                    // console.log(validateCall)
-                    harvestJob.validateCallBack = validateCallBack
-                    // console.log(harvestJob.validateCall)
-                    harvestJob.removedCallBack = removedCallBack
                     return harvestJob
                 }
 
-                // console.log(harvestJob.id)
-                // console.log(Object.get)
+                // console.log('counts ', freeSpaceJobCount, containerJobCount)
 
                 // just normal energy jobs
                 for(var freeSpaceJobIndex = 0; freeSpaceJobIndex < freeSpaceJobCount; freeSpaceJobIndex++) {
                     var harvestJob = harvestJobTemplate()
-                    harvestJob.kind = JOBS.HARVEST
+                    harvestJob.jobTypeId = JOBS.HARVEST.id
+                    // console.log('id = ', harvestJob.jobTypeId)
                     jobScheduler.postJob(harvestJob)
+                    // room.memory.sources[source.id].jobsLinked[0]++
                 }
 
+                // console.log('got after the loop !!!!!!!!!!!', containerJobCount)
                 // container coordination jobs
-                for(var containerJobIndex = 0; containerJobCount < containerJobCount; containerJobIndex++) {
+                for(var containerJobIndex = 0; containerJobIndex < containerJobCount; containerJobIndex++) {
                     var harvestJob = harvestJobTemplate()
-                    harvestJob.kind = JOBS.HARVEST_PURE
+                    harvestJob.jobTypeId = JOBS.HARVEST_PURE.id
+                    // console.log('container ', room.sources[source.id].containersNearby[containerJobIndex])
+                    // console.log('id = ', harvestJob.jobTypeId)
                     harvestJob.container = containersNearby[containerJobIndex]
                     jobScheduler.postJob(harvestJob)
+                    // room.memory.sources[source.id].jobsLinked[1]++
                 }
-
-                // Memory.jobs.push(harvestJob)/
-
-
-                // var jobTest = new Contract(JOBS.HARVEST)
-                // jobTest.target = source.id
-                //
-                // // console.log(jobTest)
-                // // console.log(jobTest.createdTime)
-                // // console.log(jobTest.deadline)
-                //
-                // jobTest.deadline = Game.time + 100
-                // // console.log(jobTest.deadline)
-                // // console.log(jobTest.target)
-                // // console.log(jobTest)
-
             }
 
 
             for (i in sources) {
                 let source = sources[i]
-                postJob(source)
+                checkAndPostJob(source)
                 // console.log(source)
             }
         },
@@ -254,35 +305,33 @@ var searchJobsUtility = {
 
 
 
-
 class Contract {
 
     /**
      * constructor - description
      *
-     * @param  {number} kind of contract
      * @param  {number} deadline of game tick time that the task need to finish before
      * @return {Contract}      description
      */
 
     //
-    constructor(kind) {
+    constructor(jobTypeId) {
         /**
          * test documentation
          * @type {number}
          */
         this.id = undefined
-        this.contractKind = kind
+        this.jobTypeId = jobTypeId
 
         this.createdTime = Game.time
         this.deadline = Game.time
         // this.absoluteInvalidTime = Number.MAX_SAFE_INTEGER
         this.assignedTo = undefined
 
-        this.validateCallBack = undefined // called routinely or by finished shared task
-        this.assignedCallBack = undefined
-        this.finishedCallBack = undefined
-        this.removedCallBack = undefined
+        // this.validateCallBack = undefined // called routinely or by finished shared task
+        // this.assignedCallBack = undefined
+        // this.finishedCallBack = undefined
+        // this.removedCallBack = undefined
 
     }
 
