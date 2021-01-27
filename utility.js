@@ -116,13 +116,14 @@ var utility = {
         return accum
     },
 
+
     /**
      * countEnergy - Count how much energy can this spawn spawn
      * @param  {type} spawn description
      * @return {type}       description
      */
     countEnergy: function(spawn) {
-        var extensionStructures = spawn.room.find(FIND_MY_STRUCTURES, { filter: structureFilter.isExtension })
+        var extensionStructures = spawn.room.find(FIND_MY_STRUCTURES, { filter: utility.structureFilter.isExtension })
         var totalEnergyAvailable = spawn.store.getUsedCapacity(RESOURCE_ENERGY)
         var totalEnergyCapacity = 300
         for (var i in extensionStructures) {
@@ -131,6 +132,37 @@ var utility = {
             totalEnergyCapacity += extensionStructures[i].store.getCapacity(RESOURCE_ENERGY)
         }
         return {available: totalEnergyAvailable, capacity: totalEnergyCapacity}
+    },
+
+    /**
+     * balanceSpec - Try to balance the specification given with given energy levels
+     *
+     * @param  {type} spec   description
+     * @param  {type} energy description
+     * @return {type}        description
+     */
+    balanceSpec: function(spec, energy) {
+        // var sum = spec.reduce((a, b) => a + b, 0)
+        const bodyPartName = [MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, CLAIM, TOUGH]
+        const bodyPartCost = [50,   100,  50,    80,     150,           250,  600,   10   ]
+
+        var weighted = []
+        var weightedSum = 0
+        for (i in spec){
+            var c = spec[i] * bodyPartCost[i]
+            weighted[i] = c
+            weightedSum += c
+        }
+        var scale = energy / weightedSum
+
+        var parts = []
+        for (i in spec) {
+            var count = Math.floor(weighted[i] * scale / bodyPartCost[i])
+            for (c in Array(count).fill(0)) {
+                parts.push(bodyPartName[i])
+            }
+        }
+        return parts
     },
 
     general: {
@@ -146,7 +178,18 @@ var utility = {
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
-    }
+    },
+
+    structureFilter: {
+        hasFreeEnergyCapacity: function(structure) {
+            if (structure.store === undefined) { return false }
+            else { return (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0) }
+        },
+
+        isExtension: function(structure) { return structure.structureType == STRUCTURE_EXTENSION; }
+
+        // ownerIsMe: function(structure) { return structure.owner == Memory.myUsername }
+    },
 
 }
 

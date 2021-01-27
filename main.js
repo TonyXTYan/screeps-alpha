@@ -9,7 +9,7 @@ module.exports.loop = function () {
     // }
 
     var numberFormatter = Intl.NumberFormat('en-US')
-    var stats = ("✅ Tick: " + Game.time + " ---------------------------------------------------------------------3\n")
+    var stats = ("✅ Tick: " + Game.time + " ---------------------------------------------------------------------\n")
     // let startCpuTime = performance.now()
     // stats += ('CPU tickLimit: ' + Game.cpu.tickLimit + ', bucket: ' + Game.cpu.bucket + '\n')
     // stats += ('Flags: ' + Object.keys(Game.flags).length + '\n')

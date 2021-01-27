@@ -148,6 +148,11 @@ var jobCallBack = {
                 controller.room.memory.controllerJobs.push(job.id)
                 return 0
             };
+            case (JOBS.SPAWN): {
+                let spawn = Game.getObjectById(job.spawn)
+                spawn.memory.jobsLinked.push(job.id)
+                return 0
+            }
             default: return -1
         }
     },
@@ -161,6 +166,7 @@ var jobCallBack = {
             case (JOBS.TRANSFER):
             case (JOBS.BUILD):
             case (JOBS.UPGRADE_RC):
+            case (JOBS.SPAWN):
             {
                 if (job.deadline + 10 < Game.time && job.assignedTo === undefined) {
                     // console.log('jobCallBacks.validate: ' + job.id)
@@ -216,6 +222,13 @@ var jobCallBack = {
                 controller.room.memory.controllerJobs = replacement
                 return 0
             };
+            case (JOBS.SPAWN): {
+                let spawn = Game.getObjectById(job.spawn)
+                let array = spawn.memory.jobsLinked
+                let replacement = utility.general.arrayDeleteOne(array, job.id)
+                spawn.memory.jobsLinked = replacement
+                return 0
+            }
             default: return -1
         }
     }
@@ -332,7 +345,7 @@ var searchJobsUtility = {
 
         postJobForStructuresIn: function(room) {
             // console.log('jobScheduler.postJobForStructuresIn: called on room ' + room.name)
-            let structures = room.find(FIND_MY_STRUCTURES, { filter: structureFilter.hasFreeEnergyCapacity })
+            let structures = room.find(FIND_MY_STRUCTURES, { filter: utility.structureFilter.hasFreeEnergyCapacity })
             // let structures = room.find(FIND_MY_STRUCTURES)
             // console.log(structures)
 
@@ -406,8 +419,18 @@ var searchJobsUtility = {
             // if (!spawn.my) { console.log('❗️❗️jobScheduler.findJobsMySpawn: NOT MINE'); return }
             let energy = utility.countEnergy(spawn)
             console.log('jobScheduler.findJobsMySpawn: called on ' + spawn.name, ' E:', energy.available + ',', energy.capacity + ')')
+            if (spawn.memory.jobsLinked === undefined) { spawn.memory.jobsLinked = [] }
+
             function starterActions() {
-                
+                let creeps = spawn.room.find(FIND_MY_CREEPS)
+                if (spawn.memory.jobsLinked.length > 4) { return }
+                if (creeps.length < 4) {
+                    // console.log('ahh')
+                    var job = new Contract(JOBS.SPAWN)
+                    job.spawn = spawn.id
+                    job.spec = CONSTANTS.CREEPS_SPECS.WORKER
+                    jobScheduler.postJob(job)
+                }
             }
 
             if (spawn.room.controller.level < 5) {
@@ -421,17 +444,6 @@ var searchJobsUtility = {
 
     }
 
-}
-
-var structureFilter = {
-    hasFreeEnergyCapacity: function(structure) {
-        if (structure.store === undefined) { return false }
-        else { return (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0) }
-    },
-
-    isExtension: function(structure) { return structure.structureType == STRUCTURE_EXTENSION; }
-
-    // ownerIsMe: function(structure) { return structure.owner == Memory.myUsername }
 }
 
 
