@@ -17,20 +17,10 @@ var utility = {
     initialSetupEnvironmentCheckForRoom: function(room) {
         console.log('utility.initialSetupEnvironmentCheckForRoom: called')
         utility.basicMemoryCheck()
-        Memory.jobsCreatedThisTick = 0
-        if (room.memory.sourcesChecked === undefined) {
-            utility.computeSourcePropertyInRoom(room)
-        } else if (room.memory.sourcesChecked + CONSTANTS.FREQ_LOW < Game.time) { //FIXME: schedule
+        if (room.memory.sourcesChecked === undefined) { utility.computeSourcePropertyInRoom(room) }
+        if (room.memory.sourcesChecked + CONSTANTS.FREQ_LOW < Game.time) { //FIXME: schedule
             utility.computeSourcePropertyInRoom(room)
         }
-
-        if (Memory.myUsername === undefined) {
-            // console.log(Game.spawns[Object.keys(Game.spawns)[0]])
-            Memory.myUsername = Game.spawns[Object.keys(Game.spawns)[0]].owner.username
-        }
-
-        if (Memory.jobs === undefined) { Memory.jobs = {} }
-
         // if (Mem)
     },
 
@@ -90,11 +80,14 @@ var utility = {
     },
 
     resetMemory: function() {
-        Memory = undefined
-        Memory.creeps = {};
-        Memory.spawns = {};
-        Memory.rooms = {};
-        Memory.flags = {};
+        // require('utility').resetMemory()
+        // Memory = {}
+        for (let key in Memory) {
+            Memory[key] = undefined
+            // console.log(key)
+        }
+        utility.basicMemoryCheck()
+        console.log('💣utility.resetMemory: job done 💥')
     },
 
     basicMemoryCheck: function() {
@@ -102,6 +95,12 @@ var utility = {
         if (Memory.spawns === undefined) { Memory.spawns = {} }
         if (Memory.rooms  === undefined) { Memory.rooms = {} }
         if (Memory.flags  === undefined) { Memory.flags = {} }
+
+        if (Memory.myUsername === undefined) { Memory.myUsername = Game.spawns[Object.keys(Game.spawns)[0]].owner.username }
+        if (Memory.jobs === undefined) { Memory.jobs = {} }
+        if (Memory.jobs.contracts === undefined) { Memory.jobs.contracts = {} }
+        // if (Memory.jobs.kind === undefined) { Memory.jobs.kind = {} }
+        Memory.jobs.createdThisTick = 0
     },
 
 

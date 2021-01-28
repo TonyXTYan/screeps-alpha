@@ -1,6 +1,7 @@
 var utility = require('utility');
 var creepController = require('creep.controller');
 var jobScheduler = require('job.scheduler');
+var jobAllocator = require('job.allocator');
 var spawnController = require('spawn.controller');
 
 module.exports.loop = function () {
@@ -9,7 +10,7 @@ module.exports.loop = function () {
     // }
 
     var numberFormatter = Intl.NumberFormat('en-US')
-    var stats = ("✅ Tick: " + Game.time + " ---------------------------------------------------------------------\n")
+    var stats = ("✅ Tick: " + Game.time + " -----------------------------------------------------------------2----\n")
     // let startCpuTime = performance.now()
     // stats += ('CPU tickLimit: ' + Game.cpu.tickLimit + ', bucket: ' + Game.cpu.bucket + '\n')
     // stats += ('Flags: ' + Object.keys(Game.flags).length + '\n')
@@ -17,34 +18,23 @@ module.exports.loop = function () {
     // stats += ('Spawns: ' + Object.keys(Game.spawns).length + '\n')
     stats += ('Structures: ' + Object.keys(Game.structures).length + '\n')
     stats += ('Constructions: ' + Object.keys(Game.constructionSites).length + '\n')
-    if (Memory.jobs !== undefined) { stats += ('Jobs: ' + Object.keys(Memory.jobs).length + '\n') }
+    stats += ('Jobs: ' + jobScheduler.jobCount().all + '\n')
     stats += ('Memory: ' + numberFormatter.format(RawMemory.get().length) + ' bytes\n')
 
     console.log(stats)
 
-
-
-    if (Game.cpu.bucket >= 10000) {
+    if (Game.cpu.bucket >= 10000) { // FIXME: move to task manager
         console.log('Game.cpu.generatePixel: returned ' + Game.cpu.generatePixel())
     }
+    // setup
     utility.initialSetupEnvironmentCheck()
 
-    // console.log(utility.countExclusionZones())
-
-    // let spawn = Game.spawns['Spawn1']
-    // let room = spawn.room
-
-    // for(var name in Game.creeps) {
-    //     var creep = Game.creeps[name];
-    // }
-
-
+    // schedule and allocation
     jobScheduler.run()
+    jobAllocator.run()
 
-    for(var name in Game.spawns) {
-        let spawn = Game.spawns[name]
-        spawnController.run(spawn)
-    }
+    // execution
+    spawnController.run()
 
 
 

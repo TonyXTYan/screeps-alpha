@@ -3,7 +3,14 @@ var utility = require('utility');
 
 var spawnController = {
 
-    run: function(spawn) {
+    run: function() {
+        for(var name in Game.spawns) {
+            // let spawn = Game.spawns[name]
+            spawnController.checkSpawn(Game.spawns[name])
+        }
+    },
+
+    checkSpawn: function(spawn) {
         // var log = ""
         // console.log(' ')
         console.log("spawnController: called on " + spawn.name + ' in room ' + spawn.room.name)
