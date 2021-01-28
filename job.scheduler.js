@@ -1,12 +1,17 @@
 var utility = require('utility');
+var jobUtility = require('job.utility')
+// var jobScheduler = require('job.')
 var CONSTANTS = require('constants')
+var RETURN = CONSTANTS.RETURN
+var CONTRACTS = jobUtility.CONTRACTS
+var Contract = jobUtility.Contract
+// let OK = 0
 
 var jobScheduler = {
 
     run: function() {
         let currentTick = Game.time
-        // console.log(' ')
-        console.log('contractScheduler: called')
+        // console.log('jobScheduler: called')
 
         // console.log(CONTRACTS.BUILD === CONTRACTS.BUILD)
         // console.log(CONTRACTS.BUILD === CONTRACTS.ATTACK)
@@ -32,52 +37,29 @@ var jobScheduler = {
                 }
             }
         }
-        jobScheduler.mapAllJobs(validate)
-        // for (let id in Memory.jobs.contracts) {
-        //     let job = Memory.jobs.contracts[id]
-        //     if (job.deadline < Game.time) {
-        //         // console.log('job: ' + id + ' outdated')
-        //         if (job.deadline + CONSTANTS.ALL_JOB_TIMEOUT < Game.time) {
-        //             console.log('❗️jobScheduler.validateRoutine: timeout forced removed ' + job.id )
-        //             jobScheduler.removeJob(job)
-        //         } else {
-        //             jobCallBack.validate(job)
-        //         }
-        //     }
-        // }
+        jobUtility.mapAllJobs(validate)
     },
 
-    mapAllJobs: function(f) {
-        for(let type in Memory.jobs.contracts) {
-            for (let id in Memory.jobs.contracts[type]){
-                f(Memory.jobs.contracts[type][id])
-            }
-        }
-    },
 
-    jobCount: function() {
-        var output = new Object()
-        output.all = 0
-        for(let type in Memory.jobs.contracts) {
-            output[type] = Object.keys(Memory.jobs.contracts[type]).length
-            output.all += output[type]
-        }
-        return output
-    },
 
     searchJobs: searchJobsUtility,
 
     removeJob: function(job) {
         let code = jobCallBack.removing(job)
+        // console.log('jobScheduler.removeJob: called on job: ' + job.id + ', code: ' + code)
         function removeFromMemory() {
             Memory.jobs.contracts[job.jobTypeId][job.id] = undefined
         }
-        if (code == 0) {
+        if (code == OK) {
             // console.log('jobScheduler.removeJob: peacefully ' + job.id + ' with code: ' + code)
             removeFromMemory()
         } else if (job.deadline + CONSTANTS.ALL_JOB_TIMEOUT < Game.time) {
             console.log('❗️jobScheduler.removeJob: VERY FORCED id = ' + job.id + ' btw code ' + code)
             removeFromMemory()
+        } else if (code == RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL) {
+            console.log('❕jobScheduler.removeJob: got invalid memory addres')
+            removeFromMemory()
+            memoryValidation.fullAudit() // break this down a bit
         } else {
             console.log('❗️jobScheduler.removeJob: forced id = ' + job.id + ' with code ' + code)
             removeFromMemory()
@@ -87,111 +69,93 @@ var jobScheduler = {
     postJob: function(job){
         // console.log('postJob: begin')
         let id = job.jobTypeId + '_' + Game.time + '_' + Memory.jobs.createdThisTick
+        if (id === undefined) { console.log('❗️jobScheduler.postJob: WTF JS? ' + id )}
         job.id = id
         if(Memory.jobs === undefined) { Memory.jobs = {} }
         if(Memory.jobs.contracts === undefined) { Memory.jobs.contracts = {} }
         if(Memory.jobs.contracts[job.jobTypeId] === undefined) { Memory.jobs.contracts[job.jobTypeId] = {} }
         Memory.jobs.contracts[job.jobTypeId][job.id] = job
         Memory.jobs.createdThisTick++
-        console.log('jobScheduler.postJob: ' + id + ', has time ' + (job.deadline - Game.time))
+        // console.log('jobScheduler.postJob: ' + id + ', has time ' + (job.deadline - Game.time))
         let code = jobCallBack.created(job)
-        if (code != 0) {
+        if (code != OK) {
             console.log('❗️jobScheduler.postJob: id = ' + id + ', callBack code: ' + code)
         }
     },
 
+    assignedJob: function(job) {
+        let code = jobCallBack.assigned(job)
+        console.log('jobScheduler.assignedJob: called back with code ' + code)
+    },
+
+    completedJob: function(job) {
+        let code = jobCallBack.completed(job)
+        if (code == RETURN.DELETE_THIS_JOB) {
+            jobScheduler.removeJob(job)
+        } else if (code == RETURN.KEEP_THIS_JOB) {
+            console.log('jobScheduler.completedJob: WHAT ARE YOU THINKING? ' + job.id)
+        }
+        console.log('jobScheduler.completedJob: called job' + job.id + ' with code ' + code)
+    },
 
     memoryValidation: memoryValidation
 }
 
 module.exports = jobScheduler
 
-let CONTRACTS = {
-    // GET RESOURCES
-    // harvest energy from source or minerals from deposits.
-    HARVEST:        100, //{ id: 100, parts: [WORK] },
-    // // harvest and drop immediately to container
-    HARVEST_PURE:   101, //{ id: 101, parts: [WORK] },
-    WITHDRAW:       104, //{ id: 104, parts: [] },
-    PICKUP:         106, //{ id: 106, parts: [CARRY] }, //
-    DISMANTLE:      108, //{ id: 108, parts: [WORK] }, //
 
-    // PUT RESOURCES
-    BUILD:          110, //{ id: 110, parts: [WORK, CARRY] },
-    UPGRADE_RC:     112, //{ id: 112, parts: [WORK, CARRY] },
-    TRANSFER:       114, //{ id: 114, parts: [CARRY] },
-    DROP:           116, //{ id: 116, parts: [CARRY] }, // Drop on top of ground or container
-
-    // CREEP OR TOWER ish
-    ATTACK:         120, //{ id: 120, parts: [ATTACK] },
-    // ATTACK_RANGED:  { }
-    ATTACK_MASS:    121, //{ id: 121, parts: [RANGED_ATTACK] },
-    HEAL:           124, //{ id: 124, parts: [HEAL] }, // heal creeps
-    REPAIR:         126, //{ id: 126, parts: [WORK, CARRY] }, // repair structure
-
-    // TRANSPORT
-    MOVE:           130, //{ id: 130, parts: [MOVE] },
-    // PULLER: {id: , parts: []}, // TODO: check this
-    // PULLED: {id: , parts: []},
-
-    // OTHER
-    CLAIM:          180, //{ id: 180, parts: [CLAIM] },
-    RESERVE_RC:     184, //{ id: 184, parts: [CLAIM] },
-
-    // SPAWN ACTION
-    SPAWN:          200, //{ id: 200 },
-    RECYCLE:        210, //{ id: 210 },
-    RENEW:          200, //{ id: 220 },
-
-    // ROOM CONTROLLER
-    SAFE_MODE:      300, //{ id: 300 },
-    UNCLAIM:        301, //{ id: 301 },
-
-    // OTHER STUFF
-    LINK_TRANSFER:  400, //{ id: 400 },
-
-    CPU_PIXEL:      500, //{ id: 500 },
-    CPU_UNLOCK:     510, //{ id: 510 }
-
-}
 
 
 var memoryValidation = {
+    fullAudit: function() {
+        console.log('⁉️⁉️jobScheduler.fullAudit: TODO THIS 📛📛💯⁉️')
+    },
+
+    auditJobTypeMemory: function(jobTypeId) {
+
+    },
+
     checkSourceHarvestJobs: function() {
 
-    }
+    },
 }
 
 var jobCallBack = {
     created: function(job) {
+        // console.log(job)
         switch(job.jobTypeId) {
             case (CONTRACTS.HARVEST):
             case (CONTRACTS.HARVEST_PURE): {
                 let target = Game.getObjectById(job.target)
+                // if (target === undefined) { return -2 }
                 target.room.memory.sources[job.target].jobsLinked.push(job.id)
-                return 0
+                return OK
             };
             case (CONTRACTS.TRANSFER): {
                 let structure = Game.getObjectById(job.structure)
+                // if (structure === undefined) { return -2 }
                 structure.room.memory.structures[job.structure].jobLinked = job.id
-                return 0
+                return OK
             }
             case (CONTRACTS.BUILD): {
                 let site = Game.getObjectById(job.site)
+                // if (site === undefined) { return -2 }
                 site.room.memory.constructions[job.site].jobLinked = job.id
-                return 0
+                return OK
             }
             case (CONTRACTS.UPGRADE_RC): {
                 let controller = Game.getObjectById(job.controller)
+                // if (controller === undefined) { return -2 }
                 controller.room.memory.controllerJobs.push(job.id)
-                return 0
+                return OK
             };
             case (CONTRACTS.SPAWN): {
                 let spawn = Game.getObjectById(job.spawn)
+                // if (spawn === undefined) { return -2 }
                 spawn.memory.jobsLinked.push(job.id)
-                return 0
+                return OK
             }
-            default: return -1
+            default: return RETURN.ERR_BEHAVIOUR_UNDEF
         }
     },
 
@@ -210,23 +174,46 @@ var jobCallBack = {
                     // console.log('jobCallBacks.validate: ' + job.id)
                     jobScheduler.removeJob(job)
                 }
-                return 0
+                return OK
             };
-            default: return -1
+            default: return RETURN.ERR_BEHAVIOUR_UNDEF
 
         }
     },
 
     assigned: function(job) {
+        switch(job.jobTypeId) {
+            case (CONTRACTS.SPAWN): {
+                // let jobTypeId
+                // let job = Memory.jobs.contracts[job.jobTypeId]
+                if (job.bodySpec === undefined) { return RETURN.ERR_MEMORY_REQUIRED_UNDEF }
+                // let bodySpec = job.bodySpec
+                let spawn = Game.getObjectById(job.spawn)
+                spawn.memory.currentJob = job.id
 
+                return RETURN.ERR_I_AM_WORKING_ON_IT
+            };
+            default: return RETURN.ERR_BEHAVIOUR_UNDEF
+        }
     },
-    completed: function(job) {
 
+    completed: function(job) {
+        switch(job.jobTypeId) {
+            case (CONTRACTS.SPAWN): {
+                // if (job.bodySpec === undefined) { return RETURN.ERR_MEMORY_REQUIRED_UNDEF }
+                let spawn = Game.getObjectById(job.spawn)
+                spawn.memory.currentJob = undefined
+                // jobScheduler.removeJob(job)
+                return RETURN.DELETE_THIS_JOB
+            };
+            default: return RETURN.ERR_BEHAVIOUR_UNDEF
+        }
+        // return RETURN.ERR_BEHAVIOUR_UNDEF
     },
 
     removing: function(job) {
         // don't touch Memory.jobs, that's done after this function
-        // console.log('jobCallBack.removed: on ' + job.id )
+        // console.log('jobScheduler.jobCallBack.removed: on ' + job.id )
         switch(job.jobTypeId){
             case (CONTRACTS.HARVEST):
             case (CONTRACTS.HARVEST_PURE): {
@@ -235,39 +222,44 @@ var jobCallBack = {
                 // console.log(target)
                 // console.log(target.room)
                 // console.log(target.room.memory)
+                if (target === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
                 let array = target.room.memory.sources[target.id].jobsLinked
                 let replacement = utility.general.arrayDeleteOne(array, job.id)
                 target.room.memory.sources[target.id].jobsLinked = replacement
                 // let replacement =
 
                 // searchJobsUtility.energyRelated.postJobForSourcesIn()
-                return 0
+                return OK
             };
             case (CONTRACTS.TRANSFER): {
                 let structure = Game.getObjectById(job.structure)
+                if (structure === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
                 structure.room.memory.structures[structure.id].jobLinked = undefined
-                return 0
+                return OK
             };
             case (CONTRACTS.BUILD): {
                 let site = Game.getObjectById(job.site)
+                if (site === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
                 site.room.memory.constructions[site.id].jobLinked = undefined
-                return 0
+                return OK
             };
             case (CONTRACTS.UPGRADE_RC): {
                 let controller = Game.getObjectById(job.controller)
+                if (controller === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
                 let array = controller.room.memory.controllerJobs
                 let replacement = utility.general.arrayDeleteOne(array, job.id)
                 controller.room.memory.controllerJobs = replacement
-                return 0
+                return OK
             };
             case (CONTRACTS.SPAWN): {
                 let spawn = Game.getObjectById(job.spawn)
+                if (spawn === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
                 let array = spawn.memory.jobsLinked
                 let replacement = utility.general.arrayDeleteOne(array, job.id)
                 spawn.memory.jobsLinked = replacement
-                return 0
+                return OK
             }
-            default: return -1
+            default: return RETURN.ERR_BEHAVIOUR_UNDEF
         }
     }
 }
@@ -282,7 +274,7 @@ var searchJobsUtility = {
         run: function(room) {
             // get: harvest, withdraw
             // put: build, upgrade, transfers
-            console.log('jobScheduler.searchJobsUtility.energyRelated: called 🌕')
+            // console.log('jobScheduler.searchJobsUtility.energyRelated: called 🌕')
             searchJobsUtility.energyRelated.postJobForSourcesIn(room)
             searchJobsUtility.energyRelated.postJobForStructuresIn(room)
             searchJobsUtility.energyRelated.postJobForConstructionsIn(room)
@@ -290,7 +282,7 @@ var searchJobsUtility = {
         },
 
         postJobForSourcesIn: function(room) {
-            console.log('searchJobsUtility.postJobForSourcesIn: in room ' + room.name)
+            console.log('searchJobsUtility.postJobForSourcesIn: 🟨 in room ' + room.name)
 
             let sources = room.find(FIND_SOURCES)
             // console.log(sources)
@@ -298,7 +290,7 @@ var searchJobsUtility = {
             function checkAndPostJob(source) {
                 // console.log(source)
                 // console.log(room.memory.sources[source.id].spaceCounter)
-
+                if (source.energy < 50) { console.log('➰jobScheduler: postJobForSourcesIn: skip depleted'); return }
                 if (room.memory.sources === undefined) { room.memory.sources = {} }
                 if (room.memory.sources[source.id] === undefined) { room.memory.sources[source.id] = {} }
                 if (room.memory.sources[source.id].jobsLinked === undefined) {
@@ -385,7 +377,7 @@ var searchJobsUtility = {
         },
 
         postJobForStructuresIn: function(room) {
-            // console.log('jobScheduler.postJobForStructuresIn: called on room ' + room.name)
+            console.log('jobScheduler.postJobForStructuresIn: 📦 called on room ' + room.name)
             let structures = room.find(FIND_MY_STRUCTURES, { filter: utility.structureFilter.hasFreeEnergyCapacity })
             // let structures = room.find(FIND_MY_STRUCTURES)
             // console.log(structures)
@@ -402,14 +394,14 @@ var searchJobsUtility = {
                 job.structure = structure.id
                 job.resource = RESOURCE_ENERGY
                 job.amount = structure.store.getFreeCapacity(RESOURCE_ENERGY)
-                console.log('posted')
+                // console.log('posted')
                 jobScheduler.postJob(job)
             }
 
         },
 
         postJobForConstructionsIn: function(room) {
-            console.log('jobScheduler.postJobForConstructionsIn: called on room ' + room.name)
+            console.log('jobScheduler.postJobForConstructionsIn: 🏗 called on room ' + room.name)
             let constructions = room.find(FIND_MY_CONSTRUCTION_SITES)
             if (room.memory.constructions === undefined) { room.memory.constructions = {} }
             for (i in constructions) {
@@ -430,7 +422,7 @@ var searchJobsUtility = {
         postJobControllerUpgrade: function(room) {
             let controller = room.controller
             if (! controller.my) { return }
-            console.log('jobScheduler.postJobControllerUpgrade: called on room ' + room.name)
+            console.log('jobScheduler.postJobControllerUpgrade: 🔼 called on room ' + room.name)
             if (room.memory.controllerJobs === undefined) { room.memory.controllerJobs = [] }
             let jobsScheduledCount = room.memory.controllerJobs.length
             let level = controller.level
@@ -459,14 +451,17 @@ var searchJobsUtility = {
 
         findJobsMySpawn: function(spawn) {
             // if (!spawn.my) { console.log('❗️❗️jobScheduler.findJobsMySpawn: NOT MINE'); return }
-            let energy = utility.countEnergy(spawn)
-            console.log('jobScheduler.findJobsMySpawn: called on ' + spawn.name, ' E:', energy.available + ',', energy.capacity + ')')
+            // let energy = utility.countEnergy(spawn)
+            // console.log('jobScheduler.findJobsMySpawn:  on ' + spawn.name, ' E:', energy.available + ',', energy.capacity + ')')
+            // console.log('jobScheduler.findJobsMySpawn: on ' + spawn.name)
             if (spawn.memory.jobsLinked === undefined) { spawn.memory.jobsLinked = [] }
 
             function starterActions() {
                 let creeps = spawn.room.find(FIND_MY_CREEPS)
                 if (spawn.memory.jobsLinked.length > 4) { return }
-                if (creeps.length < 4) {
+                let minersNeeded = utility.totalSourceSpots(spawn.room)
+                // console.log('jobScheduler.findJobsMySpawn: needed ' + minersNeeded)
+                if (creeps.length < minersNeeded) {
                     // console.log('ahh')
                     var job = new Contract(CONTRACTS.SPAWN)
                     job.spawn = spawn.id
@@ -475,7 +470,7 @@ var searchJobsUtility = {
                 }
             }
 
-            if (spawn.room.controller.level < 5) {
+            if (spawn.room.controller.level < CONSTANTS.STARTER_LEVEL) {
                 starterActions()
             } else {
                 console.log('❗️❗️jobScheduler.findJobsMySpawn: HAVE NOT IMPLEMENT THIS YOU LAZY!')
@@ -483,39 +478,6 @@ var searchJobsUtility = {
             }
 
         },
-
-    }
-
-}
-
-
-class Contract {
-
-    /**
-     * constructor - description
-     *
-     * @param  {number} deadline of game tick time that the task need to finish before
-     * @return {Contract}      description
-     */
-
-    //
-    constructor(jobTypeId) {
-        /**
-         * test documentation
-         * @type {number}
-         */
-        this.id = undefined
-        this.jobTypeId = jobTypeId
-
-        this.createdTime = Game.time
-        this.deadline = Game.time + CONSTANTS.STD_JOB_TIME + utility.general.getRandomInt(-CONSTANTS.STD_JOB_TIME_VAR, CONSTANTS.STD_JOB_TIME_VAR)
-        // this.absoluteInvalidTime = Number.MAX_SAFE_INTEGER
-        this.assignedTo = undefined
-
-        // this.validateCallBack = undefined // called routinely or by finished shared task
-        // this.assignedCallBack = undefined
-        // this.finishedCallBack = undefined
-        // this.removedCallBack = undefined
 
     }
 

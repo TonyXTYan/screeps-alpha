@@ -11,12 +11,12 @@ var utility = {
     },
 
     initialSetupEnvironmentCheck: function() {
+        utility.basicMemoryCheck()
         utility.runForAllRooms(utility.initialSetupEnvironmentCheckForRoom)
     },
 
     initialSetupEnvironmentCheckForRoom: function(room) {
-        console.log('utility.initialSetupEnvironmentCheckForRoom: called')
-        utility.basicMemoryCheck()
+        // console.log('utility.initialSetupEnvironmentCheckForRoom: called on ' + room.name)
         if (room.memory.sourcesChecked === undefined) { utility.computeSourcePropertyInRoom(room) }
         if (room.memory.sourcesChecked + CONSTANTS.FREQ_LOW < Game.time) { //FIXME: schedule
             utility.computeSourcePropertyInRoom(room)
@@ -79,6 +79,14 @@ var utility = {
         room.memory.sourcesChecked = Game.time
     },
 
+    totalSourceSpots: function(room) {
+        var total = 0
+        for(let id in room.memory.sources) {
+            total += room.memory.sources[id].spaceCounter
+        }
+        return total
+    },
+
     resetMemory: function() {
         // require('utility').resetMemory()
         // Memory = {}
@@ -101,6 +109,7 @@ var utility = {
         if (Memory.jobs.contracts === undefined) { Memory.jobs.contracts = {} }
         // if (Memory.jobs.kind === undefined) { Memory.jobs.kind = {} }
         Memory.jobs.createdThisTick = 0
+        Memory.spawns.spawnnedThisTick = 0
     },
 
 
@@ -121,17 +130,17 @@ var utility = {
      * @param  {type} spawn description
      * @return {type}       description
      */
-    countEnergy: function(spawn) {
-        var extensionStructures = spawn.room.find(FIND_MY_STRUCTURES, { filter: utility.structureFilter.isExtension })
-        var totalEnergyAvailable = spawn.store.getUsedCapacity(RESOURCE_ENERGY)
-        var totalEnergyCapacity = 300
-        for (var i in extensionStructures) {
-            // console.log(extension)
-            totalEnergyAvailable += extensionStructures[i].store.getUsedCapacity(RESOURCE_ENERGY)
-            totalEnergyCapacity += extensionStructures[i].store.getCapacity(RESOURCE_ENERGY)
-        }
-        return {available: totalEnergyAvailable, capacity: totalEnergyCapacity}
-    },
+    // countEnergy: function(spawn) {
+    //     var extensionStructures = spawn.room.find(FIND_MY_STRUCTURES, { filter: utility.structureFilter.isExtension })
+    //     var totalEnergyAvailable = spawn.store.getUsedCapacity(RESOURCE_ENERGY)
+    //     var totalEnergyCapacity = 300
+    //     for (var i in extensionStructures) {
+    //         // console.log(extension)
+    //         totalEnergyAvailable += extensionStructures[i].store.getUsedCapacity(RESOURCE_ENERGY)
+    //         totalEnergyCapacity += extensionStructures[i].store.getCapacity(RESOURCE_ENERGY)
+    //     }
+    //     return {available: totalEnergyAvailable, capacity: totalEnergyCapacity}
+    // },
 
     /**
      * balanceSpec - Try to balance the specification given with given energy levels
@@ -163,6 +172,14 @@ var utility = {
         }
         return parts
     },
+
+    // getJobFromId: function(id) {
+    //     let typeId = id.split('_')[0]
+    //     // console.log(typeId)
+    //     // let job = Memory.jobs.contracts[typeId][id]
+    //     // console.log(job)
+    //     return Memory.jobs.contracts[typeId][id]
+    // },
 
     general: {
         arrayDeleteOne: function(array, value) {
