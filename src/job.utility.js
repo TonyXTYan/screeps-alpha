@@ -51,17 +51,27 @@ var jobUtility = {
 
     },
 
+    /**
+     * mapping
+     * @param {number} type
+     * @param {function} func
+     */
+    mapJobsType: function(type, func) {
+        for (let id in Memory.jobs.contracts[type]){
+            if (Memory.jobs.contracts[type][id] === undefined) { console.log('❗️jobUtility.mapJobsType: async problem on ' + id); return }
+            func(Memory.jobs.contracts[type][id])
+        }
+    },
 
-    mapAllJobs: function(f) {
+    mapAllJobs: function(func) {
         for(let type in Memory.jobs.contracts) {
-            for (let id in Memory.jobs.contracts[type]){
-                f(Memory.jobs.contracts[type][id])
-            }
+            jobUtility.mapJobsType(type, func)
         }
     },
 
     jobCount: function() {
         var output = new Object()
+        if (Memory.jobs === undefined) { return output }
         output.all = 0
         for(let type in Memory.jobs.contracts) {
             output[type] = Object.keys(Memory.jobs.contracts[type]).length

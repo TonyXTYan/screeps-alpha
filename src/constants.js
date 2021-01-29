@@ -1,22 +1,23 @@
 var CONSTANTS = {
-    STD_JOB_TIME: 200,
-    STD_JOB_TIME_VAR: 30,
-    ALL_JOB_TIMEOUT: 3000,
+    // STD_JOB_TIME: 200,
+    // STD_JOB_TIME_VAR: 30,
+    // ALL_JOB_TIMEOUT: 3000,
+    //
+    // FREQ_LOW: 50,
+    // FREQ_MID: 20,
+    // FREQ_HIGH: 6,
 
-    FREQ_LOW: 50,
-    FREQ_MID: 20,
-    FREQ_HIGH: 6,
-
-    // STD_JOB_TIME: 20,
-    // STD_JOB_TIME_VAR: 3,
-    // ALL_JOB_TIMEOUT: 130,
-    // FREQ_LOW: 10,
-    // FREQ_MID: 7,
-    // FREQ_HIGH: 4,
+    STD_JOB_TIME: 20,
+    STD_JOB_TIME_VAR: 10,
+    ALL_JOB_TIMEOUT: 130,
+    FREQ_LOW: 10,
+    FREQ_MID: 7,
+    FREQ_HIGH: 4,
     //
     //
 
     STARTER_LEVEL: 5,
+    STARTER_HITS_MAX: 1000000,
 
     CREEPS_SPECS: {
         // ratio of the body parts desired in a new spawn

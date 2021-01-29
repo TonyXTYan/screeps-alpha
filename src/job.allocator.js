@@ -9,48 +9,41 @@ var CONTRACTS = jobUtility.CONTRACTS
 var jobAllocator = {
     run: function() {
         // if (Game.time % CONSTANTS.FREQ_HIGH = 1) {
-            // jobAllocator.allocateCreeps.run()
+            // jobAllocator.creepRelated.run()
             jobAllocator.spawnsRelated.run()
         // }
     },
 
-    // allocateCreeps: {
-    //     run: function() {
-    //         utility.runForAllRooms(jobAllocator.allocateCreeps.checkRoom)
-    //     },
-    //     checkRoom: function(room){
-    //         console.log('jobAllocator.allocateCreeps: on room ' + room.name)
-    //         let creeps = room.find(FIND_MY_CREEPS)
-    //         console.log(creeps)
-    //     },
-    // },
-
     spawnsRelated: {
         run: function() {
-            jobAllocator.spawnsRelated.spawnCreap()
+            jobAllocator.spawnsRelated.spawnCreep()
         },
 
-        spawnCreap() {
-            let spawnContracts = Memory.jobs.contracts[CONTRACTS.SPAWN]
-            for (let k in spawnContracts) {
-                let job = spawnContracts[k]
-                if (job === undefined) { continue }
+        spawnCreep() {
+            // let spawnContracts = Memory.jobs.contracts[CONTRACTS.SPAWN]
+            // for (let k in spawnContracts) {
+            function allocate(job) {
+                // console.log('jobAllocator.spawnCreep.allocate: called on job ' + job.id)
+                // let job = spawnContracts[k]
+                if (job === undefined) { return }
                 // console.log(job)
                 // console.log(job.id)
                 let jobSpawn = Game.getObjectById(job.spawn)
                 // console.log(jobSpawn.name, jobSpawn.spawning)
-                if (jobSpawn.spawning) { continue }
+                if (jobSpawn.spawning) { return }
                 if (jobSpawn.memory.currentJob !== undefined ) {
                     let jobId = jobSpawn.memory.currentJob
                     let job = Memory.jobs.contracts[CONTRACTS.SPAWN][jobId]
                     // console.log(job)
                     if (job === undefined) {
                         jobSpawn.memory.currentJob = undefined
-                    } else { continue }
+                    } else { return }
                 }
 
+                // jobSpawn.spawnCreep()
+
                 let energy = jobSpawn.room.energyAvailable
-                if (energy < 300) { continue }
+                if (energy < 300) { return }
 
 
                 // if (jobSpawn.spawning === null) {
@@ -64,6 +57,8 @@ var jobAllocator = {
                 jobScheduler.assignedJob(job)
                 // } // else { continue }
             }
+
+            jobUtility.mapJobsType(CONTRACTS.SPAWN, allocate)
         }
 
 
@@ -71,24 +66,38 @@ var jobAllocator = {
 
     creepRelated: {
         run: function() {
+            console.log('jobAllocator.creepRelated: called')
+            // jobUtility.mapJobsType(CONTRACTS.BUILD, jobAllocator.creepRelated.checkBuild)
+            // jobUtility.mapJobsType(CONTRACTS.TRANSFER, jobAllocator.creepRelated.checkTransfer)
+            jobUtility.mapJobsType(CONTRACTS.HARVEST, jobAllocator.creepRelated.checkHarvest)
+            // jobUtility.mapJobsType(CONTRACTS.HARVEST_PURE, jobAllocator.creepRelated.checkHarvestPure)
+        },
+
+        checkHarvest: function(job) {
+            console.log('jobAllocator.checkHarvest: ' + job.id)
+            // let preferredSpec = CONSTANTS.CREEPS_SPECS.WORKER
+            // let creeps
 
         },
 
-        checkHarvest: function() {
+        checkHarvestPure: function(job) {
+            console.log('jobAllocator.checkHarvestPure: ' + job.id)
+            console.log('❗️jobAllocator.checkHarvestPure: HAVE NOT IMPLEMENT THIS YET')
 
         },
 
-        checkHarvestPure: function() {
+        checkBuild: function(job) {
+            console.log('jobAllocator.checkHarvestBuild: ' + job.id)
+
 
         },
 
-        checkBuild: function() {
+        checkTransfer: function(job) {
+            console.log('jobAllocator.checkHarvestTransfer: ' + job.id)
+
 
         },
 
-        checkTransfer: function() {
-            
-        }
 
     }
 }

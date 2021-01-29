@@ -134,7 +134,7 @@ var jobCallBack = {
             case (CONTRACTS.TRANSFER): {
                 let structure = Game.getObjectById(job.structure)
                 // if (structure === undefined) { return -2 }
-                structure.room.memory.structures[job.structure].jobLinked = job.id
+                structure.room.memory.structures[job.structure].jobTransferLinked = job.id
                 return OK
             }
             case (CONTRACTS.BUILD): {
@@ -154,7 +154,13 @@ var jobCallBack = {
                 // if (spawn === undefined) { return -2 }
                 spawn.memory.jobsLinked.push(job.id)
                 return OK
-            }
+            };
+            case (CONTRACTS.REPAIR): {
+                let structure = Game.getObjectById(job.structure)
+                // if (structure === null)
+                structure.room.memory.structures[job.structure].jobRepairLinked = job.id
+                return OK
+            };
             default: return RETURN.ERR_BEHAVIOUR_UNDEF
         }
     },
@@ -169,6 +175,7 @@ var jobCallBack = {
             case (CONTRACTS.BUILD):
             case (CONTRACTS.UPGRADE_RC):
             case (CONTRACTS.SPAWN):
+            case (CONTRACTS.REPAIR):
             {
                 if (job.deadline + 10 < Game.time && job.assignedTo === undefined) {
                     // console.log('jobCallBacks.validate: ' + job.id)
@@ -234,7 +241,7 @@ var jobCallBack = {
             case (CONTRACTS.TRANSFER): {
                 let structure = Game.getObjectById(job.structure)
                 if (structure === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
-                structure.room.memory.structures[structure.id].jobLinked = undefined
+                structure.room.memory.structures[structure.id].jobTransferLinked = undefined
                 return OK
             };
             case (CONTRACTS.BUILD): {
@@ -258,7 +265,13 @@ var jobCallBack = {
                 let replacement = utility.general.arrayDeleteOne(array, job.id)
                 spawn.memory.jobsLinked = replacement
                 return OK
-            }
+            };
+            case (CONTRACTS.REPAIR): {
+                let structure = Game.getObjectById(job.structure)
+                if (structure === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
+                structure.room.memory.structures[structure.id].jobRepairLinked = undefined
+                return OK
+            };
             default: return RETURN.ERR_BEHAVIOUR_UNDEF
         }
     }
@@ -266,8 +279,9 @@ var jobCallBack = {
 
 var searchJobsUtility = {
     runAll: function() {
-        utility.runForAllRooms(searchJobsUtility.energyRelated.run)
-        searchJobsUtility.spawnsRelated.run()
+        // utility.runForAllRooms(searchJobsUtility.energyRelated.run)
+        utility.runForAllRooms(searchJobsUtility.damageRelated.run)
+        // searchJobsUtility.spawnsRelated.run()
     },
 
     energyRelated:  {
@@ -388,7 +402,7 @@ var searchJobsUtility = {
                 let structure = structures[i]
                 // console.log(structure)
                 if (room.memory.structures[structure.id] === undefined) { room.memory.structures[structure.id] = {} }
-                if (room.memory.structures[structure.id].jobLinked !== undefined ) { continue }
+                if (room.memory.structures[structure.id].jobTransferLinked !== undefined ) { continue }
                 var job = new Contract(CONTRACTS.TRANSFER)
                 // job.deadline = Game.time + 200 + utility.general.getRandomInt(-30, 30)
                 job.structure = structure.id
@@ -434,8 +448,6 @@ var searchJobsUtility = {
             jobScheduler.postJob(job)
         }
 
-
-
     },
 
     spawnsRelated: {
@@ -461,7 +473,7 @@ var searchJobsUtility = {
                 if (spawn.memory.jobsLinked.length > 4) { return }
                 let minersNeeded = utility.totalSourceSpots(spawn.room)
                 // console.log('jobScheduler.findJobsMySpawn: needed ' + minersNeeded)
-                if (creeps.length < minersNeeded) {
+                if (creeps.length < Math.min(5, minersNeeded)) {
                     // console.log('ahh')
                     var job = new Contract(CONTRACTS.SPAWN)
                     job.spawn = spawn.id
@@ -479,6 +491,49 @@ var searchJobsUtility = {
 
         },
 
-    }
+    },
+
+    damageRelated: {
+        run: function(room) {
+            console.log('searchJobsUtility.damageRelated.run: called on ' + room.name)
+            searchJobsUtility.damageRelated.repairStructures(room)
+        },
+
+        repairStructures: function(room) {
+            if (room.controller.owner.username != Memory.myUsername) {
+                // Without the controller, I cannot build structure in that room.
+                console.log('jobScheduler.repairStructures: not my room ' + room.name, room.controller.owner.username, Memory.myUsername)
+                return
+            } // not my room, i don't care
+            let targets = room.find(FIND_STRUCTURES, { filter: utility.structureFilter.needRepair })
+            // console.log(targets.length)
+
+            for (let i in targets) {
+                let target = targets[i]
+                // console.log(target)
+                if (room.memory.structures === undefined) { room.memory.structures = {} }
+                if (room.memory.structures[target.id] === undefined) { room.memory.structures[target.id] = {} }
+                // if (room.memory.structure[target.id].jobRepairLinked === undefined) { room.memory.structure[target.id].jobRepairLinked = {} }
+                if (room.memory.structures[target.id].jobRepairLinked !== undefined) { continue }
+                var job = new Contract(CONTRACTS.REPAIR)
+                job.structure = target.id
+                jobScheduler.postJob(job)
+            }
+
+
+        },
+
+        healCreeps: function(room) {
+            // FIXME:
+            // TODO:
+        },
+
+
+    },
+
+
+
+
+
 
 }

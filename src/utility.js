@@ -216,10 +216,22 @@ var utility = {
             else { return (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0) }
         },
 
-        isExtension: function(structure) { return structure.structureType == STRUCTURE_EXTENSION; }
+        isExtension: function(structure) { return structure.structureType == STRUCTURE_EXTENSION; },
 
-        // ownerIsMe: function(structure) { return structure.owner == Memory.myUsername }
+        // ownerIsMe: function(structure) { return structure.owner == Memory.myUsername },
+
+        needRepair: function(structure) {
+            return structure.hits < structure.hitsMax
+        },
+
+        needRepairContainers: function(structure) {
+            return (structure.hits < structure.hitsMax) && (structure.structureType == STRUCTURE_CONTAINER)
+        },
+
+
     },
+
+
 
 }
 

@@ -1,13 +1,13 @@
 module.exports = function(grunt) {
     require('time-grunt')(grunt);
-    
+
     var config = require('./.screeps.json')
     var branch = grunt.option('branch') || config.branch;
     var email = grunt.option('email') || config.email;
     var token = grunt.option('token') || config.token;
     var ptr = grunt.option('ptr') ? true : config.ptr
     // e.g. grunt screeps --ptr=true --branch=development
-    
+
     grunt.loadNpmTasks('grunt-screeps');
     grunt.loadNpmTasks('grunt-contrib-concat'); // ????
     grunt.loadNpmTasks('grunt-contrib-clean');
@@ -17,12 +17,13 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    
-    var currentdate = new Date(); 
+
+    var currentdate = new Date();
     // Output the current date and branch.
     grunt.log.subhead('Task Start: ' + currentdate.toLocaleString())
     grunt.log.writeln('Branch: ' + branch)
-    
+    grunt.log.writeln('PTR: ' + ptr)
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         screeps: {
@@ -30,7 +31,7 @@ module.exports = function(grunt) {
                 email: email,
                 token: token,
                 branch: branch,
-                ptr: ptr
+                ptr: ptr, 
                 //server: 'season'
             },
             dist: {
@@ -38,21 +39,21 @@ module.exports = function(grunt) {
                 // src: ['src/*.js']
             }
         },
-        
+
         // Remove all files from the dist folder.
         clean: {
-            'dist': ['dist'], 
-        }, 
-        
+            'dist': ['dist'],
+        },
+
         concat: {
             // options: {
-            // }, 
+            // },
             dist: {
                 src: ['src/**/*.js'],
                 dest: 'dist/main.js'
             },
         },
-        
+
         // Copy all source files into the dist folder, flattening the folder structure by converting path delimiters to underscores
         copy: {
             // Pushes the game code to the dist folder so it can be modified before being send to the screeps server.
@@ -70,14 +71,14 @@ module.exports = function(grunt) {
                 }],
             }
         },
-        
+
         // Add version variable using current timestamp.
         file_append: {
             versioning: {
                 files: [
                     {
-                        //   append: "\nglobal.SCRIPT_VERSION = " + currentdate.getTime() + "\n",
-                        append: '\nbasic\n',
+                        append: "\nglobal.SCRIPT_VERSION = " + currentdate.getTime() + "\n",
+                        // append: '\nbasic\n',
                         input: 'dist/version.js',
                     }
                     // function () { return {
@@ -87,7 +88,7 @@ module.exports = function(grunt) {
                 ]
             }
         },
-        
+
         // Apply code styling
         jsbeautifier: {
             modify: {
@@ -104,25 +105,25 @@ module.exports = function(grunt) {
                 }
             }
         },
-        
+
         jshint: {
             all: ['Gruntfile.js', 'src/**/*.js']
         },
 
         watch: {
             files: 'src/**/*.js',
-            tasks: ['clean', 'copy:screeps', 'screeps']
+            tasks: ['clean', 'copy:screeps', 'file_append:versioning', 'screeps']
         },
-        
+
     });
-    
+
     // file_append doesn't work
-    // grunt.registerTask('default',  ['clean', 'copy:screeps', 'file_append:versioning', 'screeps']);
-    
-    
-    grunt.registerTask('default',  ['clean', 'copy:screeps', 'screeps']);
+    grunt.registerTask('default',  ['clean', 'copy:screeps', 'file_append:versioning', 'screeps']);
+
+
+    // grunt.registerTask('default',  ['clean', 'copy:screeps', 'screeps']);
     grunt.registerTask('test',     ['jsbeautifier:verify']);
     grunt.registerTask('pretty',   ['jsbeautifier:modify']);
-    
+
     // grunt.registerTask('jshint',   ['jshint']);
 }
