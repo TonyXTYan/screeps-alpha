@@ -14,22 +14,19 @@ var jobAllocator = {
         // }
     },
 
-    allocateCreeps: {
-        run: function() {
-            utility.runForAllRooms(jobAllocator.allocateCreeps.checkRoom)
-        },
-        checkRoom: function(room){
-            console.log('jobAllocator.allocateCreeps: on room ' + room.name)
-            let creeps = room.find(FIND_MY_CREEPS)
-            console.log(creeps)
-        },
-    },
+    // allocateCreeps: {
+    //     run: function() {
+    //         utility.runForAllRooms(jobAllocator.allocateCreeps.checkRoom)
+    //     },
+    //     checkRoom: function(room){
+    //         console.log('jobAllocator.allocateCreeps: on room ' + room.name)
+    //         let creeps = room.find(FIND_MY_CREEPS)
+    //         console.log(creeps)
+    //     },
+    // },
 
     spawnsRelated: {
         run: function() {
-            // for (i in Game.spawns) {
-            //     jobAllocator.spawnsRelated.checkSpawn(Game.spawns[i])
-            // }
             jobAllocator.spawnsRelated.spawnCreap()
         },
 
@@ -42,64 +39,58 @@ var jobAllocator = {
                 // console.log(job.id)
                 let jobSpawn = Game.getObjectById(job.spawn)
                 // console.log(jobSpawn.name, jobSpawn.spawning)
-                //
+                if (jobSpawn.spawning) { continue }
                 if (jobSpawn.memory.currentJob !== undefined ) {
                     let jobId = jobSpawn.memory.currentJob
                     let job = Memory.jobs.contracts[CONTRACTS.SPAWN][jobId]
                     // console.log(job)
                     if (job === undefined) {
                         jobSpawn.memory.currentJob = undefined
-                    } else { break }
+                    } else { continue }
                 }
 
                 let energy = jobSpawn.room.energyAvailable
-                if (energy < 300) { break }
+                if (energy < 300) { continue }
+
+
+                // if (jobSpawn.spawning === null) {
                 if (jobSpawn.room.controller.level > CONSTANTS.STARTER_LEVEL) {
                     console.log('❗️❗️jobAllocator.checkSpawn: TODO: TIME TO FIX THIS ')
                 }
-
-
-                if (jobSpawn.spawning === null) {
-                    // console.log('jobAllocator.spawnsRelated: can spawn')
-                    let spec = utility.balanceSpec(CONSTANTS.CREEPS_SPECS.WORKER, energy)
-                    console.log('jobAllocator.spawnsRelated: bodySpec ' + spec)
-                    job.bodySpec = spec
-                    jobScheduler.assignedJob(job)
-                    // if (jobSpawn.memory.currentJob === undefined) { jobSpawn.memory.currentJob = job.id }
-                    // else { jobSpawn.memory.currentJob = job.id }
-                } // else { continue }
+                // console.log('jobAllocator.spawnsRelated: can spawn')
+                let spec = utility.balanceSpec(CONSTANTS.CREEPS_SPECS.WORKER, energy)
+                console.log('jobAllocator.spawnsRelated: bodySpec ' + spec)
+                job.bodySpec = spec
+                jobScheduler.assignedJob(job)
+                // } // else { continue }
             }
-            // }
-            // if (spawn.room.controller.level < CONSTANTS.STARTER_LEVEL) {
-            //     starterActions()
-            // } else {
-            //     starterActions()
-            //     console.log('❗️❗️jobAllocator.checkSpawn: TODO THIS')
-            // }
         }
 
-        // checkSpawn: function(spawn) {
-        //     console.log(spawn)
-        //     let spawnContracts = Memory.jobs.contracts[CONTRACTS.SPAWN]
-        //     let renewContracts = Memory.jobs.contracts[CONTRACTS.RENEW]
-        //     let recycleContracts = Memory.jobs.contracts[CONTRACTS.RECYCLE]
-        //
-        //     console.log('spawn:', spawnContracts, 'renew:', renewContracts, 'recycle', recycleContracts)
-        //
-        //     function starterActions() {
-        //
-        //     }
-        //     if (spawn.room.controller.level < CONSTANTS.STARTER_LEVEL) {
-        //         starterActions()
-        //     } else {
-        //         starterActions()
-        //         console.log('❗️❗️jobAllocator.checkSpawn: TODO THIS')
-        //     }
-        //
-        // }
 
     },
 
+    creepRelated: {
+        run: function() {
+
+        },
+
+        checkHarvest: function() {
+
+        },
+
+        checkHarvestPure: function() {
+
+        },
+
+        checkBuild: function() {
+
+        },
+
+        checkTransfer: function() {
+            
+        }
+
+    }
 }
 
 module.exports = jobAllocator

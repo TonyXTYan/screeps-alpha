@@ -10,6 +10,20 @@ var utility = {
         }
     },
 
+    runForAllCreeps: function(func) {
+        for (name in Game.creeps) {
+            let creep = Game.creeps[name]
+            func(creep)
+        }
+    },
+
+    runForAllSpawns: function(func) {
+        for (name in Game.spawns) {
+            let spawn = Game.spawns[name]
+            func(spawn)
+        }
+    },
+
     initialSetupEnvironmentCheck: function() {
         utility.basicMemoryCheck()
         utility.runForAllRooms(utility.initialSetupEnvironmentCheckForRoom)

@@ -1,14 +1,18 @@
 // var contractAgent = require('contract.agent');
 var utility = require('utility');
+var CONSTANTS = require('constants');
 var jobUtility = require('job.utility');
 var jobScheduler = require('job.scheduler');
 
 var spawnController = {
 
     run: function() {
-        for(var name in Game.spawns) {
-            // let spawn = Game.spawns[name]
-            spawnController.checkSpawnning(Game.spawns[name])
+        // for(var name in Game.spawns) {
+        //     // let spawn = Game.spawns[name]
+        //     spawnController.checkSpawnning(Game.spawns[name])
+        // }
+        if (Game.time % CONSTANTS.FREQ_HIGH == 0) {
+            utility.runForAllSpawns(spawnController.checkSpawnning)
         }
     },
 

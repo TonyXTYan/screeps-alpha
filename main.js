@@ -1,9 +1,9 @@
 var utility = require('utility');
-var creepController = require('creep.controller');
 var jobScheduler = require('job.scheduler');
 var jobAllocator = require('job.allocator');
 var jobUtility = require('job.utility')
 var spawnController = require('spawn.controller');
+var creepController = require('creep.controller');
 
 module.exports.loop = function () {
     // if (Game.time % 5 == 0) {
@@ -13,9 +13,9 @@ module.exports.loop = function () {
     var numberFormatter = Intl.NumberFormat('en-US')
     var stats = ("✅ Tick: " + Game.time + " -----------------------------------------------------------------4----\n")
     let startCpuTime = performance.now()
-    // stats += ('CPU tickLimit: ' + Game.cpu.tickLimit + ', bucket: ' + Game.cpu.bucket + '\n')
+    stats += ('CPU tickLimit: ' + Game.cpu.tickLimit + ', bucket: ' + Game.cpu.bucket + '\n')
     // stats += ('Flags: ' + Object.keys(Game.flags).length + '\n')
-    // stats += ('Creeps: ' + Object.keys(Game.creeps).length + '\n')
+    stats += ('Creeps: ' + Object.keys(Game.creeps).length + '\n')
     // stats += ('Spawns: ' + Object.keys(Game.spawns).length + '\n')
     stats += ('Structures: ' + Object.keys(Game.structures).length + '\n')
     stats += ('Constructions: ' + Object.keys(Game.constructionSites).length + '\n')
@@ -36,6 +36,7 @@ module.exports.loop = function () {
 
     // execution
     spawnController.run()
+    creepController.run()
 
 
 
