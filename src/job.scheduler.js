@@ -279,9 +279,9 @@ var jobCallBack = {
 
 var searchJobsUtility = {
     runAll: function() {
-        // utility.runForAllRooms(searchJobsUtility.energyRelated.run)
+        utility.runForAllRooms(searchJobsUtility.energyRelated.run)
         utility.runForAllRooms(searchJobsUtility.damageRelated.run)
-        // searchJobsUtility.spawnsRelated.run()
+        searchJobsUtility.spawnsRelated.run()
     },
 
     energyRelated:  {
@@ -296,7 +296,7 @@ var searchJobsUtility = {
         },
 
         postJobForSourcesIn: function(room) {
-            console.log('searchJobsUtility.postJobForSourcesIn: 🟨 in room ' + room.name)
+            console.log('jobScheduler.postJobForSourcesIn: 🟨 in room ' + room.name)
 
             let sources = room.find(FIND_SOURCES)
             // console.log(sources)
@@ -495,14 +495,14 @@ var searchJobsUtility = {
 
     damageRelated: {
         run: function(room) {
-            console.log('searchJobsUtility.damageRelated.run: called on ' + room.name)
+            console.log('jobScheduler.damageRelated.run: 🛠 called on ' + room.name)
             searchJobsUtility.damageRelated.repairStructures(room)
         },
 
         repairStructures: function(room) {
             if (room.controller.owner.username != Memory.myUsername) {
                 // Without the controller, I cannot build structure in that room.
-                console.log('jobScheduler.repairStructures: not my room ' + room.name, room.controller.owner.username, Memory.myUsername)
+                // console.log('jobScheduler.repairStructures: not my room ' + room.name, room.controller.owner.username, Memory.myUsername)
                 return
             } // not my room, i don't care
             let targets = room.find(FIND_STRUCTURES, { filter: utility.structureFilter.needRepair })

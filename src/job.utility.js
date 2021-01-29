@@ -58,7 +58,7 @@ var jobUtility = {
      */
     mapJobsType: function(type, func) {
         for (let id in Memory.jobs.contracts[type]){
-            if (Memory.jobs.contracts[type][id] === undefined) { console.log('❗️jobUtility.mapJobsType: async problem on ' + id); return }
+            if (Memory.jobs.contracts[type][id] === undefined) { console.log('❗️jobUtility.mapJobsType: async problem on ' + id); continue }
             func(Memory.jobs.contracts[type][id])
         }
     },
