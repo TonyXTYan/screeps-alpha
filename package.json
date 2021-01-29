@@ -1,0 +1,31 @@
+{
+  "name": "screeps-alpha",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ToCkie/screeps-alpha.git"
+  },
+  "author": "Tony XT Yan",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/ToCkie/screeps-alpha/issues"
+  },
+  "homepage": "https://github.com/ToCkie/screeps-alpha#readme",
+  "devDependencies": {
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-jshint": "^3.0.0",
+    "grunt-contrib-uglify": "^5.0.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-file-append": "^0.0.7",
+    "grunt-jsbeautifier": "^0.2.13",
+    "grunt-screeps": "^1.5.0",
+    "time-grunt": "^2.0.0"
+  }
+}

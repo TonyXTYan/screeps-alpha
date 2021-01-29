@@ -1,2 +1,6 @@
 ScreepsAutocomplete/
+dist
 .DS_Store
+# Gruntfile.js
+.screeps.json
+node_modules
