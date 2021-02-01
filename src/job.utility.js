@@ -52,9 +52,10 @@ var jobUtility = {
     },
 
     /**
-     * mapping
-     * @param {number} type
-     * @param {function} func
+     * mapJobsType - Mapping function across all this job type
+     *
+     * @param {number} type type of job as defined above in CONTRACTS
+     * @param {function} func function to be mapped
      */
     mapJobsType: function(type, func) {
         for (let id in Memory.jobs.contracts[type]){
@@ -63,12 +64,24 @@ var jobUtility = {
         }
     },
 
+
+    /**
+     * mapAllJobs - Map this function across all jobs
+     *
+     * @param  {function} func function to be mapped
+     */
     mapAllJobs: function(func) {
         for(let type in Memory.jobs.contracts) {
             jobUtility.mapJobsType(type, func)
         }
     },
 
+
+    /**
+     * jobCount - Count the number of jobs cached in Memory
+     *
+     * @return {number}  the number of jobs
+     */
     jobCount: function() {
         var output = new Object()
         if (Memory.jobs === undefined) { return output }
@@ -80,6 +93,13 @@ var jobUtility = {
         return output
     },
 
+
+    /**
+     * getJobFromId - Get the job Object for given job ID.
+     *
+     * @param  {string} id The ID of this job
+     * @return {Object}    The Contract Object
+     */
     getJobFromId: function(id) {
         let typeId = id.split('_')[0]
         // console.log(typeId)
@@ -88,6 +108,10 @@ var jobUtility = {
         return Memory.jobs.contracts[typeId][id]
     },
 
+
+    /**
+     * The Contract to be store in Memory.jobs.contracts[jobTypeId][jobId]    
+     */
     Contract: class {
 
         /**

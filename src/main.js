@@ -44,6 +44,7 @@ module.exports.loop = function () {
     if (Game.cpu.bucket >= 10000) { // FIXME: move to task manager
         console.log('Game.cpu.generatePixel: returned ' + Game.cpu.generatePixel());
     }
+    
     // setup
     utility.initialSetupEnvironmentCheck();
 

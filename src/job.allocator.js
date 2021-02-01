@@ -9,8 +9,8 @@ var CONTRACTS = jobUtility.CONTRACTS
 var jobAllocator = {
     run: function() {
         // if (Game.time % CONSTANTS.FREQ_HIGH = 1) {
-            jobAllocator.creepRelated.run()
-            jobAllocator.spawnsRelated.run()
+        jobAllocator.creepRelated.run()
+        jobAllocator.spawnsRelated.run()
         // }
     },
 

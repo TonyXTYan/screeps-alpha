@@ -9,6 +9,11 @@ var Contract = jobUtility.Contract
 
 var jobScheduler = {
 
+
+    /**
+     * run - Call this every tick to attempt schedule task
+     * FIXME: use task manager to schedule CPU jobs as well
+     */
     run: function() {
         let currentTick = Game.time
         // console.log('jobScheduler: called')
@@ -24,6 +29,10 @@ var jobScheduler = {
     },
     // do storage and arrage the contracts
 
+
+    /**
+     * validationRoutine - run the validation function for this job after the deadline has passed
+     */
     validationRoutine: function() {
         function validate(job) {
             // console.log('')
@@ -42,8 +51,15 @@ var jobScheduler = {
 
 
 
-    searchJobs: searchJobsUtility,
+    // searchJobs: searchJobsUtility, // TODO: check that I can remove this
 
+
+    /**
+     * removeJob - Request to remove this job
+     *
+     * @param  {Contract} job attempt to remove this job from memory
+     * TODO: return some value
+     */
     removeJob: function(job) {
         let code = jobCallBack.removing(job)
         // console.log('jobScheduler.removeJob: called on job: ' + job.id + ', code: ' + code)
@@ -66,6 +82,13 @@ var jobScheduler = {
         }
     },
 
+
+    /**
+     * postJob - Post/Schedule a job in memory
+     *
+     * @param  {Contract} job Putting this job in Memory
+     * @return {type}     TODO:
+     */
     postJob: function(job){
         // console.log('postJob: begin')
         let id = job.jobTypeId + '_' + Game.time + '_' + Memory.jobs.createdThisTick
@@ -83,11 +106,19 @@ var jobScheduler = {
         }
     },
 
+
+    /**
+     * assignedJob - Call back when the job has been assigned
+     */
     assignedJob: function(job) {
         let code = jobCallBack.assigned(job)
         console.log('jobScheduler.assignedJob: called back with code ' + code)
     },
 
+
+    /**
+     * completedJob - Call back when this job is finished
+     */
     completedJob: function(job) {
         let code = jobCallBack.completed(job)
         if (code == RETURN.DELETE_THIS_JOB) {
@@ -106,7 +137,7 @@ module.exports = jobScheduler
 
 
 
-var memoryValidation = {
+var memoryValidation = { // TODO: This
     fullAudit: function() {
         console.log('⁉️⁉️jobScheduler.fullAudit: TODO THIS 📛📛💯⁉️')
     },
@@ -120,6 +151,10 @@ var memoryValidation = {
     },
 }
 
+
+/**
+ * The call back functions to complete job specific things
+ */
 var jobCallBack = {
     created: function(job) {
         // console.log(job)
