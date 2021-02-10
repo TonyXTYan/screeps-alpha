@@ -33,7 +33,7 @@ module.exports.loop = function () {
 
     // creepPopulationControl.check.balance()
 
-    console.log('sync test 10')
+    // console.log('sync test 11')
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
@@ -55,6 +55,8 @@ module.exports.loop = function () {
             roleManual.run(creep)
         }
     }
+
+    console.log('⏺Finished execution and used', Game.cpu.getUsed().toFixed(3), 'CPU. \n')
 
     // console.clear();
     // console.log("<script>angular.element(document.getElementsByClassName('fa fa-trash ng-scope')[0].parentNode).scope().Console.clear()</script>")

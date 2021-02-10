@@ -28,7 +28,7 @@ var creepPopulationControl = {
                             + ', doctors: ' + doctors.length
                     )
 
-        let energy = Math.max(totalEnergyAvailable, 300)
+        let energy = Math.min(Math.max(totalEnergyAvailable, 300), 2500)
 
         // MARK - Minimum population control
         // TODO: fix these duplicate code and make this work better with the auto spawning in roleBalane
@@ -56,7 +56,8 @@ var creepPopulationControl = {
 
         if ((doctors.length < 1) && (totalEnergyAvailable >= 500)) {
             var newName = 'Doctor' + Game.time
-            let bodyParts = creepRoleBalance.balanceSpec(specification.doctor, totalEnergyAvailable)
+            let bodyParts = creepRoleBalance.balanceSpec(specification.doctor, energy)
+            // console.log(bodyParts.length)
             let o = spawn.spawnCreep(bodyParts, newName, {memory: {role: 'doctor'}})
             console.log('creep.populationControl: Spawning new doctor: ' + newName + ', returned: ' + o)
         }

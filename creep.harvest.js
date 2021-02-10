@@ -18,6 +18,8 @@ var creepHarvest = {
             else { creep.memory.harvestTargetSourceId = sourcesClosest.id }
         }
         let targetThisTick = Game.getObjectById(creep.memory.harvestTargetSourceId)
+        // console.log(targetThisTick instanceof Source)
+        // console.log(targetThisTick.prototype)
         if (creep.room.memory.sources === undefined) {
             creep.room.memory.sources = new Map();
             creep.room.memory.sources[targetThisTick.id] = [8, 1, Game.time] // [max, current, last check on max]
