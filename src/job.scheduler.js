@@ -19,9 +19,6 @@ var jobScheduler = {
         let currentTick = Game.time
         // console.log('jobScheduler: called')
 
-        // console.log(CONTRACTS.BUILD === CONTRACTS.BUILD)
-        // console.log(CONTRACTS.BUILD === CONTRACTS.ATTACK)
-
         if (Game.time % CONSTANTS.FREQ_MID == 0) { // FIXME: here
             searchJobsUtility.runAll()
         }
@@ -51,7 +48,6 @@ var jobScheduler = {
     },
 
 
-
     // searchJobs: searchJobsUtility, // TODO: check that I can remove this
 
 
@@ -69,18 +65,18 @@ var jobScheduler = {
         }
         if (code == OK) {
             // console.log('jobScheduler.removeJob: peacefully ' + job.id + ' with code: ' + code)
-            removeFromMemory()
+            // removeFromMemory()
         } else if (job.deadline + CONSTANTS.ALL_JOB_TIMEOUT < Game.time) {
             console.log('❗️jobScheduler.removeJob: VERY FORCED id = ' + job.id + ' btw code ' + code)
-            removeFromMemory()
+            // removeFromMemory()
         } else if (code == RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL) {
             console.log('❕jobScheduler.removeJob: got invalid memory addres')
-            removeFromMemory()
+            // removeFromMemory()
             memoryValidation.fullAudit() // break this down a bit
         } else {
             console.log('❗️jobScheduler.removeJob: forced id = ' + job.id + ' with code ' + code)
-            removeFromMemory()
         }
+        removeFromMemory()
     },
 
 
