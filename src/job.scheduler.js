@@ -4,6 +4,7 @@ var jobUtility = require('job.utility')
 var CONSTANTS = require('constants')
 var RETURN = CONSTANTS.RETURN
 var CONTRACTS = jobUtility.CONTRACTS
+var CONTRACT = require('job.contract')
 var Contract = jobUtility.Contract
 // let OK = 0
 

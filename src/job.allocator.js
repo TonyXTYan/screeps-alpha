@@ -53,7 +53,7 @@ var jobAllocator = {
                 }
 
                 // console.log('jobAllocator.spawnsRelated: can spawn')
-                let spec = jobUtility.bestBodyParts(CONTRACTS.HARVEST, energy) 
+                let spec = jobUtility.bestBodyParts(CONTRACTS.HARVEST, energy)
 
                 console.log('jobAllocator.spawnsRelated: bodySpec ' + spec)
                 job.bodySpec = spec
@@ -72,7 +72,7 @@ var jobAllocator = {
             console.log('jobAllocator.creepRelated: called')
             // jobUtility.mapJobsType(CONTRACTS.BUILD, jobAllocator.creepRelated.checkBuild)
             // jobUtility.mapJobsType(CONTRACTS.TRANSFER, jobAllocator.creepRelated.checkTransfer)
-            jobUtility.mapJobsType(CONTRACTS.HARVEST, jobAllocator.creepRelated.checkHarvest)
+            // jobUtility.mapJobsType(CONTRACTS.HARVEST, jobAllocator.creepRelated.checkHarvest)
             // jobUtility.mapJobsType(CONTRACTS.HARVEST_PURE, jobAllocator.creepRelated.checkHarvestPure)
         },
 

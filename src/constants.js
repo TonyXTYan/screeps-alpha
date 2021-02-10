@@ -29,13 +29,15 @@ var CONSTANTS = {
 
     RETURN: {
         OK: 0, // duplicate definition
-        // UNDEFINED
+        // INSTRUCTIONS
         DELETE_THIS_JOB: 100,
         KEEP_THIS_JOB: 110,
-        ERR_BEHAVIOUR_UNDEF: -10,
+
+        // ERRORS
         ERR_MEMORY_ADDRESS_RETURNS_NULL: -100,
-        ERR_MEMORY_REQUIRED_UNDEF: -200,
-        ERR_I_AM_WORKING_ON_IT: -1000,
+        ERR_MEMORY_REQUIRED_UNDEF: -110,
+        ERR_BEHAVIOUR_UNDEF: -200,
+        ERR_I_AM_WORKING_ON_IT: -201,
     }
 
 }
