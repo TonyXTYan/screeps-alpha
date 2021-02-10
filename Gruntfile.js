@@ -23,6 +23,8 @@ module.exports = function(grunt) {
     grunt.log.subhead('Task Start: ' + currentdate.toLocaleString())
     grunt.log.writeln('Branch: ' + branch)
     grunt.log.writeln('PTR: ' + ptr)
+    grunt.log.writeln('Email: ' + email)
+    grunt.log.writeln('Token: ' + token.split('-')[0] + '-****-****-****-************')
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -31,7 +33,7 @@ module.exports = function(grunt) {
                 email: email,
                 token: token,
                 branch: branch,
-                ptr: ptr, 
+                ptr: ptr,
                 //server: 'season'
             },
             dist: {

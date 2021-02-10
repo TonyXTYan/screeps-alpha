@@ -110,7 +110,7 @@ var jobUtility = {
 
 
     /**
-     * The Contract to be store in Memory.jobs.contracts[jobTypeId][jobId]    
+     * The Contract to be store in Memory.jobs.contracts[jobTypeId][jobId]
      */
     Contract: class {
 
@@ -136,7 +136,20 @@ var jobUtility = {
             this.assignedTo = undefined
         }
 
-    }
+    },
+
+    bestBodyParts: function(jobId, energy) {
+        let CONTRACTS = jobUtility.CONTRACTS
+        switch(jobId) {
+            case CONTRACTS.HARVEST: {
+                return utility.balanceSpec(CONSTANTS.CREEPS_SPECS.WORKER, energy)
+            }
+        }
+    },
+
+
+
+
 }
 
 module.exports = jobUtility

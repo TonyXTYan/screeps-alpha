@@ -513,6 +513,7 @@ var searchJobsUtility = {
                     var job = new Contract(CONTRACTS.SPAWN)
                     job.spawn = spawn.id
                     job.spec = CONSTANTS.CREEPS_SPECS.WORKER
+                    // job.creepJob =
                     jobScheduler.postJob(job)
                 }
             }

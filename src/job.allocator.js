@@ -44,15 +44,17 @@ var jobAllocator = {
                 // jobSpawn.spawnCreep()
 
                 let energy = jobSpawn.room.energyAvailable
-                if (energy < 300) { return }
+                if (energy < 300) { return } // don't bother
 
 
                 // if (jobSpawn.spawning === null) {
                 if (jobSpawn.room.controller.level > CONSTANTS.STARTER_LEVEL) {
                     console.log('❗️❗️jobAllocator.checkSpawn: TODO: TIME TO FIX THIS ')
                 }
+
                 // console.log('jobAllocator.spawnsRelated: can spawn')
-                let spec = utility.balanceSpec(CONSTANTS.CREEPS_SPECS.WORKER, energy)
+                let spec = jobUtility.bestBodyParts(CONTRACTS.HARVEST, energy) 
+
                 console.log('jobAllocator.spawnsRelated: bodySpec ' + spec)
                 job.bodySpec = spec
                 jobScheduler.assignedJob(job)
@@ -78,6 +80,29 @@ var jobAllocator = {
             console.log('jobAllocator.checkHarvest: ' + job.id)
             // let preferredSpec = CONSTANTS.CREEPS_SPECS.WORKER
             // let creeps
+
+            let target = Game.getObjectById(job.target)
+            // console.log(target, target.room)
+            let room = target.room
+            let creeps = room.find(FIND_MY_CREEPS, { filter: function(creep) {
+                return !creep.memory.job
+            } })
+            console.log(creeps)
+
+            // ####### ####### ######  #######  #     ####### ### #     # #######    ####### #     # ###  #####
+            //    #    #     # #     # #     # ###    #        #   #   #     #          #    #     #  #  #     #
+            //    #    #     # #     # #     #  #     #        #    # #      #          #    #     #  #  #
+            //    #    #     # #     # #     #        #####    #     #       #          #    #######  #   #####
+            //    #    #     # #     # #     #  #     #        #    # #      #          #    #     #  #        #
+            //    #    #     # #     # #     # ###    #        #   #   #     #          #    #     #  #  #     #
+            //    #    ####### ######  #######  #     #       ### #     #    #          #    #     # ###  #####
+
+            console.log(room.controller.level)
+            if (room.controller.level > CONSTANTS.STARTER_LEVEL) {
+                console.log('jobAllocator.checkHarvest: ‼️‼️THIS IS UNIMPLEMENTED')
+            }
+
+
 
         },
 

@@ -21,6 +21,7 @@ module.exports.loop = function () {
 #    # #    # #    # #         #    # #      #    # #    #   #   #      #    #
  ####   ####  #####  ######     ####  #      #####  #    #   #   ###### #####
         `
+        // https://www.patorjk.com/software/taag/#p=display&f=Banner&t=%0A
         console.log(updatedBlock)
         console.log('🆕🆕🆕🆕New code version: ' + SCRIPT_VERSION)
     }
@@ -44,7 +45,7 @@ module.exports.loop = function () {
     if (Game.cpu.bucket >= 10000) { // FIXME: move to task manager
         console.log('Game.cpu.generatePixel: returned ' + Game.cpu.generatePixel());
     }
-    
+
     // setup
     utility.initialSetupEnvironmentCheck();
 
@@ -59,6 +60,6 @@ module.exports.loop = function () {
 
     // let finalCpuTime = performance.now();
     // let deltaCpuTime = finalCpuTime - startCpuTime;
-    console.log('⏺Finished execution\n')
+    console.log('⏺Finished execution and used', Game.cpu.getUsed(), 'CPU. \n')
     // console.log('⏺Finished execution in ' + numberFormatter.format(1000 * deltaCpuTime) + 'ns\n\n');
 };
