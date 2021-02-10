@@ -107,7 +107,8 @@ var creepHarvest = {
     useContainer: function(creep) {
         var containers = creep.room.find(FIND_STRUCTURES, {
             filter: (structure) => {
-                return (structure.structureType == STRUCTURE_CONTAINER) &&
+                return (structure.structureType == STRUCTURE_CONTAINER ||
+                        structure.structureType == STRUCTURE_STORAGE) &&
                        (structure.store.getUsedCapacity(RESOURCE_ENERGY) > 2 * creep.store.getCapacity(RESOURCE_ENERGY));
             }
         });
