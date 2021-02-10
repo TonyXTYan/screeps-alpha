@@ -27,10 +27,11 @@ module.exports.loop = function () {
     }
 
     var numberFormatter = Intl.NumberFormat('en-US');
-    var stats = ("✅ Tick: " + Game.time + " ----------------------------------------------------------------\n");
+    // console.log(Memory.SCRIPT_VERSION)
+    var stats = ('✅ Tick: ' + Game.time + ' script: ' + Memory.SCRIPT_VERSION + ' ----------------------------------\n');
     // let startCpuTime = performance.now();
     stats += ('CPU tickLimit: ' + Game.cpu.tickLimit + ', bucket: ' + Game.cpu.bucket + '\n');
-    stats += ('Shard: ' + Game.shard.name + ', ptr = ' + Game.shard.ptr + '\n')
+    stats += ('Shard: ' + Game.shard.name + ', ptr = ' + Game.shard.ptr + ', branch: grunt\n')
     // stats += ('Flags: ' + Object.keys(Game.flags).length + '\n');
     stats += ('Creeps: ' + Object.keys(Game.creeps).length + '\n');
     // stats += ('Spawns: ' + Object.keys(Game.spawns).length + '\n');
@@ -60,6 +61,6 @@ module.exports.loop = function () {
 
     // let finalCpuTime = performance.now();
     // let deltaCpuTime = finalCpuTime - startCpuTime;
-    console.log('⏺Finished execution and used', Game.cpu.getUsed(), 'CPU. \n')
+    console.log('⏺Finished execution and used', Game.cpu.getUsed().toFixed(3), 'CPU. \n')
     // console.log('⏺Finished execution in ' + numberFormatter.format(1000 * deltaCpuTime) + 'ns\n\n');
 };
