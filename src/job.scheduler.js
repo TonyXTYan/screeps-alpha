@@ -4,7 +4,7 @@ var jobUtility = require('job.utility')
 var CONSTANTS = require('constants')
 var RETURN = CONSTANTS.RETURN
 var CONTRACTS = jobUtility.CONTRACTS
-var CONTRACT = require('job.contract')
+var jobContract = require('job.contract')
 var Contract = jobUtility.Contract
 // let OK = 0
 
@@ -22,6 +22,9 @@ var jobScheduler = {
         if (Game.time % CONSTANTS.FREQ_MID == 0) { // FIXME: here
             searchJobsUtility.runAll()
         }
+
+        // jobContract.runCallbackForJob()
+        // jobUtility.mapAllJobs(jobContract.runCallbackForJob)
 
         jobScheduler.validationRoutine()
     },
