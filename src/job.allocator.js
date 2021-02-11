@@ -1,6 +1,7 @@
 var utility = require('utility');
 var jobUtility = require('job.utility')
 var jobScheduler = require('job.scheduler')
+var jobContract = require('job.contract')
 var CONSTANTS = require('constants')
 var CONTRACTS = jobUtility.CONTRACTS
 
@@ -57,7 +58,7 @@ var jobAllocator = {
 
                 console.log('jobAllocator.spawnsRelated: bodySpec ' + spec)
                 job.bodySpec = spec
-                jobScheduler.assignedJob(job)
+                jobContract.assignedJob(job)
                 // } // else { continue }
             }
 

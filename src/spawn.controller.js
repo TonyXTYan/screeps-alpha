@@ -3,6 +3,8 @@ var utility = require('utility');
 var CONSTANTS = require('constants');
 var jobUtility = require('job.utility');
 var jobScheduler = require('job.scheduler');
+var jobContract = require('job.contract');
+
 
 var spawnController = {
 
@@ -70,7 +72,9 @@ var spawnController = {
         // console.log(name)
 
         spawn.spawnCreep(bodySpec, name)
-        jobScheduler.completedJob(job)
+        // jobScheduler.completedJob(job)
+        jobContract.completedJob(job)
+
 
     }
 

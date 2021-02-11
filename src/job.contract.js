@@ -1,5 +1,7 @@
 var CONSTANTS = require('constants')
 var RETURN = CONSTANTS.RETURN
+var jobUtility = require('job.utility')
+var utility = require('utility')
 
 
 var jobContract = {
@@ -47,8 +49,22 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) {
+                    // console.log('here hehe')
+                    let target = Game.getObjectById(job.target)
+                    // console.log(target)
+                    // console.log(target.room)
+                    // console.log(target.room.memory)
+                    if (target === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
+                    let array = target.room.memory.sources[target.id].jobsLinked
+                    let replacement = utility.general.arrayDeleteOne(array, job.id)
+                    target.room.memory.sources[target.id].jobsLinked = replacement
+                    // let replacement =
+
+                    // searchJobsUtility.energyRelated.postJobForSourcesIn()
+                    return OK
+                },
+            },
         },
         // // harvest and drop immediately to container
         HARVEST_PURE: {
@@ -63,8 +79,22 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) {
+                    // console.log('here hehe')
+                    let target = Game.getObjectById(job.target)
+                    // console.log(target)
+                    // console.log(target.room)
+                    // console.log(target.room.memory)
+                    if (target === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
+                    let array = target.room.memory.sources[target.id].jobsLinked
+                    let replacement = utility.general.arrayDeleteOne(array, job.id)
+                    target.room.memory.sources[target.id].jobsLinked = replacement
+                    // let replacement =
+
+                    // searchJobsUtility.energyRelated.postJobForSourcesIn()
+                    return OK
+                },
+            },
         },
         WITHDRAW: {
             id: 104,
@@ -73,8 +103,8 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+            },
         },
         PICKUP: {
             id: 106,
@@ -83,8 +113,8 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+            },
         },
         DISMANTLE: {
             id: 108,
@@ -93,8 +123,8 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+            },
         },
 
         // PUT RESOURCES
@@ -110,8 +140,13 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) {
+                    let site = Game.getObjectById(job.site)
+                    if (site === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
+                    site.room.memory.constructions[site.id].jobLinked = undefined
+                    return OK
+                },
+            },
         },
         UPGRADE_RC: {
             id: 112,
@@ -125,8 +160,15 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) {
+                    let controller = Game.getObjectById(job.controller)
+                    if (controller === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
+                    let array = controller.room.memory.controllerJobs
+                    let replacement = utility.general.arrayDeleteOne(array, job.id)
+                    controller.room.memory.controllerJobs = replacement
+                    return OK
+                },
+            },
         },
         TRANSFER: {
             id: 114,
@@ -140,7 +182,12 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
+                removing: function(job) {
+                    let structure = Game.getObjectById(job.structure)
+                    if (structure === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
+                    structure.room.memory.structures[structure.id].jobTransferLinked = undefined
+                    return OK
+                },
             }
         },
         DROP: {
@@ -150,7 +197,7 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             }
         },
 
@@ -162,7 +209,7 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             }
         },
         // ATTACK_RANGED:  { }
@@ -183,7 +230,7 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             }
         },
         REPAIR: {
@@ -198,7 +245,12 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
+                removing: function(job) {
+                    let structure = Game.getObjectById(job.structure)
+                    if (structure === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
+                    structure.room.memory.structures[structure.id].jobRepairLinked = undefined
+                    return OK
+                },
             }
         },
 
@@ -210,7 +262,7 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             }
         },
         // PULLER: {id: , parts: []}, // TODO: check this
@@ -224,7 +276,7 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             }
         },
         RESERVE_RC: {
@@ -234,7 +286,7 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             }
         },
 
@@ -249,10 +301,32 @@ var jobContract = {
                     return OK
                 },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                assigned: function(job) {
+                    // let jobTypeId
+                    // let job = Memory.jobs.contracts[job.jobTypeId]
+                    if (job.bodySpec === undefined) { return RETURN.ERR_MEMORY_REQUIRED_UNDEF }
+                    // let bodySpec = job.bodySpec
+                    let spawn = Game.getObjectById(job.spawn)
+                    spawn.memory.currentJob = job.id
+
+                    return RETURN.ERR_I_AM_WORKING_ON_IT
+                },
+                completed: function(job) {
+                    // if (job.bodySpec === undefined) { return RETURN.ERR_MEMORY_REQUIRED_UNDEF }
+                    let spawn = Game.getObjectById(job.spawn)
+                    spawn.memory.currentJob = undefined
+                    // jobContract.removeJob(job)
+                    return RETURN.DELETE_THIS_JOB
+                },
+                removing: function(job) {
+                    let spawn = Game.getObjectById(job.spawn)
+                    if (spawn === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
+                    let array = spawn.memory.jobsLinked
+                    let replacement = utility.general.arrayDeleteOne(array, job.id)
+                    spawn.memory.jobsLinked = replacement
+                    return OK
+                },
+            },
         },
         RECYCLE: {
             id: 210,
@@ -261,8 +335,8 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+            },
         },
         RENEW: {
             id: 220,
@@ -271,8 +345,8 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+            },
         },
 
         // ROOM CONTROLLER
@@ -283,8 +357,8 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+            },
         },
         UNCLAIM: {
             id: 301,
@@ -293,8 +367,8 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+            },
         },
 
         // OTHER STUFF
@@ -305,8 +379,8 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+            },
         },
 
         CPU_PIXEL: {
@@ -316,8 +390,8 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+            },
         },
         CPU_UNLOCK: {
             id: 510,
@@ -326,28 +400,35 @@ var jobContract = {
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
-            }
-        },
-
-        universalCallback: {
-            created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-            validate: function(job) {
-                if (job.deadline + 10 < Game.time && job.assignedTo === undefined) {
-                    // console.log('jobCallBacks.validate: ' + job.id)
-                    jobScheduler.removeJob(job)
-                }
-                return OK
+                removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             },
-            assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-            completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-            removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
         },
+    },
 
+    universalCallback: {
+        created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+        validate: function(job) {
+            if (job.deadline + 10 < Game.time && job.assignedTo === undefined) {
+                // console.log('jobCallBacks.validate: ' + job.id)
+                jobContract.removeJob(job)
+            }
+            return OK
+        },
+        assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+        completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+        removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+    },
+
+    CALLBACK_TYPE: {
+        CREATED: 'created',
+        VALIDATE: 'validate',
+        ASSIGNED: 'assigned',
+        COMPLETED: 'completed',
+        REMOVING: 'removing',
     },
 
     runCallbackForJob: function(job, callback) {
-        console.log('jobContract.runCallbackForJob: called on job ' + job.id, 'and callback:', callback)
+        // console.log('jobContract.runCallbackForJob: called on job ' + job.id, 'and callback:', callback)
         if (!callback) { return RETURN.ERR_PARAMETER_MISSING }
         let jobTypeId = job.jobTypeId
         for (let key in jobContract.CONTRACT) {
@@ -355,14 +436,20 @@ var jobContract = {
             let jobType = jobContract.CONTRACT[key]
             if (jobType.id == job.jobTypeId) {
                 let func = jobContract.CONTRACT[key].callback[callback]
-                console.log(key, jobType.id, job.jobTypeId, typeof func == 'function')
-                if (!func) { return RETURN.ERR_PARAMETER_INVALID }
-                return func(job)
+                // console.log(key, jobType.id, job.jobTypeId, typeof func == 'function')
+                if (!func) {
+                    console.log('‼️‼️jobContract.runCallbackForJob: for job ' + job.id + ', callback ' + callback + ', function undefined')
+                    return RETURN.ERR_PARAMETER_INVALID
+                }
+                let code = func(job)
+                if (code == RETURN.ERR_BEHAVIOUR_UNDEF) {
+                    return jobContract.universalCallback[callback](job)
+                } else { return code }
             }
         }
     },
 
-    
+
     /**
      * validationRoutine - run the validation function for this job after the deadline has passed
      */
@@ -370,15 +457,20 @@ var jobContract = {
         function validate(job) {
             // console.log('')
             if (job.deadline < Game.time) {
-                // console.log('job: ' + id + ' outdated')
+                // console.log('jobContract.validateRoutine: job: ' + job.id + ' outdated')
+
                 if (job.deadline + CONSTANTS.ALL_JOB_TIMEOUT < Game.time) {
-                    console.log('❗️jobScheduler.validateRoutine: timeout forced removed ' + job.id )
-                    jobScheduler.removeJob(job)
+                    console.log('❗️jobContract.validateRoutine: timeout forced removed ' + job.id )
+                    // jobContract.removeJob(job)
+                    jobContract.removeJob(job)
+                    job
                 } else {
-                    jobCallBack.validate(job)
+                    // jobContract.validate(job)
+                    jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.VALIDATE)
                 }
             }
         }
+
         jobUtility.mapAllJobs(validate)
     },
 
@@ -394,23 +486,24 @@ var jobContract = {
      * TODO: return some value
      */
     removeJob: function(job) {
-        let code = jobCallBack.removing(job)
-        // console.log('jobScheduler.removeJob: called on job: ' + job.id + ', code: ' + code)
+        let code = jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.REMOVING)
+
+        // console.log('jobContract.removeJob: called on job: ' + job.id + ', code: ' + code)
         function removeFromMemory() {
             Memory.jobs.contracts[job.jobTypeId][job.id] = undefined
         }
         if (code == OK) {
-            // console.log('jobScheduler.removeJob: peacefully ' + job.id + ' with code: ' + code)
+            // console.log('jobContract.removeJob: peacefully ' + job.id + ' with code: ' + code)
             // removeFromMemory()
         } else if (job.deadline + CONSTANTS.ALL_JOB_TIMEOUT < Game.time) {
-            console.log('❗️jobScheduler.removeJob: VERY FORCED id = ' + job.id + ' btw code ' + code)
+            console.log('❗️jobContract.removeJob: VERY FORCED id = ' + job.id + ' btw code ' + code)
             // removeFromMemory()
         } else if (code == RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL) {
-            console.log('❕jobScheduler.removeJob: got invalid memory addres')
+            console.log('❕jobContract.removeJob: got invalid memory addres')
             // removeFromMemory()
-            memoryValidation.fullAudit() // break this down a bit
+            jobContract.memoryValidation.fullAudit() // break this down a bit
         } else {
-            console.log('❗️jobScheduler.removeJob: forced id = ' + job.id + ' with code ' + code)
+            console.log('❗️jobContract.removeJob: forced id = ' + job.id + ' with code ' + code)
         }
         removeFromMemory()
     },
@@ -425,17 +518,18 @@ var jobContract = {
     postJob: function(job){
         // console.log('postJob: begin')
         let id = job.jobTypeId + '_' + Game.time + '_' + Memory.jobs.createdThisTick
-        if (id === undefined) { console.log('❗️jobScheduler.postJob: WTF JS? ' + id )}
+        if (id === undefined) { console.log('❗️jobContract.postJob: WTF JS? ' + id )}
         job.id = id
         if(Memory.jobs === undefined) { Memory.jobs = {} }
         if(Memory.jobs.contracts === undefined) { Memory.jobs.contracts = {} }
         if(Memory.jobs.contracts[job.jobTypeId] === undefined) { Memory.jobs.contracts[job.jobTypeId] = {} }
         Memory.jobs.contracts[job.jobTypeId][job.id] = job
         Memory.jobs.createdThisTick++
-        // console.log('jobScheduler.postJob: ' + id + ', has time ' + (job.deadline - Game.time))
-        let code = jobCallBack.created(job)
+        // console.log('jobContract.postJob: ' + id + ', has time ' + (job.deadline - Game.time))
+        // let code = jobCallBack.created(job)
+        let code = jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.CREATED)
         if (code != OK) {
-            console.log('❗️jobScheduler.postJob: id = ' + id + ', callBack code: ' + code)
+            console.log('❗️jobContract.postJob: id = ' + id + ', callBack code: ' + code)
         }
     },
 
@@ -444,8 +538,9 @@ var jobContract = {
      * assignedJob - Call back when the job has been assigned
      */
     assignedJob: function(job) {
-        let code = jobCallBack.assigned(job)
-        console.log('jobScheduler.assignedJob: called back with code ' + code)
+        // let code = jobCallBack.assigned(job)
+        let code = jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.ASSIGNED)
+        console.log('jobContract.assignedJob: called back with code ' + code)
     },
 
 
@@ -453,18 +548,19 @@ var jobContract = {
      * completedJob - Call back when this job is finished
      */
     completedJob: function(job) {
-        let code = jobCallBack.completed(job)
+        // let code = jobCallBack.completed(job)
+        let code = jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.COMPLETED)
         if (code == RETURN.DELETE_THIS_JOB) {
-            jobScheduler.removeJob(job)
+            jobContract.removeJob(job)
         } else if (code == RETURN.KEEP_THIS_JOB) {
-            console.log('jobScheduler.completedJob: WHAT ARE YOU THINKING? ' + job.id)
+            console.log('jobContract.completedJob: WHAT ARE YOU THINKING? ' + job.id)
         }
-        console.log('jobScheduler.completedJob: called job' + job.id + ' with code ' + code)
+        console.log('jobContract.completedJob: called job' + job.id + ' with code ' + code)
     },
 
     memoryValidation: { // TODO: This
         fullAudit: function() {
-            console.log('⁉️⁉️jobScheduler.fullAudit: TODO THIS 📛📛💯⁉️')
+            console.log('⁉️⁉️jobContract.fullAudit: TODO THIS 📛📛💯⁉️')
         },
 
         auditJobTypeMemory: function(jobTypeId) {
