@@ -432,7 +432,6 @@ var jobContract = {
         if (!callback) { return RETURN.ERR_PARAMETER_MISSING }
         let jobTypeId = job.jobTypeId
         for (let key in jobContract.CONTRACT) {
-            // console.log(key)
             let jobType = jobContract.CONTRACT[key]
             if (jobType.id == job.jobTypeId) {
                 let func = jobContract.CONTRACT[key].callback[callback]
@@ -461,11 +460,9 @@ var jobContract = {
 
                 if (job.deadline + CONSTANTS.ALL_JOB_TIMEOUT < Game.time) {
                     console.log('❗️jobContract.validateRoutine: timeout forced removed ' + job.id )
-                    // jobContract.removeJob(job)
                     jobContract.removeJob(job)
                     job
                 } else {
-                    // jobContract.validate(job)
                     jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.VALIDATE)
                 }
             }
@@ -526,7 +523,6 @@ var jobContract = {
         Memory.jobs.contracts[job.jobTypeId][job.id] = job
         Memory.jobs.createdThisTick++
         // console.log('jobContract.postJob: ' + id + ', has time ' + (job.deadline - Game.time))
-        // let code = jobCallBack.created(job)
         let code = jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.CREATED)
         if (code != OK) {
             console.log('❗️jobContract.postJob: id = ' + id + ', callBack code: ' + code)
@@ -538,7 +534,6 @@ var jobContract = {
      * assignedJob - Call back when the job has been assigned
      */
     assignedJob: function(job) {
-        // let code = jobCallBack.assigned(job)
         let code = jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.ASSIGNED)
         console.log('jobContract.assignedJob: called back with code ' + code)
     },
@@ -548,7 +543,6 @@ var jobContract = {
      * completedJob - Call back when this job is finished
      */
     completedJob: function(job) {
-        // let code = jobCallBack.completed(job)
         let code = jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.COMPLETED)
         if (code == RETURN.DELETE_THIS_JOB) {
             jobContract.removeJob(job)
