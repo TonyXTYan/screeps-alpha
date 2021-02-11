@@ -24,9 +24,10 @@ var jobScheduler = {
         }
 
         // jobContract.runCallbackForJob()
-        // jobUtility.mapAllJobs(jobContract.runCallbackForJob)
+        // jobUtility.mapAllJobs(jobContract.runCallbackForJob, 'created')
 
         jobScheduler.validationRoutine()
+        // jobContract.validationRoutine()
     },
     // do storage and arrage the contracts
 

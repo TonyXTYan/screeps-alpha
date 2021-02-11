@@ -43,7 +43,20 @@ var CONSTANTS = {
         ERR_MEMORY_REQUIRED_UNDEF: -1010,
         ERR_BEHAVIOUR_UNDEF: -2000,
         ERR_I_AM_WORKING_ON_IT: -2100,
-    }
+    },
+
+
+    BANNER: { // https://www.patorjk.com/software/taag/#p=display&f=Banner&t=%0A
+        CODE_UPDATED:
+` ####   ####  #####  ######    #    # #####  #####    ##   ##### ###### #####
+#    # #    # #    # #         #    # #    # #    #  #  #    #   #      #    #
+#      #    # #    # #####     #    # #    # #    # #    #   #   #####  #    #
+#      #    # #    # #         #    # #####  #    # ######   #   #      #    #
+#    # #    # #    # #         #    # #      #    # #    #   #   #      #    #
+ ####   ####  #####  ######     ####  #      #####  #    #   #   ###### #####`,
+
+    
+    },
 
 }
 

@@ -346,6 +346,23 @@ var jobContract = {
 
     },
 
+    runCallbackForJob: function(job, callback) {
+        console.log('jobContract.runCallbackForJob: called on job ' + job.id, 'and callback:', callback)
+        if (!callback) { return RETURN.ERR_PARAMETER_MISSING }
+        let jobTypeId = job.jobTypeId
+        for (let key in jobContract.CONTRACT) {
+            // console.log(key)
+            let jobType = jobContract.CONTRACT[key]
+            if (jobType.id == job.jobTypeId) {
+                let func = jobContract.CONTRACT[key].callback[callback]
+                console.log(key, jobType.id, job.jobTypeId, typeof func == 'function')
+                if (!func) { return RETURN.ERR_PARAMETER_INVALID }
+                return func(job)
+            }
+        }
+    },
+
+    
     /**
      * validationRoutine - run the validation function for this job after the deadline has passed
      */
@@ -365,21 +382,6 @@ var jobContract = {
         jobUtility.mapAllJobs(validate)
     },
 
-    runCallbackForJob: function(job, name) {
-        console.log('jobContract.runCallbackForJob: called on job ' + job.id, 'and callback:', name)
-        if (!name) { return RETURN.ERR_PARAMETER_MISSING }
-        let jobTypeId = job.jobTypeId
-        for (let key in jobContract.CONTRACT) {
-            // console.log(key)
-            let jobType = jobContract.CONTRACT[key]
-            if (jobType.id == job.jobTypeId) {
-                console.log(key, jobType.id, job.jobTypeId)
-                let func = jobContract.CONTRACT[key].callback[name]
-                if (!func) { return RETURN.ERR_PARAMETER_INVALID }
-                return func()
-            }
-        }
-    },
 
     validateJob: function(job) {
 

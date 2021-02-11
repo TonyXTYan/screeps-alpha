@@ -57,10 +57,11 @@ var jobUtility = {
      * @param {number} type type of job as defined above in CONTRACTS
      * @param {function} func function to be mapped
      */
-    mapJobsType: function(type, func) {
+    mapJobsType: function(type, func, secondParam) {
+        // console.log('jobUtility.mapJobsType:', type, ' is called ')
         for (let id in Memory.jobs.contracts[type]){
             if (Memory.jobs.contracts[type][id] === undefined) { console.log('❗️jobUtility.mapJobsType: async problem on ' + id); continue }
-            func(Memory.jobs.contracts[type][id])
+            func(Memory.jobs.contracts[type][id], secondParam)
         }
     },
 
@@ -70,9 +71,9 @@ var jobUtility = {
      *
      * @param  {function} func function to be mapped
      */
-    mapAllJobs: function(func) {
+    mapAllJobs: function(func, secondParam) {
         for(let type in Memory.jobs.contracts) {
-            jobUtility.mapJobsType(type, func)
+            jobUtility.mapJobsType(type, func, secondParam)
         }
     },
 

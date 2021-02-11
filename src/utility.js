@@ -113,6 +113,7 @@ var utility = {
     },
 
     basicMemoryCheck: function() {
+        // console.log('utility.basicMemoryCheck: called')
         if (Memory.creeps === undefined) { Memory.creeps = {} }
         if (Memory.spawns === undefined) { Memory.spawns = {} }
         if (Memory.rooms  === undefined) { Memory.rooms = {} }
@@ -124,6 +125,16 @@ var utility = {
         // if (Memory.jobs.kind === undefined) { Memory.jobs.kind = {} }
         Memory.jobs.createdThisTick = 0
         Memory.spawns.spawnnedThisTick = 0
+
+        if (Memory.IN_SIMULATION_ROOM === undefined) {
+            var isInSimulationRoom = false
+            for (let hash in Game.rooms) {
+                console.log('room hash', hash)
+                // let room = Game.rooms[hash]
+                if (hash == 'sim') { isInSimulationRoom = true; break }
+            }
+            Memory.IN_SIMULATION_ROOM = isInSimulationRoom
+        }
     },
 
 
