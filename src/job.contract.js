@@ -34,6 +34,14 @@ var jobContract = {
 
     },
 
+//  ######
+//  #     # ###### ###### # #    # # ##### #  ####  #    #
+//  #     # #      #      # ##   # #   #   # #    # ##   #
+//  #     # #####  #####  # # #  # #   #   # #    # # #  #
+//  #     # #      #      # #  # # #   #   # #    # #  # #
+//  #     # #      #      # #   ## #   #   # #    # #   ##
+//  ######  ###### #      # #    # #   #   #  ####  #    #
+
     CONTRACT: {
         // GET RESOURCES
         // harvest energy from source or minerals from deposits.
@@ -96,6 +104,8 @@ var jobContract = {
                 },
             },
         },
+
+
         WITHDRAW: {
             id: 104,
             callback: {
@@ -405,6 +415,16 @@ var jobContract = {
         },
     },
 
+
+
+//  #     #
+//  ##   ## ###### ##### #    #  ####  #####   ####
+//  # # # # #        #   #    # #    # #    # #
+//  #  #  # #####    #   ###### #    # #    #  ####
+//  #     # #        #   #    # #    # #    #      #
+//  #     # #        #   #    # #    # #    # #    #
+//  #     # ######   #   #    #  ####  #####   ####
+
     universalCallback: {
         created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
         validate: function(job) {
@@ -535,7 +555,7 @@ var jobContract = {
      */
     assignedJob: function(job) {
         let code = jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.ASSIGNED)
-        console.log('jobContract.assignedJob: called back with code ' + code)
+        console.log('jobContract.assignedJob: job ' + job.id + ' called back with code ' + code)
     },
 
 

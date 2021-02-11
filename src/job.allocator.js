@@ -3,8 +3,8 @@ var jobUtility = require('job.utility')
 var jobScheduler = require('job.scheduler')
 var jobContract = require('job.contract')
 var CONSTANTS = require('constants')
-var CONTRACTS = jobUtility.CONTRACTS
-
+// var CONTRACTS = jobUtility.CONTRACTS
+var CONTRACT = jobContract.CONTRACT
 
 
 var jobAllocator = {
@@ -35,7 +35,7 @@ var jobAllocator = {
                 if (jobSpawn.spawning) { return }
                 if (jobSpawn.memory.currentJob !== undefined ) {
                     let jobId = jobSpawn.memory.currentJob
-                    let job = Memory.jobs.contracts[CONTRACTS.SPAWN][jobId]
+                    let job = Memory.jobs.contracts[CONTRACT.SPAWN.id][jobId]
                     // console.log(job)
                     if (job === undefined) {
                         jobSpawn.memory.currentJob = undefined
@@ -54,7 +54,16 @@ var jobAllocator = {
                 }
 
                 // console.log('jobAllocator.spawnsRelated: can spawn')
-                let spec = jobUtility.bestBodyParts(CONTRACTS.HARVEST, energy)
+                // let spec = jobUtility.bestBodyParts(CONTRACT.HARVEST.id, energy)
+                let spec = [1,1,1,0, 0,0,0,0]
+                
+                // ####### ### #     # #     # #######
+                // #        #   #   #  ##   ## #
+                // #        #    # #   # # # # #
+                // #####    #     #    #  #  # #####
+                // #        #    # #   #     # #
+                // #        #   #   #  #     # #
+                // #       ### #     # #     # #######
 
                 console.log('jobAllocator.spawnsRelated: bodySpec ' + spec)
                 job.bodySpec = spec
@@ -62,7 +71,7 @@ var jobAllocator = {
                 // } // else { continue }
             }
 
-            jobUtility.mapJobsType(CONTRACTS.SPAWN, allocate)
+            jobUtility.mapJobsType(CONTRACT.SPAWN.id, allocate)
         }
 
 

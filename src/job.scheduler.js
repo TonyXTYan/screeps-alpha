@@ -3,9 +3,10 @@ var jobUtility = require('job.utility')
 // var jobScheduler = require('job.')
 var CONSTANTS = require('constants')
 var RETURN = CONSTANTS.RETURN
-var CONTRACTS = jobUtility.CONTRACTS
+// var CONTRACTS = jobUtility.CONTRACTS
 var jobContract = require('job.contract')
-var Contract = jobUtility.Contract
+var CONTRACT = jobContract.CONTRACT
+var Contract = jobContract.Contract
 // let OK = 0
 
 var jobScheduler = {
@@ -26,7 +27,7 @@ var jobScheduler = {
         jobContract.validationRoutine()
     },
     // do storage and arrage the contracts
-    
+
 }
 
 module.exports = jobScheduler
@@ -39,6 +40,14 @@ var searchJobsUtility = {
         utility.runForAllRooms(searchJobsUtility.damageRelated.run)
         searchJobsUtility.spawnsRelated.run()
     },
+
+//  #######
+//  #       #    # ###### #####   ####  #   #
+//  #       ##   # #      #    # #    #  # #
+//  #####   # #  # #####  #    # #        #
+//  #       #  # # #      #####  #  ###   #
+//  #       #   ## #      #   #  #    #   #
+//  ####### #    # ###### #    #  ####    #
 
     energyRelated:  {
         run: function(room) {
@@ -80,9 +89,9 @@ var searchJobsUtility = {
                     let jobTypeId = name.split('_')[0]
                     // let jobTypeId =
                     // console.log(jobTypeId)
-                    if (jobTypeId == CONTRACTS.HARVEST) {
+                    if (jobTypeId == CONTRACT.HARVEST.id) {
                         harvestExistingCount++
-                    } else if (jobTypeId == CONTRACTS.HARVEST_PURE ) {
+                    } else if (jobTypeId == CONTRACT.HARVEST_PURE.id ) {
                         harvestExistingPureCount++
                     } else {
                         console.log('jobScheduler.checkAndPostJob: incorrect placement of job ' + name)
@@ -119,7 +128,7 @@ var searchJobsUtility = {
                 // just normal energy jobs
                 for(var freeSpaceJobIndex = 0; freeSpaceJobIndex < freeSpaceJobCount; freeSpaceJobIndex++) {
                     var harvestJob = harvestJobTemplate()
-                    harvestJob.jobTypeId = CONTRACTS.HARVEST
+                    harvestJob.jobTypeId = CONTRACT.HARVEST.id
                     // console.log('id = ', harvestJob.jobTypeId)
                     jobContract.postJob(harvestJob)
                     // room.memory.sources[source.id].jobsLinked[0]++
@@ -129,7 +138,7 @@ var searchJobsUtility = {
                 // container coordination jobs
                 for(var containerJobIndex = 0; containerJobIndex < containerJobCount; containerJobIndex++) {
                     var harvestJob = harvestJobTemplate()
-                    harvestJob.jobTypeId = CONTRACTS.HARVEST_PURE
+                    harvestJob.jobTypeId = CONTRACT.HARVEST_PURE.id
                     // console.log('container ', room.sources[source.id].containersNearby[containerJobIndex])
                     // console.log('id = ', harvestJob.jobTypeId)
                     harvestJob.container = containersNearby[containerJobIndex]
@@ -159,7 +168,7 @@ var searchJobsUtility = {
                 // console.log(structure)
                 if (room.memory.structures[structure.id] === undefined) { room.memory.structures[structure.id] = {} }
                 if (room.memory.structures[structure.id].jobTransferLinked !== undefined ) { continue }
-                var job = new Contract(CONTRACTS.TRANSFER)
+                var job = new Contract(CONTRACT.TRANSFER.id)
                 // job.deadline = Game.time + 200 + utility.general.getRandomInt(-30, 30)
                 job.structure = structure.id
                 job.resource = RESOURCE_ENERGY
@@ -179,7 +188,7 @@ var searchJobsUtility = {
                 let site = constructions[i]
                 if (room.memory.constructions[site.id] === undefined) { room.memory.constructions[site.id] = {} }
                 if (room.memory.constructions[site.id].jobLinked !== undefined) { continue }
-                var job = new Contract(CONTRACTS.BUILD)
+                var job = new Contract(CONTRACT.BUILD.id)
                 // console.log(room.memory.constructions[site.id].jobLined)
                 // job.deadline = Game.time + utility.general.getRandomInt(12, 20)
                 job.site = site.id
@@ -199,12 +208,21 @@ var searchJobsUtility = {
             if (jobsScheduledCount > level) { return }
 
             // console.log(level)
-            var job = new Contract(CONTRACTS.UPGRADE_RC)
+            var job = new Contract(CONTRACT.UPGRADE_RC.id)
             job.controller = controller.id
             jobContract.postJob(job)
         }
 
     },
+
+//   #####
+//  #     # #####    ##   #    # #    #
+//  #       #    #  #  #  #    # ##   #
+//   #####  #    # #    # #    # # #  #
+//        # #####  ###### # ## # #  # #
+//  #     # #      #    # ##  ## #   ##
+//   #####  #      #    # #    # #    #
+
 
     spawnsRelated: {
         run: function() {
@@ -231,7 +249,7 @@ var searchJobsUtility = {
                 // console.log('jobScheduler.findJobsMySpawn: needed ' + minersNeeded)
                 if (creeps.length < Math.min(5, minersNeeded)) {
                     // console.log('ahh')
-                    var job = new Contract(CONTRACTS.SPAWN)
+                    var job = new Contract(CONTRACT.SPAWN.id)
                     job.spawn = spawn.id
                     job.spec = CONSTANTS.CREEPS_SPECS.WORKER
                     // job.creepJob =
@@ -249,6 +267,14 @@ var searchJobsUtility = {
         },
 
     },
+
+//  ######
+//  #     #   ##   #    #   ##    ####  ######
+//  #     #  #  #  ##  ##  #  #  #    # #
+//  #     # #    # # ## # #    # #      #####
+//  #     # ###### #    # ###### #  ### #
+//  #     # #    # #    # #    # #    # #
+//  ######  #    # #    # #    #  ####  ######
 
     damageRelated: {
         run: function(room) {
@@ -272,7 +298,7 @@ var searchJobsUtility = {
                 if (room.memory.structures[target.id] === undefined) { room.memory.structures[target.id] = {} }
                 // if (room.memory.structure[target.id].jobRepairLinked === undefined) { room.memory.structure[target.id].jobRepairLinked = {} }
                 if (room.memory.structures[target.id].jobRepairLinked !== undefined) { continue }
-                var job = new Contract(CONTRACTS.REPAIR)
+                var job = new Contract(CONTRACT.REPAIR.id)
                 job.structure = target.id
                 jobContract.postJob(job)
             }
