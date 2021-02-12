@@ -104,14 +104,15 @@ var jobAllocator = {
     creepRelated: {
         run: function() {
             console.log('jobAllocator.creepRelated: called')
-            // jobUtility.mapJobsType(CONTRACTS.BUILD, jobAllocator.creepRelated.checkBuild)
+            jobUtility.mapJobsType(CONTRACT.BUILD.id, jobAllocator.creepRelated.checkBuild)
             // jobUtility.mapJobsType(CONTRACTS.TRANSFER, jobAllocator.creepRelated.checkTransfer)
-            // jobUtility.mapJobsType(CONTRACTS.HARVEST, jobAllocator.creepRelated.checkHarvest)
+            jobUtility.mapJobsType(CONTRACT.HARVEST.id, jobAllocator.creepRelated.checkHarvest)
             // jobUtility.mapJobsType(CONTRACTS.HARVEST_PURE, jobAllocator.creepRelated.checkHarvestPure)
         },
 
         checkHarvest: function(job) {
-            console.log('jobAllocator.checkHarvest: ' + job.id)
+            if (job.creepId) { return }
+            // console.log('jobAllocator.checkHarvest: ' + job.id)
             // let preferredSpec = CONSTANTS.CREEPS_SPECS.WORKER
             // let creeps
 
@@ -119,10 +120,15 @@ var jobAllocator = {
             // console.log(target, target.room)
             let room = target.room
             let creeps = room.find(FIND_MY_CREEPS, { filter: function(creep) {
-                return !creep.memory.job
+                return ((!creep.memory.jobLinked) &&
+                        // (creep.room.id == room.id) &&
+                        (creep.store.getFreeCapacity() > 0))
             } })
-            console.log(creeps)
+            // console.log('available creeps: ' + creeps.length)
 
+
+            // console.log(room.controller.level)
+            if (room.controller.level > CONSTANTS.STARTER_LEVEL) {
             // ####### ####### ######  #######  #     ####### ### #     # #######    ####### #     # ###  #####
             //    #    #     # #     # #     # ###    #        #   #   #     #          #    #     #  #  #     #
             //    #    #     # #     # #     #  #     #        #    # #      #          #    #     #  #  #
@@ -130,14 +136,17 @@ var jobAllocator = {
             //    #    #     # #     # #     #  #     #        #    # #      #          #    #     #  #        #
             //    #    #     # #     # #     # ###    #        #   #   #     #          #    #     #  #  #     #
             //    #    ####### ######  #######  #     #       ### #     #    #          #    #     # ###  #####
-
-            console.log(room.controller.level)
-            if (room.controller.level > CONSTANTS.STARTER_LEVEL) {
                 console.log('jobAllocator.checkHarvest: ‼️‼️THIS IS UNIMPLEMENTED')
             }
 
+            let creep = creeps[0]
+            if (!creep) { return }
 
+            console.log('jobAllocator.checkHarvest: on job ' + job.id + ' assigned to creep ' + creep.name)
 
+            // creep.memory.jobLinked = job.id
+            job.creepId = creep.id
+            jobContract.assignedJob(job)
         },
 
         checkHarvestPure: function(job) {
@@ -147,17 +156,36 @@ var jobAllocator = {
         },
 
         checkBuild: function(job) {
-            console.log('jobAllocator.checkHarvestBuild: ' + job.id)
+            // console.log('jobAllocator.checkHarvestBuild: ' + job.id)
+            let site = Game.getObjectById(job.site)
+            let room = site.room
+            let creeps = room.find(FIND_MY_CREEPS, { filter: function(creep) {
+                return ((!creep.memory.jobLinked) &&
+                        // (creep.room.id == room.id) &&
+                        (creep.store.getUsedCapacity(RESOURCE_ENERGY) >= 50))
+            } })
+            // console.log('available creeps: ' + creeps.length)
+            let creep = creeps[0]
+            if (!creep) { return }
+            console.log('jobAllocator.checkBuild: ' + job.id + ' assigned to ' + creep.name)
 
-
+            job.creepId = creep.id
+            jobContract.assignedJob(job)
         },
 
         checkTransfer: function(job) {
             console.log('jobAllocator.checkHarvestTransfer: ' + job.id)
 
-
         },
 
+        checkUpgrade: function(job) {
+            console.log('jobAllocator.checkUpgrade: ' + job.id)
+        },
+
+
+        checkRepair: function(job) {
+            console.log('jobAllocator.checkRepair: ' + job.id)
+        },
 
     }
 }

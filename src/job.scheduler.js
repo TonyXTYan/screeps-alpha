@@ -67,8 +67,7 @@ var searchJobsUtility = {
             // console.log(sources)
 
             function checkAndPostJob(source) {
-                // console.log(source)
-                // console.log(room.memory.sources[source.id].spaceCounter)
+                console.log('jobScheduler.checkAndPostJob: called on ' + source.id)
                 if (source.energy < 50) { console.log('➰jobScheduler: postJobForSourcesIn: skip depleted'); return }
                 if (room.memory.sources === undefined) { room.memory.sources = {} }
                 if (room.memory.sources[source.id] === undefined) { room.memory.sources[source.id] = {} }
@@ -99,7 +98,7 @@ var searchJobsUtility = {
                 }
                 // if (Memory.jobs.contracts[job.])
 
-                // console.log('existing counts ', harvestExistingCount, harvestExistingPureCount)
+                // console.log('debug checkAndPostJob existing counts ', harvestExistingCount, harvestExistingPureCount)
 
                 let containersNearby = room.memory.sources[source.id].containersNearby
                 // console.log('checking to post jobs for: ' + source + ' has ' + freeSpace + ', ' + containersNearby.length)
@@ -115,8 +114,8 @@ var searchJobsUtility = {
                 // console.log(jobEnergyShare)
 
 
-                function harvestJobTemplate() {
-                    var harvestJob = new Contract()
+                function harvestJobTemplate(jobTypeId) {
+                    var harvestJob = new Contract(jobTypeId)
                     // harvestJob.deadline = Game.time + 200 + utility.general.getRandomInt(-30,30)
                     harvestJob.target = source.id
                     harvestJob.amount = jobEnergyShare
@@ -124,11 +123,12 @@ var searchJobsUtility = {
                 }
 
                 // console.log('counts ', freeSpaceJobCount, containerJobCount)
+                // console.log(CONTRACT.HARVEST.id)
 
                 // just normal energy jobs
                 for(var freeSpaceJobIndex = 0; freeSpaceJobIndex < freeSpaceJobCount; freeSpaceJobIndex++) {
-                    var harvestJob = harvestJobTemplate()
-                    harvestJob.jobTypeId = CONTRACT.HARVEST.id
+                    var harvestJob = harvestJobTemplate(CONTRACT.HARVEST.id)
+                    // harvestJob.jobTypeId = CONTRACT.HARVEST.id
                     // console.log('id = ', harvestJob.jobTypeId)
                     jobContract.postJob(harvestJob)
                     // room.memory.sources[source.id].jobsLinked[0]++
@@ -137,8 +137,8 @@ var searchJobsUtility = {
                 // console.log('got after the loop !!!!!!!!!!!', containerJobCount)
                 // container coordination jobs
                 for(var containerJobIndex = 0; containerJobIndex < containerJobCount; containerJobIndex++) {
-                    var harvestJob = harvestJobTemplate()
-                    harvestJob.jobTypeId = CONTRACT.HARVEST_PURE.id
+                    var harvestJob = harvestJobTemplate(CONTRACT.HARVEST_PURE.id)
+                    // harvestJob.jobTypeId = CONTRACT.HARVEST_PURE.id
                     // console.log('container ', room.sources[source.id].containersNearby[containerJobIndex])
                     // console.log('id = ', harvestJob.jobTypeId)
                     harvestJob.container = containersNearby[containerJobIndex]
@@ -189,7 +189,7 @@ var searchJobsUtility = {
                 if (room.memory.constructions[site.id] === undefined) { room.memory.constructions[site.id] = {} }
                 if (room.memory.constructions[site.id].jobLinked !== undefined) { continue }
                 var job = new Contract(CONTRACT.BUILD.id)
-                // console.log(room.memory.constructions[site.id].jobLined)
+                // console.log(room.memory.constructions[site.id].jobLinked)
                 // job.deadline = Game.time + utility.general.getRandomInt(12, 20)
                 job.site = site.id
                 job.resource = RESOURCE_ENERGY

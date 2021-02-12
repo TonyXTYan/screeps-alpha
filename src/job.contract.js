@@ -23,7 +23,12 @@ var jobContract = {
              * test documentation
              * @type {number}
              */
-            this.id = undefined
+            // let id = job.jobTypeId + '_' + Game.time + '_' + Memory.jobs.createdThisTick
+            this.id = jobTypeId + '_' + Game.time + '_' + Memory.jobs.createdThisTick
+            Memory.jobs.createdThisTick++
+            if (this.id === undefined) { console.log('❗️❗️❗️❗️❗️jobContract.constructor: WTF JS? ' + id )}
+
+            // this.id = undefined
             this.jobTypeId = jobTypeId
 
             this.createdTime = Game.time
@@ -53,9 +58,23 @@ var jobContract = {
                     target.room.memory.sources[job.target].jobsLinked.push(job.id)
                     return OK
                 },
-                validate: function(job) { return RETURN.USE_UNIVERSAL_CALLBACK },
-                assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+                validate: function(job) {
+                    // console.log('jobContract.HARVEST.validate: ' + job.deadline)
+                    if (job.creepId) { job.deadline += 100 }
+                    // console.log('jobContract.HARVEST.validate: ' + job.deadline)
+                    return RETURN.USE_UNIVERSAL_CALLBACK
+                },
+                assigned: function(job) {
+                    if (job.creepId === undefined) { return RETURN.ERR_MEMORY_REQUIRED_UNDEF }
+                    let creep = Game.getObjectById(job.creepId)
+                    creep.memory.jobLinked = job.id
+                    return RETURN.OK
+                },
+                completed: function(job) {
+                    let creep = Game.getObjectById(job.creepId)
+                    creep.memory.jobLinked = undefined
+                    return RETURN.DELETE_THIS_JOB
+                },
                 removing: function(job) {
                     // console.log('here hehe')
                     let target = Game.getObjectById(job.target)
@@ -69,6 +88,9 @@ var jobContract = {
                     // let replacement =
 
                     // searchJobsUtility.energyRelated.postJobForSourcesIn()
+
+                    let creep = Game.getObjectById(job.creepId)
+                    if (creep !== null) { creep.memory.jobLinked = undefined }
                     return OK
                 },
             },
@@ -142,13 +164,28 @@ var jobContract = {
                     site.room.memory.constructions[job.site].jobLinked = job.id
                     return OK
                 },
-                validate: function(job) { return RETURN.USE_UNIVERSAL_CALLBACK },
-                assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+                validate: function(job) {
+                    if (job.creepId) { job.deadline += 100 }
+                    return RETURN.USE_UNIVERSAL_CALLBACK
+                },
+                assigned: function(job) {
+                    if (job.creepId === undefined) { return RETURN.ERR_MEMORY_REQUIRED_UNDEF }
+                    let creep = Game.getObjectById(job.creepId)
+                    creep.memory.jobLinked = job.id
+                    return RETURN.OK
+                },
+                completed: function(job) {
+                    let creep = Game.getObjectById(job.creepId)
+                    creep.memory.jobLinked = undefined
+                    return RETURN.DELETE_THIS_JOB
+                },
                 removing: function(job) {
                     let site = Game.getObjectById(job.site)
                     if (site === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
                     site.room.memory.constructions[site.id].jobLinked = undefined
+
+                    let creep = Game.getObjectById(job.creepId)
+                    if (creep !== null) { creep.memory.jobLinked = undefined }
                     return OK
                 },
             },
@@ -240,7 +277,7 @@ var jobContract = {
                     structure.room.memory.structures[job.structure].jobRepairLinked = job.id
                     return OK
                 },
-                validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+                validate: function(job) { return RETURN.USE_UNIVERSAL_CALLBACK },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 removing: function(job) {
@@ -524,14 +561,14 @@ var jobContract = {
      */
     postJob: function(job){
         // console.log('postJob: begin')
-        let id = job.jobTypeId + '_' + Game.time + '_' + Memory.jobs.createdThisTick
-        if (id === undefined) { console.log('❗️jobContract.postJob: WTF JS? ' + id )}
-        job.id = id
+        // let id = job.jobTypeId + '_' + Game.time + '_' + Memory.jobs.createdThisTick
+        // if (id === undefined) { console.log('❗️jobContract.postJob: WTF JS? ' + id )}
+        // job.id = id
+        // Memory.jobs.createdThisTick++
         if(Memory.jobs === undefined) { Memory.jobs = {} }
         if(Memory.jobs.contracts === undefined) { Memory.jobs.contracts = {} }
         if(Memory.jobs.contracts[job.jobTypeId] === undefined) { Memory.jobs.contracts[job.jobTypeId] = {} }
         Memory.jobs.contracts[job.jobTypeId][job.id] = job
-        Memory.jobs.createdThisTick++
         // console.log('jobContract.postJob: ' + id + ', has time ' + (job.deadline - Game.time))
         let code = jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.CREATED)
         if (code != OK) {
@@ -561,7 +598,7 @@ var jobContract = {
         } else if (code == RETURN.KEEP_THIS_JOB) {
             console.log('jobContract.completedJob: WHAT ARE YOU THINKING? ' + job.id)
         }
-        console.log('jobContract.completedJob: called job' + job.id + ' with code ' + code)
+        console.log('jobContract.completedJob: called job ' + job.id + ' with code ' + code)
     },
 
     memoryValidation: { // TODO: This
