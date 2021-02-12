@@ -29,7 +29,8 @@ var spawnController = {
             return
         }
         if (spawn.store[RESOURCE_ENERGY] < 300 ) { return }
-        console.log("spawnController.checkSpawnning: called on " + spawn.name + ' in room ' + spawn.room.name + ', Mem: ' + spawn.memory.currentJob)
+        // console.log("spawnController.checkSpawnning: called on " + spawn.name + ' in room ' + spawn.room.name + ', Mem: ' + spawn.memory.currentJob)
+
         // console.log("Spawn hits: " + spawn.hits + ' of ' + spawn.hitsMax)
         // console.log("Spawn energy: " + spawn.store.getUsedCapacity(RESOURCE_ENERGY) + ' of ' + spawn.store.getCapacity(RESOURCE_ENERGY))
 
@@ -42,7 +43,7 @@ var spawnController = {
         // utility.computeSourcePropertyInRoom(spawn.room)
         // if (spawn.memory.spawnedThisTick === undefined) { spawn.memory.spawnn}
         // spawn.memory.spawnnedThisTick = 0
-        if (spawn.memory.currentJob === undefined) {
+        if (spawn.memory.currentJob === undefined && spawn.store.getFreeCapacity() == 0) {
             console.log('spawnController.checkSpawnning: ' + spawn.name + ' does not have a .currentJob')
             // console.log('')
             return
@@ -69,7 +70,7 @@ var spawnController = {
         let argSpec = utility.balanceSpec(bodySpec, Math.min(spawn.room.energyAvailable, 2000))
 
         let code = spawn.spawnCreep(argSpec, name)
-        
+
         if (code == OK) {
             jobContract.completedJob(job)
         } else {
@@ -77,7 +78,7 @@ var spawnController = {
         }
         // jobScheduler.completedJob(job)
 
-
+        
     }
 
     // spawn

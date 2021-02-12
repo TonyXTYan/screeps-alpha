@@ -67,7 +67,7 @@ var searchJobsUtility = {
             // console.log(sources)
 
             function checkAndPostJob(source) {
-                console.log('jobScheduler.checkAndPostJob: called on ' + source.id)
+                // console.log('jobScheduler.checkAndPostJob: source ' + source.id)
                 if (source.energy < 50) { console.log('➰jobScheduler: postJobForSourcesIn: skip depleted'); return }
                 if (room.memory.sources === undefined) { room.memory.sources = {} }
                 if (room.memory.sources[source.id] === undefined) { room.memory.sources[source.id] = {} }

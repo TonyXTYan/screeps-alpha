@@ -104,6 +104,7 @@ var jobAllocator = {
     creepRelated: {
         run: function() {
             console.log('jobAllocator.creepRelated: called')
+            jobUtility.mapJobsType(CONTRACT.UPGRADE_RC.id, jobAllocator.creepRelated.checkUpgradeRc)
             jobUtility.mapJobsType(CONTRACT.BUILD.id, jobAllocator.creepRelated.checkBuild)
             // jobUtility.mapJobsType(CONTRACTS.TRANSFER, jobAllocator.creepRelated.checkTransfer)
             jobUtility.mapJobsType(CONTRACT.HARVEST.id, jobAllocator.creepRelated.checkHarvest)
@@ -119,11 +120,16 @@ var jobAllocator = {
             let target = Game.getObjectById(job.target)
             // console.log(target, target.room)
             let room = target.room
-            let creeps = room.find(FIND_MY_CREEPS, { filter: function(creep) {
+            let creep = target.pos.findClosestByPath(FIND_MY_CREEPS, { filter: function(creep) {
                 return ((!creep.memory.jobLinked) &&
                         // (creep.room.id == room.id) &&
                         (creep.store.getFreeCapacity() > 0))
             } })
+            // let creeps = room.find(FIND_MY_CREEPS, { filter: function(creep) {
+            //     return ((!creep.memory.jobLinked) &&
+            //             // (creep.room.id == room.id) &&
+            //             (creep.store.getFreeCapacity() > 0))
+            // } })
             // console.log('available creeps: ' + creeps.length)
 
 
@@ -139,7 +145,7 @@ var jobAllocator = {
                 console.log('jobAllocator.checkHarvest: ‼️‼️THIS IS UNIMPLEMENTED')
             }
 
-            let creep = creeps[0]
+            // let creep = creeps[0]
             if (!creep) { return }
 
             console.log('jobAllocator.checkHarvest: on job ' + job.id + ' assigned to creep ' + creep.name)
@@ -158,14 +164,20 @@ var jobAllocator = {
         checkBuild: function(job) {
             // console.log('jobAllocator.checkHarvestBuild: ' + job.id)
             let site = Game.getObjectById(job.site)
+            if (site == null) { jobContract.removeJob(job); return }
             let room = site.room
-            let creeps = room.find(FIND_MY_CREEPS, { filter: function(creep) {
+            let creep = site.pos.findClosestByPath(FIND_MY_CREEPS, { filter: function(creep) {
                 return ((!creep.memory.jobLinked) &&
                         // (creep.room.id == room.id) &&
                         (creep.store.getUsedCapacity(RESOURCE_ENERGY) >= 50))
             } })
-            // console.log('available creeps: ' + creeps.length)
-            let creep = creeps[0]
+            // let creeps = room.find(FIND_MY_CREEPS, { filter: function(creep) {
+            //     return ((!creep.memory.jobLinked) &&
+            //             // (creep.room.id == room.id) &&
+            //             (creep.store.getUsedCapacity(RESOURCE_ENERGY) >= 50))
+            // } })
+            // // console.log('available creeps: ' + creeps.length)
+            // let creep = creeps[0]
             if (!creep) { return }
             console.log('jobAllocator.checkBuild: ' + job.id + ' assigned to ' + creep.name)
 
@@ -178,13 +190,25 @@ var jobAllocator = {
 
         },
 
-        checkUpgrade: function(job) {
-            console.log('jobAllocator.checkUpgrade: ' + job.id)
+        checkUpgradeRc: function(job) {
+            // console.log('jobAllocator.checkUpgradeRc: ' + job.id)
+            let controller = Game.getObjectById(job.controller)
+            let room = controller.room
+            let creeps = room.find(FIND_MY_CREEPS, { filter: function(creep) {
+                return ((!creep.memory.jobLinked) &&
+                (creep.store.getUsedCapacity(RESOURCE_ENERGY) >= 50))
+            }})
+            // console.log('jobAllocator.checkUpgradeRc: ' + creeps.length)
+            let creep = creeps[0]
+            if (!creep) { return }
+            job.creepId = creep.id
+            jobContract.assignedJob(job)
         },
 
 
         checkRepair: function(job) {
             console.log('jobAllocator.checkRepair: ' + job.id)
+
         },
 
     }

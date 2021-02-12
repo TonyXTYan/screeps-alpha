@@ -19,6 +19,8 @@ var CONSTANTS = {
     STARTER_LEVEL: 5,
     STARTER_HITS_MAX: 1000000,
 
+
+
     CREEPS_SPECS: {
         // ratio of the body parts desired in a new spawn
         // [MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, CLAIM, TOUGH]

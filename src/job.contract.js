@@ -59,9 +59,11 @@ var jobContract = {
                     return OK
                 },
                 validate: function(job) {
-                    // console.log('jobContract.HARVEST.validate: ' + job.deadline)
-                    if (job.creepId) { job.deadline += 100 }
-                    // console.log('jobContract.HARVEST.validate: ' + job.deadline)
+                    if (job.creepId) {
+                        console.log('jobContract.HARVEST.validate: ' + job.deadline)
+                        job.deadline += 100
+                        console.log('jobContract.HARVEST.validate: ' + job.deadline)
+                    }
                     return RETURN.USE_UNIVERSAL_CALLBACK
                 },
                 assigned: function(job) {
@@ -198,15 +200,37 @@ var jobContract = {
                     controller.room.memory.controllerJobs.push(job.id)
                     return OK
                 },
-                validate: function(job) { return RETURN.USE_UNIVERSAL_CALLBACK },
-                assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
-                completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+                validate: function(job) {
+                    if (job.creepId) {
+                        console.log('jobContract.UPGRADE_RC.validate: ' + job.deadline)
+                        job.deadline += 100
+                        console.log('jobContract.UPGRADE_RC.validate: ' + job.deadline)
+                    }
+                    return RETURN.USE_UNIVERSAL_CALLBACK
+                },
+                assigned: function(job) {
+                    if (job.creepId === undefined) { return RETURN.ERR_MEMORY_REQUIRED_UNDEF }
+                    let creep = Game.getObjectById(job.creepId)
+                    creep.memory.jobLinked = job.id
+                    return RETURN.OK
+                },
+                completed: function(job) {
+                    let creep = Game.getObjectById(job.creepId)
+                    // console.log('here ', creep)
+                    if (creep == null) { return RETURN.DELETE_THIS_JOB } // TODO: FIXME: MEMORY AUDIT
+                    creep.memory.jobLinked = undefined
+                    return RETURN.DELETE_THIS_JOB // TODO: change this to renew
+                },
                 removing: function(job) {
                     let controller = Game.getObjectById(job.controller)
                     if (controller === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
                     let array = controller.room.memory.controllerJobs
                     let replacement = utility.general.arrayDeleteOne(array, job.id)
                     controller.room.memory.controllerJobs = replacement
+
+                    let creep = Game.getObjectById(job.creepId)
+                    if (creep !== null) { creep.memory.jobLinked = undefined }
+
                     return OK
                 },
             },

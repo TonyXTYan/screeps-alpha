@@ -13,6 +13,7 @@ var utility = {
     runForAllCreeps: function(func) {
         for (name in Game.creeps) {
             let creep = Game.creeps[name]
+            // if (creep === null) { console.log('ahhhhhhhhhhhh') }
             func(creep)
         }
     },
