@@ -9,19 +9,15 @@ var jobContract = require('job.contract');
 var spawnController = {
 
     run: function() {
-        // for(var name in Game.spawns) {
-        //     // let spawn = Game.spawns[name]
-        //     spawnController.checkSpawnning(Game.spawns[name])
-        // }
-        if (Game.time % CONSTANTS.FREQ_HIGH == 0) {
+        // console.log('spawnController.run: called')
+
+        // if (Game.time % CONSTANTS.FREQ_HIGH == 0) {
             utility.runForAllSpawns(spawnController.checkSpawnning)
-        }
+        // }
     },
 
     checkSpawnning: function(spawn) {
-        // var log = ""
-        // console.log(' ')
-        // if (spawn.spawning !== null ) { return }
+        // console.log('spawnController.checkSpawnning: on ' + spawn.name)
         if(spawn.spawning) {
             // var spawningCreep = Game.creeps[spawn.spawning.name];
             spawn.room.visual.text(
@@ -33,7 +29,7 @@ var spawnController = {
             return
         }
         if (spawn.store[RESOURCE_ENERGY] < 300 ) { return }
-        console.log("spawnController.checkSpawnning: called on " + spawn.name + ' in room ' + spawn.room.name)
+        console.log("spawnController.checkSpawnning: called on " + spawn.name + ' in room ' + spawn.room.name + ', Mem: ' + spawn.memory.currentJob)
         // console.log("Spawn hits: " + spawn.hits + ' of ' + spawn.hitsMax)
         // console.log("Spawn energy: " + spawn.store.getUsedCapacity(RESOURCE_ENERGY) + ' of ' + spawn.store.getCapacity(RESOURCE_ENERGY))
 
@@ -47,7 +43,7 @@ var spawnController = {
         // if (spawn.memory.spawnedThisTick === undefined) { spawn.memory.spawnn}
         // spawn.memory.spawnnedThisTick = 0
         if (spawn.memory.currentJob === undefined) {
-            console.log('spawnController.checkSpawnning: ' + spawn.name + ' idling')
+            console.log('spawnController.checkSpawnning: ' + spawn.name + ' does not have a .currentJob')
             // console.log('')
             return
         }
@@ -70,10 +66,16 @@ var spawnController = {
         let bodySpec = job.bodySpec
         let name = Game.time + '_' + Memory.spawns.spawnnedThisTick
         // console.log(name)
+        let argSpec = utility.balanceSpec(bodySpec, Math.min(spawn.room.energyAvailable, 2000))
 
-        spawn.spawnCreep(bodySpec, name)
+        let code = spawn.spawnCreep(argSpec, name)
+        
+        if (code == OK) {
+            jobContract.completedJob(job)
+        } else {
+            console.log('spawnController.checkSpawnning: ❗️ spec ' + bodySpec, ', name: ' + name +', returned: ' + code)
+        }
         // jobScheduler.completedJob(job)
-        jobContract.completedJob(job)
 
 
     }

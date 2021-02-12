@@ -7,9 +7,9 @@ var CONSTANTS = {
     // FREQ_MID: 20,
     // FREQ_HIGH: 6,
 
-    STD_JOB_TIME: 20,
+    STD_JOB_TIME: 30,
     STD_JOB_TIME_VAR: 10,
-    ALL_JOB_TIMEOUT: 130,
+    ALL_JOB_TIMEOUT: 200,
     FREQ_LOW: 10,
     FREQ_MID: 7,
     FREQ_HIGH: 4,
@@ -35,6 +35,7 @@ var CONSTANTS = {
         USE_DEFAULT_TRIVIAL_IMPLEMENTATION: 200,
         USE_DEFAULT_ALTERNATIVE: 201,
         USE_DEFAULT_COMPLICATED: 202,
+        USE_UNIVERSAL_CALLBACK: 1000,
 
         // ERRORS
         ERR_PARAMETER_MISSING: -100,
@@ -54,7 +55,7 @@ var CONSTANTS = {
  #       #    # #    # #####     #     # #    # #    # #    #   #   #####  #    #
  #       #    # #    # #         #     # #####  #    # ######   #   #      #    #
  #     # #    # #    # #         #     # #      #    # #    #   #   #      #    #
-  #####   ####  #####  ######     #####  #      #####  #    #   #   ###### #####  `, 
+  #####   ####  #####  ######     #####  #      #####  #    #   #   ###### #####  `,
 
 
     },

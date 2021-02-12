@@ -253,6 +253,7 @@ var searchJobsUtility = {
                     job.spawn = spawn.id
                     job.spec = CONSTANTS.CREEPS_SPECS.WORKER
                     // job.creepJob =
+                    // console.log('jobScheduler.findJobsMySpawn: got ' + job.id)
                     jobContract.postJob(job)
                 }
             }

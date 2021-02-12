@@ -45,8 +45,7 @@ var jobContract = {
     CONTRACT: {
         // GET RESOURCES
         // harvest energy from source or minerals from deposits.
-        HARVEST: {
-            id: 100,
+        HARVEST: { id: 100,
             callback: {
                 created: function(job) {
                     let target = Game.getObjectById(job.target)
@@ -54,7 +53,7 @@ var jobContract = {
                     target.room.memory.sources[job.target].jobsLinked.push(job.id)
                     return OK
                 },
-                validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+                validate: function(job) { return RETURN.USE_UNIVERSAL_CALLBACK },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 removing: function(job) {
@@ -74,9 +73,9 @@ var jobContract = {
                 },
             },
         },
+
         // // harvest and drop immediately to container
-        HARVEST_PURE: {
-            id: 101,
+        HARVEST_PURE: { id: 101,
             callback: {
                 created: function(job) {
                     let target = Game.getObjectById(job.target)
@@ -84,7 +83,7 @@ var jobContract = {
                     target.room.memory.sources[job.target].jobsLinked.push(job.id)
                     return OK
                 },
-                validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+                validate: function(job) { return RETURN.USE_UNIVERSAL_CALLBACK },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 removing: function(job) {
@@ -106,8 +105,7 @@ var jobContract = {
         },
 
 
-        WITHDRAW: {
-            id: 104,
+        WITHDRAW: { id: 104,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -116,8 +114,7 @@ var jobContract = {
                 removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             },
         },
-        PICKUP: {
-            id: 106,
+        PICKUP: { id: 106,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -126,8 +123,7 @@ var jobContract = {
                 removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             },
         },
-        DISMANTLE: {
-            id: 108,
+        DISMANTLE: { id: 108,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -138,8 +134,7 @@ var jobContract = {
         },
 
         // PUT RESOURCES
-        BUILD: {
-            id: 110,
+        BUILD: { id: 110,
             callback: {
                 created: function(job) {
                     let site = Game.getObjectById(job.site)
@@ -147,7 +142,7 @@ var jobContract = {
                     site.room.memory.constructions[job.site].jobLinked = job.id
                     return OK
                 },
-                validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+                validate: function(job) { return RETURN.USE_UNIVERSAL_CALLBACK },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 removing: function(job) {
@@ -158,8 +153,7 @@ var jobContract = {
                 },
             },
         },
-        UPGRADE_RC: {
-            id: 112,
+        UPGRADE_RC: { id: 112,
             callback: {
                 created: function(job) {
                     let controller = Game.getObjectById(job.controller)
@@ -167,7 +161,7 @@ var jobContract = {
                     controller.room.memory.controllerJobs.push(job.id)
                     return OK
                 },
-                validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+                validate: function(job) { return RETURN.USE_UNIVERSAL_CALLBACK },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 removing: function(job) {
@@ -180,8 +174,7 @@ var jobContract = {
                 },
             },
         },
-        TRANSFER: {
-            id: 114,
+        TRANSFER: { id: 114,
             callback: {
                 created: function(job) {
                     let structure = Game.getObjectById(job.structure)
@@ -189,7 +182,7 @@ var jobContract = {
                     structure.room.memory.structures[job.structure].jobTransferLinked = job.id
                     return OK
                 },
-                validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+                validate: function(job) { return RETURN.USE_UNIVERSAL_CALLBACK },
                 assigned: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 completed: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 removing: function(job) {
@@ -200,8 +193,7 @@ var jobContract = {
                 },
             }
         },
-        DROP: {
-            id: 116,
+        DROP: { id: 116,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -212,8 +204,7 @@ var jobContract = {
         },
 
         // CREEP OR TOWER ish
-        ATTACK: {
-            id: 120,
+        ATTACK: { id: 120,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -223,8 +214,7 @@ var jobContract = {
             }
         },
         // ATTACK_RANGED:  { }
-        ATTACK_MASS: {
-            id: 121,
+        ATTACK_MASS: { id: 121,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -233,8 +223,7 @@ var jobContract = {
                 removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF }
             }
         },
-        HEAL: {
-            id: 124,
+        HEAL: { id: 124,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -243,8 +232,7 @@ var jobContract = {
                 removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             }
         },
-        REPAIR: {
-            id: 126,
+        REPAIR: { id: 126,
             callback: {
                 created: function(job) {
                     let structure = Game.getObjectById(job.structure)
@@ -265,8 +253,7 @@ var jobContract = {
         },
 
         // TRANSPORT
-        MOVE: {
-            id: 130,
+        MOVE: { id: 130,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -279,8 +266,7 @@ var jobContract = {
         // PULLED: {id: , parts: []},
 
         // OTHER
-        CLAIM:  {
-            id: 180,
+        CLAIM:  { id: 180,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -289,8 +275,7 @@ var jobContract = {
                 removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             }
         },
-        RESERVE_RC: {
-            id: 185,
+        RESERVE_RC: { id: 185,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -301,8 +286,7 @@ var jobContract = {
         },
 
         // SPAWN ACTION
-        SPAWN: {
-            id: 200,
+        SPAWN: { id: 200,
             callback: {
                 created: function(job) {
                     let spawn = Game.getObjectById(job.spawn)
@@ -310,7 +294,7 @@ var jobContract = {
                     spawn.memory.jobsLinked.push(job.id)
                     return OK
                 },
-                validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
+                validate: function(job) { return RETURN.USE_UNIVERSAL_CALLBACK },
                 assigned: function(job) {
                     // let jobTypeId
                     // let job = Memory.jobs.contracts[job.jobTypeId]
@@ -319,7 +303,8 @@ var jobContract = {
                     let spawn = Game.getObjectById(job.spawn)
                     spawn.memory.currentJob = job.id
 
-                    return RETURN.ERR_I_AM_WORKING_ON_IT
+                    // return RETURN.ERR_I_AM_WORKING_ON_IT
+                    return OK
                 },
                 completed: function(job) {
                     // if (job.bodySpec === undefined) { return RETURN.ERR_MEMORY_REQUIRED_UNDEF }
@@ -338,8 +323,8 @@ var jobContract = {
                 },
             },
         },
-        RECYCLE: {
-            id: 210,
+
+        RECYCLE: { id: 210,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -348,8 +333,7 @@ var jobContract = {
                 removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             },
         },
-        RENEW: {
-            id: 220,
+        RENEW: { id: 220,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -360,8 +344,7 @@ var jobContract = {
         },
 
         // ROOM CONTROLLER
-        SAFE_MODE: {
-            id: 300,
+        SAFE_MODE: { id: 300,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -370,8 +353,7 @@ var jobContract = {
                 removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             },
         },
-        UNCLAIM: {
-            id: 301,
+        UNCLAIM: { id: 301,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -382,8 +364,7 @@ var jobContract = {
         },
 
         // OTHER STUFF
-        LINK_TRANSFER: {
-            id: 400,
+        LINK_TRANSFER: { id: 400,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -393,8 +374,7 @@ var jobContract = {
             },
         },
 
-        CPU_PIXEL: {
-            id: 500,
+        CPU_PIXEL: { id: 500,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -403,8 +383,7 @@ var jobContract = {
                 removing: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
             },
         },
-        CPU_UNLOCK: {
-            id: 510,
+        CPU_UNLOCK: { id: 510,
             callback: {
                 created: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
                 validate: function(job) { return RETURN.ERR_BEHAVIOUR_UNDEF },
@@ -461,7 +440,10 @@ var jobContract = {
                     return RETURN.ERR_PARAMETER_INVALID
                 }
                 let code = func(job)
-                if (code == RETURN.ERR_BEHAVIOUR_UNDEF) {
+                if (code == RETURN.USE_UNIVERSAL_CALLBACK) {
+                    return jobContract.universalCallback[callback](job)
+                } else if (code == RETURN.ERR_BEHAVIOUR_UNDEF) {
+                    console.log('jobContract.runCallbackForJob: ' + callback + ' on ' + job.id + ' undefined behaviour falling back using default')
                     return jobContract.universalCallback[callback](job)
                 } else { return code }
             }
@@ -481,9 +463,8 @@ var jobContract = {
                 if (job.deadline + CONSTANTS.ALL_JOB_TIMEOUT < Game.time) {
                     console.log('❗️jobContract.validateRoutine: timeout forced removed ' + job.id )
                     jobContract.removeJob(job)
-                    job
                 } else {
-                    jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.VALIDATE)
+                    jobContract.validateJob(job)
                 }
             }
         }
@@ -493,7 +474,16 @@ var jobContract = {
 
 
     validateJob: function(job) {
-
+        let code = jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.VALIDATE)
+        // switch (code) {
+        //     case OK: return
+        //     default: {
+        //         console.log('❗️jobContract.validateJob: ')
+        //     }
+        // }
+        if (code != OK) {
+            console.log('❗️jobContract.validateJob: id = ' + job.id + ', code = ' + code)
+        }
     },
 
     /**
@@ -516,7 +506,7 @@ var jobContract = {
             console.log('❗️jobContract.removeJob: VERY FORCED id = ' + job.id + ' btw code ' + code)
             // removeFromMemory()
         } else if (code == RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL) {
-            console.log('❕jobContract.removeJob: got invalid memory addres')
+            console.log('❗️jobContract.removeJob: got invalid memory addres')
             // removeFromMemory()
             jobContract.memoryValidation.fullAudit() // break this down a bit
         } else {
@@ -555,7 +545,9 @@ var jobContract = {
      */
     assignedJob: function(job) {
         let code = jobContract.runCallbackForJob(job, jobContract.CALLBACK_TYPE.ASSIGNED)
-        console.log('jobContract.assignedJob: job ' + job.id + ' called back with code ' + code)
+        if (code != OK) {
+            console.log('jobContract.assignedJob: job ' + job.id + ' called back with code ' + code)
+        }
     },
 
 
