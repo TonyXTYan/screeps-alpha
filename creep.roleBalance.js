@@ -18,11 +18,11 @@ var creepRoleBalance = {
         var totalEnergyAvailable = result.available
         var totalEnergyCapacity = result.capacity
 
-        if (totalEnergyAvailable == totalEnergyCapacity) {
+        if (totalEnergyAvailable > totalEnergyCapacity * 0.9) {
             if (spawn.memory.full < 0) { spawn.memory.full = Game.time }
 
             // wait this many ticks before spawn
-            const waitTicks = Object.keys(Game.creeps).length * 10 + 50
+            const waitTicks = Math.max(Object.keys(Game.creeps).length * 10 + 50, 200)
 
             if (spawn.memory.full + waitTicks < Game.time) { // ready to spawn new creep
                 var body = creepRoleBalance.balanceSpec([1,1,1,0, 0,0,0,0], totalEnergyCapacity)
