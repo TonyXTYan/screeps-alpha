@@ -59,11 +59,11 @@ var jobContract = {
                     return OK
                 },
                 validate: function(job) {
-                    if (job.creepId) {
-                        console.log('jobContract.HARVEST.validate: ' + job.deadline)
-                        job.deadline += 100
-                        console.log('jobContract.HARVEST.validate: ' + job.deadline)
-                    }
+                    // if (job.creepId) {
+                    //     console.log('jobContract.HARVEST.validate: ' + job.deadline)
+                    //     job.deadline += 100
+                    //     console.log('jobContract.HARVEST.validate: ' + job.deadline)
+                    // }
                     return RETURN.USE_UNIVERSAL_CALLBACK
                 },
                 assigned: function(job) {
@@ -167,7 +167,7 @@ var jobContract = {
                     return OK
                 },
                 validate: function(job) {
-                    if (job.creepId) { job.deadline += 100 }
+                    // if (job.creepId) { job.deadline += 100 }
                     return RETURN.USE_UNIVERSAL_CALLBACK
                 },
                 assigned: function(job) {
@@ -191,6 +191,9 @@ var jobContract = {
                     return OK
                 },
             },
+            memoryAudit: function() {
+                // for (Memory.)
+            }
         },
         UPGRADE_RC: { id: 112,
             callback: {
@@ -201,11 +204,11 @@ var jobContract = {
                     return OK
                 },
                 validate: function(job) {
-                    if (job.creepId) {
-                        console.log('jobContract.UPGRADE_RC.validate: ' + job.deadline)
-                        job.deadline += 100
-                        console.log('jobContract.UPGRADE_RC.validate: ' + job.deadline)
-                    }
+                    // if (job.creepId) {
+                    //     console.log('jobContract.UPGRADE_RC.validate: ' + job.deadline)
+                    //     job.deadline += 100
+                    //     console.log('jobContract.UPGRADE_RC.validate: ' + job.deadline)
+                    // }
                     return RETURN.USE_UNIVERSAL_CALLBACK
                 },
                 assigned: function(job) {
@@ -377,9 +380,7 @@ var jobContract = {
                 removing: function(job) {
                     let spawn = Game.getObjectById(job.spawn)
                     if (spawn === null) { return RETURN.ERR_MEMORY_ADDRESS_RETURNS_NULL }
-                    let array = spawn.memory.jobsLinked
-                    let replacement = utility.general.arrayDeleteOne(array, job.id)
-                    spawn.memory.jobsLinked = replacement
+
                     return OK
                 },
             },
@@ -531,6 +532,7 @@ var jobContract = {
         }
 
         jobUtility.mapAllJobs(validate)
+        jobContract.memoryValidation.routine()
     },
 
 
@@ -630,13 +632,16 @@ var jobContract = {
             console.log('⁉️⁉️jobContract.fullAudit: TODO THIS 📛📛💯⁉️')
         },
 
-        auditJobTypeMemory: function(jobTypeId) {
+        routine: function() {
+            console.log('jobContract.memoryValidation.routine: called')
 
         },
 
         checkSourceHarvestJobs: function() {
 
         },
+
+
     }
 }
 

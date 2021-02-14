@@ -34,6 +34,18 @@ var jobAllocator = {
                 if (!jobId) { continue }
                 let job = jobUtility.getJobFromId(jobId)
 
+                // console.log(spawn.memory.jobsLinked)
+                if (job === undefined) {
+                    console.log('jobAllocator.signupJobForSpawns: job undefined')
+                    // if (spawn.memory.currentJob) {
+                    let array = spawn.memory.jobsLinked
+                    let replacement = utility.general.arrayDeleteOne(array, jobId)
+                    spawn.memory.jobsLinked = replacement
+                    // }
+                    spawn.memory.currentJob = undefined
+                    return
+                }
+
                 let energyAvailable = spawn.room.energyAvailable
                 if (energyAvailable < 300) { return } // don't bother
 
@@ -44,60 +56,6 @@ var jobAllocator = {
                 jobContract.assignedJob(job)
             }
         },
-
-        // spawnCreep: function() {
-        //     // let spawnContracts = Memory.jobs.contracts[CONTRACTS.SPAWN]
-        //     // for (let k in spawnContracts) {
-        //     function allocate(job) {
-        //         // console.log('jobAllocator.spawnCreep.allocate: called on job ' + job.id)
-        //         // let job = spawnContracts[k]
-        //         if (job === undefined) { return }
-        //         // console.log(job)
-        //         // console.log(job.id)
-        //         let jobSpawn = Game.getObjectById(job.spawn)
-        //         // console.log(jobSpawn.name, jobSpawn.spawning)
-        //         if (jobSpawn.spawning) { return }
-        //         if (jobSpawn.memory.currentJob !== undefined ) {
-        //             let jobId = jobSpawn.memory.currentJob
-        //             let job = Memory.jobs.contracts[CONTRACT.SPAWN.id][jobId]
-        //             // console.log(job)
-        //             if (job === undefined) {
-        //                 jobSpawn.memory.currentJob = undefined
-        //             } else { return }
-        //         }
-        //
-        //         // jobSpawn.spawnCreep()
-        //
-        //         let energy = jobSpawn.room.energyAvailable
-        //         if (energy < 300) { return } // don't bother
-        //
-        //
-        //         // if (jobSpawn.spawning === null) {
-        //         if (jobSpawn.room.controller.level > CONSTANTS.STARTER_LEVEL) {
-        //             console.log('❗️❗️jobAllocator.checkSpawn: TODO: TIME TO FIX THIS ')
-        //         }
-        //
-        //         // console.log('jobAllocator.spawnsRelated: can spawn')
-        //         // let spec = jobUtility.bestBodyParts(CONTRACT.HARVEST.id, energy)
-        //         let spec = [1,1,1,0, 0,0,0,0]
-        //
-        //         // ####### ### #     # #     # #######
-        //         // #        #   #   #  ##   ## #
-        //         // #        #    # #   # # # # #
-        //         // #####    #     #    #  #  # #####
-        //         // #        #    # #   #     # #
-        //         // #        #   #   #  #     # #
-        //         // #       ### #     # #     # #######
-        //
-        //         console.log('jobAllocator.spawnsRelated: bodySpec ' + spec)
-        //         job.bodySpec = spec
-        //         jobContract.assignedJob(job)
-        //         // } // else { continue }
-        //     }
-        //
-        //     jobUtility.mapJobsType(CONTRACT.SPAWN.id, allocate)
-        // }
-
 
     },
 
@@ -163,6 +121,7 @@ var jobAllocator = {
 
         checkBuild: function(job) {
             // console.log('jobAllocator.checkHarvestBuild: ' + job.id)
+            if (job.creepId) { return }
             let site = Game.getObjectById(job.site)
             if (site == null) { jobContract.removeJob(job); return }
             let room = site.room
@@ -192,6 +151,7 @@ var jobAllocator = {
 
         checkUpgradeRc: function(job) {
             // console.log('jobAllocator.checkUpgradeRc: ' + job.id)
+            if (job.creepId) { return }
             let controller = Game.getObjectById(job.controller)
             let room = controller.room
             let creeps = room.find(FIND_MY_CREEPS, { filter: function(creep) {

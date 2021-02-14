@@ -64,7 +64,9 @@ var jobUtility = {
         // console.log(typeId)
         // let job = Memory.jobs.contracts[typeId][id]
         // console.log(job)
-        return Memory.jobs.contracts[typeId][id]
+        let job = Memory.jobs.contracts[typeId][id]
+        if (job === undefined) { console.log('jobUtility.getJobFromId: ❗️ id=' + id, ' is undefined in memory') }
+        return job
     },
 
     // FIXME:

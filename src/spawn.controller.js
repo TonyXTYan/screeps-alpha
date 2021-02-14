@@ -29,6 +29,7 @@ var spawnController = {
             return
         }
         if (spawn.store[RESOURCE_ENERGY] < 300 ) { return }
+
         // console.log("spawnController.checkSpawnning: called on " + spawn.name + ' in room ' + spawn.room.name + ', Mem: ' + spawn.memory.currentJob)
 
         // console.log("Spawn hits: " + spawn.hits + ' of ' + spawn.hitsMax)
@@ -49,18 +50,32 @@ var spawnController = {
             return
         }
 
+        if (spawn.memory.currentJob === undefined) { return }
+
+        // console.log(spawn.store.getFreeCapacity(RESOURCE_ENERGY), ' free ')
+
         // let jobId = spawn.memory.currentJob
         // console.log(utility.getJobFromId(jobId))
         // Sanity Checks
         let job = jobUtility.getJobFromId(spawn.memory.currentJob)
+        function removeFromMemory() {
+            console.log('spawnController.checkSpawnning: remove job ' + spawn.memory.currentJob)
+            // if (spawn.memory.currentJob) {
+            let array = spawn.memory.jobsLinked
+            let replacement = utility.general.arrayDeleteOne(array, spawn.memory.currentJob)
+            spawn.memory.jobsLinked = replacement
+            // }
+            spawn.memory.currentJob = undefined
+        }
         if (job === undefined) {
             console.log('❗️❗️spawnController.checkSpawnning: encountered undefined job');
-            spawn.memory.currentJob = undefined
+            removeFromMemory()
             return
         }
         if (job.bodySpec === undefined) {
             console.log('❗️❗️spawnController.checkSpawnning: encountered undefined job.bodySpec')
-            spawn.memory.currentJob = undefined
+            // spawn.memory.currentJob = undefined
+            removeFromMemory()
             return
         }
         // console.log(job.id)
@@ -78,7 +93,7 @@ var spawnController = {
         }
         // jobScheduler.completedJob(job)
 
-        
+
     }
 
     // spawn

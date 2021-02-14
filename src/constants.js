@@ -1,18 +1,19 @@
 var CONSTANTS = {
-    // STD_JOB_TIME: 200,
-    // STD_JOB_TIME_VAR: 30,
-    // ALL_JOB_TIMEOUT: 3000,
-    //
-    // FREQ_LOW: 50,
-    // FREQ_MID: 20,
-    // FREQ_HIGH: 6,
+    STD_JOB_TIME: 200,
+    STD_JOB_TIME_VAR: 30,
+    ALL_JOB_TIMEOUT: 3000,
 
-    STD_JOB_TIME: 30,
-    STD_JOB_TIME_VAR: 10,
-    ALL_JOB_TIMEOUT: 200,
-    FREQ_LOW: 10,
-    FREQ_MID: 7,
-    FREQ_HIGH: 4,
+    FREQ_LOW: 50,
+    FREQ_MID: 20,
+    FREQ_HIGH: 6,
+
+    // STD_JOB_TIME: 30,
+    // STD_JOB_TIME_VAR: 10,
+    // ALL_JOB_TIMEOUT: 140,
+    //
+    // FREQ_LOW: 10,
+    // FREQ_MID: 7,
+    // FREQ_HIGH: 4,
 
 
 
