@@ -32,14 +32,14 @@
 
 
 
-# Simple Strightforward Algorithm
-## RCL 1 
+# Simple Straight forward ? Algorithm
+## RCL 1
 Just Harvest and throw in room controller
 
 ## RCL 2
-Start building structures, also harvesting 
+Start building structures, also harvesting
 
-## RCL 3 
+## RCL 3
 Have 10 extensions, which means 300 + 10 * 50 = 800 energy, can start building the optimal harvester (for own room)
 parts = [MOVE, MOVE, WORK * 6]
 cost  = [50, 50, 100 * 6].sum = 700
@@ -56,11 +56,9 @@ Use links to transport
 Link +1, Extractor, Labs +3,  Terminal
 
 ## RCL 7
-Extensions.capacity = 100 
+Extensions.capacity = 100
 Link +1, Labs +3
 
-## RCL 8 
+## RCL 8
 Extension.capacity = 200
 Link +2, Labs +4, Observer, Power Spawn
-
-

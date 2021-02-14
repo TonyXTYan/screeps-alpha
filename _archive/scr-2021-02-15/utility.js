@@ -13,6 +13,7 @@ var utility = {
     runForAllCreeps: function(func) {
         for (name in Game.creeps) {
             let creep = Game.creeps[name]
+            // if (creep === null) { console.log('ahhhhhhhhhhhh') }
             func(creep)
         }
     },
@@ -35,8 +36,9 @@ var utility = {
         if (room.memory.sourcesChecked + CONSTANTS.FREQ_LOW < Game.time) { //FIXME: schedule
             utility.computeSourcePropertyInRoom(room)
         }
-
+        // if (Mem)
     },
+
 
     computeSourcePropertyInRoom: function(room) {
         console.log('computeSourcePropertyInRoom: 🧮 called on room ' + room.name)
@@ -57,9 +59,14 @@ var utility = {
                     if (item.terrain != 'wall') { spaceCounter++ }
                     // console.log(room.lookForAt(LOOK_STRUCTURES, item.x, item.y)[0].structure.structureType == STRUCTURE_CONTAINER)
                     let found = room.lookForAt(LOOK_STRUCTURES, item.x, item.y)
-
+                    // console.log(found)
+                    // if (found !== undefined && found.structureType == STRUCTURE_CONTAINER) {
+                    //     // console.log(found.structureType)
+                    //     containersNearby.push(found.id)
+                    // }
                     for (let index_found in found) {
                         let structure = found[index_found]
+                        // console.log(structure)
                         if (structure.structureType == STRUCTURE_CONTAINER) {
                             containersNearby.push(structure.id)
                         }
@@ -75,9 +82,11 @@ var utility = {
         for (name in sources) {
             let source = sources[name]
             let result = calculate(source)
+            // console.log(result)s
             let spaceCounter = result[0]
             let containersNearby = result[1]
             // console.log(source + ' at ' + source.pos + ' has space ' + freeSpace)
+            // room.memory.sources[source.id] = { spaceCounter: spaceCounter, containersNearby: containersNearby }
             if (room.memory.sources[source.id] === undefined) { room.memory.sources[source.id] = {} }
             room.memory.sources[source.id].spaceCounter = spaceCounter
             room.memory.sources[source.id].containersNearby = containersNearby
@@ -94,11 +103,13 @@ var utility = {
     },
 
     resetMemory: function() {
+        // require('utility').resetMemory()
+        // Memory = {}
         for (let key in Memory) {
             Memory[key] = undefined
+            // console.log(key)
         }
         utility.basicMemoryCheck()
-        utility.initialSetupEnvironmentCheck()
         console.log('💣utility.resetMemory: job done 💥')
     },
 
@@ -109,17 +120,17 @@ var utility = {
         if (Memory.rooms  === undefined) { Memory.rooms = {} }
         if (Memory.flags  === undefined) { Memory.flags = {} }
 
-        if (Memory.MY_USERNAME === undefined) { Memory.MY_USERNAME = Game.spawns[Object.keys(Game.spawns)[0]].owner.username }
-        // if (Memory.jobs === undefined) { Memory.jobs = {} }
-        // if (Memory.jobs.contracts === undefined) { Memory.jobs.contracts = {} }
+        if (Memory.myUsername === undefined) { Memory.myUsername = Game.spawns[Object.keys(Game.spawns)[0]].owner.username }
+        if (Memory.jobs === undefined) { Memory.jobs = {} }
+        if (Memory.jobs.contracts === undefined) { Memory.jobs.contracts = {} }
         // if (Memory.jobs.kind === undefined) { Memory.jobs.kind = {} }
-        // Memory.jobs.createdThisTick = 0
+        Memory.jobs.createdThisTick = 0
         Memory.spawns.spawnnedThisTick = 0
 
         if (Memory.IN_SIMULATION_ROOM === undefined) {
             var isInSimulationRoom = false
             for (let hash in Game.rooms) {
-                // console.log('room hash', hash)
+                console.log('room hash', hash)
                 // let room = Game.rooms[hash]
                 if (hash == 'sim') { isInSimulationRoom = true; break }
             }
@@ -128,6 +139,34 @@ var utility = {
     },
 
 
+    countExclusionZones: function() {
+        var accum = 0
+        for (name in Game.flags) {
+            // console.log(name)
+            if (name == 'exclusion_zone') {
+                accum++
+            }
+        }
+        return accum
+    },
+
+
+    /**
+     * countEnergy - Count how much energy can this spawn spawn
+     * @param  {type} spawn description
+     * @return {type}       description
+     */
+    // countEnergy: function(spawn) {
+    //     var extensionStructures = spawn.room.find(FIND_MY_STRUCTURES, { filter: utility.structureFilter.isExtension })
+    //     var totalEnergyAvailable = spawn.store.getUsedCapacity(RESOURCE_ENERGY)
+    //     var totalEnergyCapacity = 300
+    //     for (var i in extensionStructures) {
+    //         // console.log(extension)
+    //         totalEnergyAvailable += extensionStructures[i].store.getUsedCapacity(RESOURCE_ENERGY)
+    //         totalEnergyCapacity += extensionStructures[i].store.getCapacity(RESOURCE_ENERGY)
+    //     }
+    //     return {available: totalEnergyAvailable, capacity: totalEnergyCapacity}
+    // },
 
     /**
      * balanceSpec - Try to balance the specification given with given energy levels
@@ -160,6 +199,13 @@ var utility = {
         return parts
     },
 
+    // getJobFromId: function(id) {
+    //     let typeId = id.split('_')[0]
+    //     // console.log(typeId)
+    //     // let job = Memory.jobs.contracts[typeId][id]
+    //     // console.log(job)
+    //     return Memory.jobs.contracts[typeId][id]
+    // },
 
     general: {
         arrayDeleteOne: function(array, value) {
@@ -175,6 +221,30 @@ var utility = {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
     },
+
+    structureFilter: {
+        hasFreeEnergyCapacity: function(structure) {
+            if (structure.store === undefined) { return false }
+            else { return (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0) }
+        },
+
+        isExtension: function(structure) { return structure.structureType == STRUCTURE_EXTENSION; },
+
+        // ownerIsMe: function(structure) { return structure.owner == Memory.myUsername },
+
+        needRepair: function(structure) {
+            return structure.hits < structure.hitsMax
+        },
+
+        needRepairContainers: function(structure) {
+            return (structure.hits < structure.hitsMax) && (structure.structureType == STRUCTURE_CONTAINER)
+        },
+
+
+    },
+
+
+
 }
 
 module.exports = utility;

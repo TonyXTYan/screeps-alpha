@@ -1,35 +1,25 @@
 var CONSTANTS = {
+    STD_JOB_TIME: 200,
+    STD_JOB_TIME_VAR: 30,
+    ALL_JOB_TIMEOUT: 3000,
 
-    // FREQ_VERY_LOW: 1000
-    // FREQ_LOW: 200,
-    // FREQ_MID: 100,
-    // FREQ_HIGH: 50,
-    // FREQ_VERY_HIGH: 10,
+    FREQ_LOW: 50,
+    FREQ_MID: 20,
+    FREQ_HIGH: 6,
+
+    // STD_JOB_TIME: 30,
+    // STD_JOB_TIME_VAR: 10,
+    // ALL_JOB_TIMEOUT: 140,
+    //
+    // FREQ_LOW: 10,
+    // FREQ_MID: 7,
+    // FREQ_HIGH: 4,
 
 
-    FREQ_VERY_LOW: 100,
-    FREQ_LOW: 20,
-    FREQ_MID: 10,
-    FREQ_HIGH: 5,
-    FREQ_VERY_HIGH: 1,
 
+    STARTER_LEVEL: 5,
+    STARTER_HITS_MAX: 1000000,
 
-    // STARTER_LEVEL: 5,
-    // STARTER_HITS_MAX: 1000000,
-
-    HITS_MAX_LIMIT: function(rcl) {
-        switch (rcl) {
-            case 1: return 1e3
-            case 2: return 10e3
-            case 3: return 50e3
-            case 4: return 100e3
-            case 5: return 500e3
-            case 6: return 1e6
-            case 7: return 10e6
-            case 8: return 100e6
-            default: return 100e6
-        }
-    },
 
 
     // CREEPS_SPECS: {
@@ -43,12 +33,12 @@ var CONSTANTS = {
     RETURN: {
         OK: 0, // duplicate definition
         // INSTRUCTIONS
-        // DELETE_THIS_JOB: 100,
-        // KEEP_THIS_JOB: 110,
-        // USE_DEFAULT_TRIVIAL_IMPLEMENTATION: 200,
-        // USE_DEFAULT_ALTERNATIVE: 201,
-        // USE_DEFAULT_COMPLICATED: 202,
-        // USE_UNIVERSAL_CALLBACK: 1000,
+        DELETE_THIS_JOB: 100,
+        KEEP_THIS_JOB: 110,
+        USE_DEFAULT_TRIVIAL_IMPLEMENTATION: 200,
+        USE_DEFAULT_ALTERNATIVE: 201,
+        USE_DEFAULT_COMPLICATED: 202,
+        USE_UNIVERSAL_CALLBACK: 1000,
 
         // ERRORS
         ERR_PARAMETER_MISSING: -100,
