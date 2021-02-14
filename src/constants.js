@@ -22,13 +22,13 @@ var CONSTANTS = {
 
 
 
-    CREEPS_SPECS: {
-        // ratio of the body parts desired in a new spawn
-        // [MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, CLAIM, TOUGH]
-        // [50,   100,  50,    80,     150,           250,  600,   10   ]
-        WORKER: [1,1,1,0, 0,0,0,0],
-        DOCTOR: [2,1,1,0, 0,1,0,0] // so min energy 500
-    },
+    // CREEPS_SPECS: {
+    //     // ratio of the body parts desired in a new spawn
+    //     // [MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, CLAIM, TOUGH]
+    //     // [50,   100,  50,    80,     150,           250,  600,   10   ]
+    //     WORKER: [1,1,1,0, 0,0,0,0],
+    //     DOCTOR: [2,1,1,0, 0,1,0,0] // so min energy 500
+    // },
 
     RETURN: {
         OK: 0, // duplicate definition

@@ -46,6 +46,22 @@ var jobContract = {
 //  #     # #      #      # #  # # #   #   # #    # #  # #
 //  #     # #      #      # #   ## #   #   # #    # #   ##
 //  ######  ###### #      # #    # #   #   #  ####  #    #
+    CREEP_SPEC: {
+        GENERAL_WORKER: { id: 100,
+            body: function(energy) {
+                return [WORK, MOVE, CARRY]
+            }
+        }
+    },
+
+    CREEP_SPEC_CONST: {
+        // ratio of the body parts desired in a new spawn
+        // [MOVE, WORK, CARRY, ATTACK, RANGED_ATTACK, HEAL, CLAIM, TOUGH]
+        // [50,   100,  50,    80,     150,           250,  600,   10   ]
+        WORKER: [1,1,1,0, 0,0,0,0],
+        DOCTOR: [2,1,1,0, 0,1,0,0] // so min energy 500
+    },
+
 
     CONTRACT: {
         // GET RESOURCES
@@ -354,15 +370,19 @@ var jobContract = {
             callback: {
                 created: function(job) {
                     let spawn = Game.getObjectById(job.spawn)
-                    // if (spawn === undefined) { return -2 }
+                    if (!job.creepSpecId) {
+                        console.log('jobContract.SPAWN.created: ' + job.id + ' missing creepSpec')
+                        return
+                    }
                     spawn.memory.jobsLinked.push(job.id)
+                    // if (spawn === undefined) { return -2 }
                     return OK
                 },
                 validate: function(job) { return RETURN.USE_UNIVERSAL_CALLBACK },
                 assigned: function(job) {
                     // let jobTypeId
                     // let job = Memory.jobs.contracts[job.jobTypeId]
-                    if (job.bodySpec === undefined) { return RETURN.ERR_MEMORY_REQUIRED_UNDEF }
+                    // if (job.bodySpec === undefined) { return RETURN.ERR_MEMORY_REQUIRED_UNDEF }
                     // let bodySpec = job.bodySpec
                     let spawn = Game.getObjectById(job.spawn)
                     spawn.memory.currentJob = job.id

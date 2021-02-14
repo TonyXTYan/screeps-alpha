@@ -79,12 +79,13 @@ var spawnController = {
             return
         }
         // console.log(job.id)
-        let bodySpec = job.bodySpec
+        let bodySpec = jobContract.CREEP_SPEC.GENERAL_WORKER.body(spawn.room.energyAvailable)
         let name = Game.time + '_' + Memory.spawns.spawnnedThisTick
         // console.log(name)
-        let argSpec = utility.balanceSpec(bodySpec, Math.min(spawn.room.energyAvailable, 2000))
+        // let argSpec = utility.balanceSpec(bodySpec, Math.min(spawn.room.energyAvailable, 2000))
 
-        let code = spawn.spawnCreep(argSpec, name)
+        console.log('spawnController.checkSpawnning: ' + bodySpec)
+        let code = spawn.spawnCreep(bodySpec, name)
 
         if (code == OK) {
             jobContract.completedJob(job)

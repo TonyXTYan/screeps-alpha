@@ -49,10 +49,11 @@ var jobAllocator = {
                 let energyAvailable = spawn.room.energyAvailable
                 if (energyAvailable < 300) { return } // don't bother
 
-                let spec = [1,1,1,0 ,0,0,0,0] // FIXME
+                // let spec = [1,1,1,0 ,0,0,0,0] // FIXME
 
-                console.log('jobAllocator.signupJobForSpawns: ' + job.id + ' linked spec ' + spec)
-                job.bodySpec = spec
+                console.log('jobAllocator.signupJobForSpawns: ' + job.id + ' linked spec ' + job.creepSpecId)
+                // job.bodySpec = jobContract.
+
                 jobContract.assignedJob(job)
             }
         },

@@ -251,7 +251,8 @@ var searchJobsUtility = {
                     // console.log('ahh')
                     var job = new Contract(CONTRACT.SPAWN.id)
                     job.spawn = spawn.id
-                    job.spec = CONSTANTS.CREEPS_SPECS.WORKER
+                    // job.spec = CONSTANTS.CREEPS_SPECS.WORKER
+                    job.creepSpecId = jobContract.CREEP_SPEC.GENERAL_WORKER.id
                     // job.creepJob =
                     // console.log('jobScheduler.findJobsMySpawn: got ' + job.id)
                     jobContract.postJob(job)
