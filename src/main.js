@@ -1,5 +1,6 @@
+var CONSTANT = require('constant');
 var utility = require('utility');
-var CONSTANTS = require('constants');
+var cpuTaskManager = require('cpu.task.manager');
 // var newFile = require('folder_newFile');
 
 module.exports.loop = function () {
@@ -17,7 +18,8 @@ module.exports.loop = function () {
         console.log('REPLACING OLD VERSION FROM', oldTimestamp)
         utility.resetMemory()
         Memory.SCRIPT_VERSION = SCRIPT_VERSION
-        console.log(CONSTANTS.BANNER.CODE_UPDATED)
+        Memory.SCRIPT_VERSION_TICK = Game.time
+        console.log(CONSTANT.BANNER.CODE_UPDATED)
     }
 
     // var numberFormatter =
@@ -38,16 +40,19 @@ module.exports.loop = function () {
         console.log('Game.cpu.generatePixel: 🟥 returned ' + Game.cpu.generatePixel());
     }
 
-    // setup
-    utility.initialSetupEnvironmentCheck();
+    cpuTaskManager.run()
 
-    // function testing() {
-    //     // utility.runForAllRooms(utility.computeSourcePropertyInRoom)
-    //     let spawn = Game.spawns['Spawn1']
-    //     let result = utility.lookAroundPosFor(spawn.pos, STRUCTURE_STORAGE, 10)
-    //     console.log(result)
-    // }
-    // utility.performanceProfile(testing, 100)
+    // utility.initialSetupEnvironmentCheck();
+
+    function testing() {
+        // utility.runForAllRooms(utility.computeSourcePropertyInRoom)
+        // let spawn = Game.spawns['Spawn1']
+        // let result = utility.lookAroundPosFor(spawn.pos, STRUCTURE_STORAGE, 10)
+        // console.log(result)
+
+        utility.basicMemoryCheck()
+    }
+    // utility.performanceProfile(testing, 1000*1000)
 
 
     if (Memory.IN_SIMULATION_ROOM) {

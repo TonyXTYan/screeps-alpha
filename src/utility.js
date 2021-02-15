@@ -1,4 +1,4 @@
-var CONSTANTS = require('constants')
+var CONSTANT = require('constant')
 
 var utility = {
 
@@ -25,38 +25,36 @@ var utility = {
 
     runForAllRooms: function(func) {
         // FIXME: pileup these functions and execut them in one go (maybe?)
-        for (name in Game.rooms) {
+        for (let name in Game.rooms) {
             let room = Game.rooms[name]
             func(room)
         }
     },
 
     runForAllCreeps: function(func) {
-        for (name in Game.creeps) {
+        for (let name in Game.creeps) {
             let creep = Game.creeps[name]
             func(creep)
         }
     },
 
     runForAllSpawns: function(func) {
-        for (name in Game.spawns) {
+        for (let name in Game.spawns) {
             let spawn = Game.spawns[name]
             func(spawn)
         }
     },
 
-    initialSetupEnvironmentCheck: function() {
-        utility.basicMemoryCheck()
-        utility.runForAllRooms(utility.initialSetupEnvironmentCheckForRoom)
+    runForAllFlags: function(func) {
+        for (let name in Game.flags) {
+            let flag = Game.flags[name]
+            func(flag)
+        }
     },
 
-    initialSetupEnvironmentCheckForRoom: function(room) {
-        // console.log('utility.initialSetupEnvironmentCheckForRoom: called on ' + room.name)
-        if (room.memory.sourcesChecked === undefined) { utility.computeSourcePropertyInRoom(room) }
-        if (room.memory.sourcesChecked + CONSTANTS.FREQ_LOW < Game.time) { //FIXME: schedule
-            utility.computeSourcePropertyInRoom(room)
-        }
-
+    memorySetup: function() {
+        // if (Memory.memorySetup.utility && (!force)) { return }
+        utility.basicMemoryCheck()
     },
 
     lookAroundPosFor: function(pos, structureType, delta = 1) {
@@ -66,7 +64,7 @@ var utility = {
         let lookResult = room.lookForAtArea(LOOK_TERRAIN, Math.max(0,  pos.y-delta), Math.max(0,  pos.x-delta)
                                                         , Math.min(49, pos.y+delta), Math.min(49, pos.x+delta), true)
         var reachableSpaceCounter = 0
-        var structureNearby = []
+        var structuresNearby = []
         for (let index in lookResult) {
             let item = lookResult[index]
             // console.log('(' + item.x + ', ' + item.y + ') is ' + item.terrain)
@@ -78,47 +76,17 @@ var utility = {
                 // console.log(found)
                 for (let index_found in found) {
                     let structure = found[index_found]
-                    // console.log(structure, structure.structureType, structureType == structureType)
                     if (structure.structureType == structureType) {
-                        structureNearby.push(structure.id)
+                        structuresNearby.push(structure.id)
                     }
                 }
 
             }
         }
-        return [reachableSpaceCounter, structureNearby]
+        return {freeSpaceCount: reachableSpaceCounter, structuresNearby: structuresNearby}
     },
 
-    computeSourcePropertyInRoom: function(room) {
-        console.log('computeSourcePropertyInRoom: 🧮 called on room ' + room.name)
-        let sources = room.find(FIND_SOURCES)
 
-        if (room.memory.sources === undefined) { room.memory.sources = {} }
-        if (room.memory.containers === undefined) { room.memory.containers = {} }
-
-        for (name in sources) {
-            let source = sources[name]
-            let result = utility.lookAroundPosFor(source.pos, STRUCTURE_CONTAINER)
-            let spaceCounter = result[0]
-            let containersNearby = result[1]
-            // console.log(source + ' at ' + source.pos, spaceCounter, 'and', containersNearby)
-            if (room.memory.sources[source.id] === undefined) { room.memory.sources[source.id] = {} }
-            room.memory.sources[source.id].spaceCounter = spaceCounter
-            room.memory.sources[source.id].containersNearby = containersNearby
-
-            for (let index in containersNearby) {
-                let containerId = containersNearby[index]
-                let container = Game.getObjectById(containerId)
-                // console.log(container)
-                let result = utility.lookAroundPosFor(container.pos, STRUCTURE_LINK)
-                // console.log(container, result[1])
-                if (room.memory.containers[container.id] === undefined) { room.memory.containers[container.id] = {} }
-                room.memory.containers[container.id].linksNearby = result[1]
-            }
-
-        }
-        room.memory.sourcesChecked = Game.time
-    },
 
     totalSourceSpots: function(room) {
         var total = 0
@@ -128,13 +96,17 @@ var utility = {
         return total
     },
 
+    memoryTickReset: function() {
+         Memory.spawns.spawnnedThisTick = 0
+    },
+
     resetMemory: function() {
+        console.log('💣💣💣💣💣utility.resetMemory: called')
         for (let key in Memory) {
             Memory[key] = undefined
         }
-        utility.basicMemoryCheck()
-        utility.initialSetupEnvironmentCheck()
-        console.log('💣utility.resetMemory: job done 💥')
+        utility.memorySetup()
+        console.log('💥💥💥💥💥utility.resetMemory: finished')
     },
 
     basicMemoryCheck: function() {
@@ -144,12 +116,30 @@ var utility = {
         if (Memory.rooms  === undefined) { Memory.rooms = {} }
         if (Memory.flags  === undefined) { Memory.flags = {} }
 
+        utility.runForAllCreeps(creep => creep.memory)
+        utility.runForAllSpawns(spawn => {
+            spawn.memory
+            spawn.memory.queue = {}
+        })
+        utility.runForAllFlags(flag => flag.memory)
+        utility.runForAllRooms(room => {
+            room.memory
+            room.memory.sources = {}
+            room.memory.containers = {}
+            room.memory.roads = {}
+        })
+
         if (Memory.MY_USERNAME === undefined) { Memory.MY_USERNAME = Game.spawns[Object.keys(Game.spawns)[0]].owner.username }
         // if (Memory.jobs === undefined) { Memory.jobs = {} }
         // if (Memory.jobs.contracts === undefined) { Memory.jobs.contracts = {} }
         // if (Memory.jobs.kind === undefined) { Memory.jobs.kind = {} }
         // Memory.jobs.createdThisTick = 0
-        Memory.spawns.spawnnedThisTick = 0
+        if (Memory.taskManager === undefined) { Memory.taskManager = {} }
+        if (Memory.taskManager.memoryCheck === undefined) { Memory.taskManager.memoryCheck = {} }
+        if (Memory.taskManager.memoryAudit === undefined) { Memory.taskManager.memoryAudit = {} }
+        if (Memory.spawns.spawnnedThisTick === undefined) { Memory.spawns.spawnnedThisTick = 0 }
+        // if (Memory.memorySetup === undefined) { Memory.memorySetup = { utility: Game.time } }
+        // if (Memory.memoryAudit === undefined) { Memory.memoryAudit = {} }
 
         if (Memory.IN_SIMULATION_ROOM === undefined) {
             var isInSimulationRoom = false

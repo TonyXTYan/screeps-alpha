@@ -1,4 +1,4 @@
-var CONSTANTS = {
+const CONSTANT = {
 
     // FREQ_VERY_LOW: 1000
     // FREQ_LOW: 200,
@@ -69,10 +69,28 @@ var CONSTANTS = {
  #       #    # #    # #         #     # #####  #    # ######   #   #      #    #
  #     # #    # #    # #         #     # #      #    # #    #   #   #      #    #
   #####   ####  #####  ######     #####  #      #####  #    #   #   ###### #####  `,
-
-
+        NEW: "new"
     },
+
+    // e.g. flag name could be CD_N_Hello
+    FLAG_PREFIX: {
+        CD: {
+            N: "CD_N",
+        },
+    },
+
+
+
+    SITE_KIND: {
+        RESOURCE_ENERGY: "source",
+        RESOURCE_MINERAL: "mineral",
+        UPGRADE_RC: "upgrade",
+        BASECAMP: "basecamp",
+
+    }
+
+
 
 }
 
-module.exports = CONSTANTS
+module.exports = CONSTANT
