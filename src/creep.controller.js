@@ -1,4 +1,4 @@
-var creepRole = {
+var creepController = {
 
     Role: class {
         constructor(roleTypeID) {
@@ -58,4 +58,4 @@ var creepRole = {
     },
 }
 
-module.exports = creepRole
+module.exports = creepController

@@ -3,13 +3,16 @@ var utility = require('utility')
 
 var roomManager = {
 
-    run: function() {
-        roomManager.memoryCheck()
+    manage: function() {
+        utility.runForAllRooms(roomManager.checkSpawnInRoom)
     },
 
-    checkSpawn: function() {
-
+    checkSpawnInRoom: function(room) {
+        console.log('roomManager.checkSpawnInRoom: called ' + room.name)
+        
     },
+
+
 
     memoryCheck: function() {
         // if (Memory.memorySetup.roomManager & (!force)) { return }
@@ -18,20 +21,14 @@ var roomManager = {
     },
 
     memoryCheckForRoom: function(room) {
-        // console.log('utility.memoryCheckForRoom: called on ' + room.name)
-        // if ((room.memory.sourcesChecked === undefined) ||
-            // (room.memory.sourcesChecked + CONSTANT.FREQ_LOW < Game.time)) { //FIXME: schedule
-            // console.log('roomManager.memoryCheckForRoom: here')
         roomManager.computeSourcePropertyInRoom(room)
-        // }
         roomManager.computeStoragePropertyInRoom(room)
 
     },
 
 
     computeStoragePropertyInRoom: function(room) {
-        // Memory.taskManager.memoryAudit.roomManager = 0
-        if (room.controller.level < 4) { return }
+        if (room.controller.level < 4) { return } // don't bother
         console.log('computeStoragePropertyInRoom: 🧮 called on room ' + room.name)
 
         let resultStorage = room.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_STORAGE }} )
@@ -39,13 +36,31 @@ var roomManager = {
         if (resultStorage.length == 0) { return }
         else if (resultStorage.length > 1) { console.log('computeStoragePropertyInRoom: WTF!!!!! 🧮🧮🧮🧮🧮🧮') }
         let storage = resultStorage[0]
-        console.log(storage)
+        // console.log(storage)
 
         let lookedLink = utility.lookAroundPosFor(storage.pos, STRUCTURE_LINK, 3).structuresNearby
-        for (let i in lookedLink) {
-            let link = Game.getObjectById(lookedLink[i])
-            console.log(link)
+        let lookedSpawn = utility.lookAroundPosFor(storage.pos, STRUCTURE_SPAWN, 3).structuresNearby
+        // for (let i in lookedLink) {
+        //     let link = Game.getObjectById(lookedLink[i])
+        //     console.log(link)
+        // }
+        // console.log('storage ', lookedLink.length, lookedLink, lookedSpawn)
+
+        if (lookedSpawn.length > 0) { // BASECAMP SITE
+            roomManager.structureLinksNearbyMemoryPairing(lookedLink, storage, CONSTANT.SITE_KIND.BASECAMP)
+            // lookedSpawn.map { spawn => roomManager.structureLinksNearbyMemoryPairing(lookedLink, spawn, CONSTANT.SITE_KIND.BASECAMP) }
+            for (let index in lookedSpawn) {
+                let hash = lookedSpawn[index]
+                let spawn = Game.getObjectById(hash)
+                // console.log(spawn)
+                spawn.memory.storage = storage.id
+                spawn.memory.siteKind = CONSTANT.SITE_KIND.BASECAMP
+                spawn.memory.linksNearby = lookedLink
+            }
+        } else if (lookedLink.length > 0) { // STORAGE SITE
+            roomManager.structureLinksNearbyMemoryPairing(lookedLink, storage, CONSTANT.SITE_KIND.STORAGE)
         }
+
 
     },
 
@@ -61,7 +76,7 @@ var roomManager = {
             console.log('roomManager.computeSourcePropertyInRoom: ♨️ Memory clashing ' + otherStructure)
         }
 
-        // console.log('!links:', links)
+        // console.log('pairing links:', links)
         for (let index in links) {
             let link = Game.getObjectById(links[index])
             // console.log('this is', link, index, links[index])
@@ -79,8 +94,6 @@ var roomManager = {
         console.log('computeSourcePropertyInRoom: 🧮 called on room ' + room.name)
         let sources = room.find(FIND_SOURCES)
 
-        // if (room.memory.sources === undefined) { room.memory.sources = {} }
-        // if (room.memory.containers === undefined) { room.memory.containers = {} }
         function linkSourceMemory(room, source, links, access) {
             // console.log('linkSourceMemory:', links)
             if (room.memory.sources[source.id].linksNearby === undefined) { room.memory.sources[source.id].linksNearby = {} }
@@ -104,22 +117,13 @@ var roomManager = {
             room.memory.sources[source.id].containersNearby = containersNearby
 
             var linkNearbyFound = false
-            // var linksNearby = []
             for (let index in containersNearby) {
                 let containerId = containersNearby[index]
                 let container = Game.getObjectById(containerId)
                 let resultLink = utility.lookAroundPosFor(container.pos, STRUCTURE_LINK)
 
                 roomManager.structureLinksNearbyMemoryPairing(resultLink.structuresNearby, container, CONSTANT.SITE_KIND.RESOURCE_ENERGY)
-                // if (room.memory.containers[container.id] === undefined) { room.memory.containers[container.id] = {} }
-                // room.memory.containers[container.id].linksNearby = resultLink.structuresNearby
-                // if (room.memory.containers[container.id].siteKind === undefined) {
-                //     room.memory.containers[container.id].siteKind = CONSTANT.SITE_KIND.RESOURCE_ENERGY
-                // } else if (room.memory.containers[container.id].siteKind != CONSTANT.SITE_KIND.RESOURCE_ENERGY){
-                //     console.log('roomManager.computeSourcePropertyInRoom: ♨️ Memory clashing ' + container)
-                // }
                 if (!linkNearbyFound) { linkNearbyFound = (resultLink.structuresNearby.length > 0) }
-                // linksNearby = linksNearby + resultLink.structuresNearby
                 linkSourceMemory(room, source, resultLink.structuresNearby, container)
             }
             // console.log('linkNearbyFound =', linkNearbyFound )
@@ -132,23 +136,10 @@ var roomManager = {
                     if (room.memory.roads[road.id] === undefined) { room.memory.roads[road.id] = {} }
 
                     roomManager.structureLinksNearbyMemoryPairing(resultLink.structuresNearby, road, CONSTANT.SITE_KIND.RESOURCE_ENERGY)
-                    // if (!linkNearbyFound) { linkNearbyFound = (resultLink.length > 0) }
                     linkSourceMemory(room, source, resultLink.structuresNearby, road)
-                    // linksNearby = linksNearby + resultLink.structuresNearby
-                    // room.memory.roads[road.id].linksNearby = resultLink.structuresNearby
-                    // if (room.memory.roads[road.id].siteKind === undefined) {
-                    //     room.memory.roads[road.id].siteKind = CONSTANT.SITE_KIND.RESOURCE_ENERGY
-                    // } else if (room.memory.roads[road.id].siteKind != CONSTANT.SITE_KIND.RESOURCE_ENERGY) {
-                    //     console.log('roomManager.computeSourcePropertyInRoom: ♨️ Memory clashing ' + road)
-                    // }
                 }
             }
-            // console.log('found', linkNearbyFound, source, linksNearby)
-            // room.memory.sources[source.id].linksNearby = linksNearby
-
-
         }
-        // room.memory.sourcesChecked = Game.time
     },
 }
 module.exports = roomManager

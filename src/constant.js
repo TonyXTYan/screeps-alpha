@@ -84,6 +84,7 @@ const CONSTANT = {
     SITE_KIND: {
         RESOURCE_ENERGY: "source",
         RESOURCE_MINERAL: "mineral",
+        STORAGE: "storage",
         UPGRADE_RC: "upgrade",
         BASECAMP: "basecamp",
 

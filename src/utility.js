@@ -110,11 +110,12 @@ var utility = {
     },
 
     basicMemoryCheck: function() {
-        // console.log('utility.basicMemoryCheck: called')
+        console.log('utility.basicMemoryCheck: called')
         if (Memory.creeps === undefined) { Memory.creeps = {} }
         if (Memory.spawns === undefined) { Memory.spawns = {} }
         if (Memory.rooms  === undefined) { Memory.rooms = {} }
         if (Memory.flags  === undefined) { Memory.flags = {} }
+
 
         utility.runForAllCreeps(creep => creep.memory)
         utility.runForAllSpawns(spawn => {
@@ -125,20 +126,26 @@ var utility = {
         utility.runForAllRooms(room => {
             room.memory
             room.memory.sources = {}
+            room.memory.storages = {}
             room.memory.links = {}
             room.memory.containers = {}
             room.memory.roads = {}
         })
 
-        if (Memory.MY_USERNAME === undefined) { Memory.MY_USERNAME = Game.spawns[Object.keys(Game.spawns)[0]].owner.username }
+        for (let key in Memory.creeps) { if (Game.creeps[key] === undefined) { Memory.creeps[key] = undefined } }
+        for (let key in Memory.spawns) { if (Game.spawns[key] === undefined) { Memory.spawns[key] = undefined } }
+        for (let key in Memory.flags) { if (Game.flags[key] === undefined) { Memory.flags[key] = undefined } }
+
         // if (Memory.jobs === undefined) { Memory.jobs = {} }
         // if (Memory.jobs.contracts === undefined) { Memory.jobs.contracts = {} }
         // if (Memory.jobs.kind === undefined) { Memory.jobs.kind = {} }
         // Memory.jobs.createdThisTick = 0
         if (Memory.taskManager === undefined) { Memory.taskManager = {} }
+        if (Memory.colony === undefined) { Memory.colony = {} }
         if (Memory.taskManager.memoryCheck === undefined) { Memory.taskManager.memoryCheck = {} }
         if (Memory.taskManager.memoryAudit === undefined) { Memory.taskManager.memoryAudit = {} }
         if (Memory.spawns.spawnnedThisTick === undefined) { Memory.spawns.spawnnedThisTick = 0 }
+        if (Memory.MY_USERNAME === undefined) { Memory.MY_USERNAME = Game.spawns[Object.keys(Game.spawns)[0]].owner.username }
         // if (Memory.memorySetup === undefined) { Memory.memorySetup = { utility: Game.time } }
         // if (Memory.memoryAudit === undefined) { Memory.memoryAudit = {} }
 

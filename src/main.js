@@ -23,7 +23,7 @@ module.exports.loop = function () {
     }
 
     // var numberFormatter =
-    var stats = ('✅ Tick: ' + Game.time + ' script: ' + Memory.SCRIPT_VERSION + ' ----------------------------------\n');
+    var stats = ('\n✅ Tick: ' + Game.time + ' script: ' + Memory.SCRIPT_VERSION + ' ----------------------------------\n');
     stats += ('CPU tickLimit: ' + Game.cpu.tickLimit + ', bucket: ' + Game.cpu.bucket + '\n');
     stats += ('Shard: ' + Game.shard.name + ', ptr = ' + Game.shard.ptr + ', branch: grunt\n')
     // stats += ('Flags: ' + Object.keys(Game.flags).length + '\n');
@@ -58,8 +58,8 @@ module.exports.loop = function () {
     if (Memory.IN_SIMULATION_ROOM) {
         let finalCpuTime = performance.now()
         let deltaCpuTime = finalCpuTime - startCpuTime
-        console.log('⏺Finished execution in ' + utility.numberFormatter.format(deltaCpuTime) + ' ms\n\n')
+        console.log('⏺Finished execution in ' + utility.numberFormatter.format(deltaCpuTime) + ' ms')
     } else {
-        console.log('⏺Finished execution and used', Game.cpu.getUsed().toFixed(3), 'CPU. \n')
+        console.log('⏺Finished execution and used', Game.cpu.getUsed().toFixed(3), 'CPU.')
     }
 };

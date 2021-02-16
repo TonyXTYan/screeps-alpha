@@ -5,36 +5,58 @@ var roomManager = require('room.manager');
 var creepManager = require('creep.manager');
 
 const CPU_TASK = {
-    everyTick: utility.memoryTickReset,
-    // colony
+    EVERY_TICK: { // routine checks
+        UTILITY: utility.memoryTickReset,
+    },
 
-    MEMORY_CHECK: {
-        utility: utility.memorySetup,
-        colonyManager: colonyManager.memoryCheck,
-        colonyDirector: colonyDirector.memoryCheck,
-        roomManager: roomManager.memoryCheck,
-        creepManager: creepManager.memoryCheck,
+    MANAGEMENT: {
+        ROOM: roomManager.manage,
+    },
+
+    MEMORY_CHECK: { // setup and check the memory
+        UTILITY: utility.memorySetup,
+        COLONY_MGR: colonyManager.memoryCheck,
+        COLONY_DIR: colonyDirector.memoryCheck,
+        ROOM_MGR: roomManager.memoryCheck,
+        CREEP_MGR: creepManager.memoryCheck,
     },
 }
 
 var cpuTaskManager = {
     run: function () {
-        CPU_TASK.everyTick()
+        cpuTaskManager.everyTickTasks()
+        cpuTaskManager.memoryCheckTasks()
+        cpuTaskManager.managementTasks()
+    },
 
-        // DEBUGGING ONLY
-        Memory.taskManager.memoryAudit.roomManager = 0
+    everyTickTasks: function() {
+        for (let name in CPU_TASK.EVERY_TICK) {
+            let func = CPU_TASK.EVERY_TICK[name]
+            func()
+        }
+    },
 
+    managementTasks: function() {
+        for (let name in CPU_TASK.MANAGEMENT) {
+            let func = CPU_TASK.MANAGEMENT[name]
+            func()
+        }
+    },
 
-
+    memoryCheckTasks: function() {
+        // DEBUGGING
+        // Memory.taskManager.memoryAudit.ROOM_MGR = 0
+        // Memory.taskManager.memoryAudit.UTILITY = 0
         for (let name in CPU_TASK.MEMORY_CHECK) {
             let func = CPU_TASK.MEMORY_CHECK[name]
             if (Memory.taskManager.memoryCheck[name] === undefined ||
                 Memory.taskManager.memoryAudit[name] !== undefined) {
-                func()
-                Memory.taskManager.memoryCheck[name] = Game.time
-                Memory.taskManager.memoryAudit[name] = undefined
-            } else { continue }
-        }
+                    func()
+                    Memory.taskManager.memoryCheck[name] = Game.time
+                    Memory.taskManager.memoryAudit[name] = undefined
+                } else { continue }
+            }
     },
+
 }
 module.exports = cpuTaskManager

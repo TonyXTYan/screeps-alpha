@@ -31,7 +31,7 @@ var colonyManager = {
 
     memoryCheck: function() {
         // if (Memory.memorySetup.colonyManager) { return }
-        if (Memory.colonyMa === undefined) { Memory.colony = {} }
+        // if (Memory.colony === undefined) { Memory.colony = {} }
         utility.runForAllRooms(colonyManager.memoryCheckForRoom)
         // Memory.memorySetup.colonyManager = Game.time
     },
