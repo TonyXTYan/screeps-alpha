@@ -2,6 +2,7 @@ var utility = require('utility');
 var colonyDirector = require('colony.director');
 var colonyManager = require('colony.manager');
 var roomManager = require('room.manager');
+var creepManager = require('creep.manager');
 
 const CPU_TASK = {
     everyTick: utility.memoryTickReset,
@@ -9,9 +10,10 @@ const CPU_TASK = {
 
     MEMORY_CHECK: {
         utility: utility.memorySetup,
-        roomManager: roomManager.memoryCheck,
         colonyManager: colonyManager.memoryCheck,
         colonyDirector: colonyDirector.memoryCheck,
+        roomManager: roomManager.memoryCheck,
+        creepManager: creepManager.memoryCheck,
     },
 }
 
@@ -20,7 +22,7 @@ var cpuTaskManager = {
         CPU_TASK.everyTick()
 
         // DEBUGGING ONLY
-        // Memory.taskManager.memoryAudit.roomManager = 0
+        Memory.taskManager.memoryAudit.roomManager = 0
 
 
 

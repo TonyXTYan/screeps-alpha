@@ -9,17 +9,43 @@ var creepRole = {
         }
     },
 
+    // CREEP_BODY: {
+    //     WORKER: { id: "worker",
+    //         bodyFromSpawn: function(spawn) {  }
+    //     },
+    //     HARVESTER: { id: "harvester",
+    //         bodyFromSpawn: function(spawn) {  }
+    //     },
+    //     QUEEN: { id: "queen",
+    //         bodyFromSpawn: function(spawn) {  }
+    //     },
+    //     SOILDER: { id: "soiler",
+    //         bodyFromSpawn: function(spawn) {  }
+    //     },
+    //     PULLER: { id: "puller",
+    //         bodyFromSpawn: function(spawn) {  }
+    //     },
+    //     CLAIMER: { id: "claimer",
+    //         bodyFromSpawn: function(spawn) {  }
+    //     },
+    // },
+
     ROLE_TYPE: {
         // GENERAL_WORKER: { id: 100, },
 
-        HARVESTER: { id: 120, },
-        HARVESTER_C: { id: 121, },
+        HARVESTER: { id: 120,
+            bodyFromSpawn: function(spawn) { },
+            transferable: function(creep) { },
+        },
+        HARVESTER_C: { id: 121,
+        },
         HARVESTER_CL: { id: 122, },
 
         UPGRADER: { id: 130, },
         // UPGRADER_C: {}
 
         BUILDER: { id: 140, },
+        QUEEN: { id: 160, },
 
         CLAIMER: { id: 200, },
         SCOUT: { id: 210,},
@@ -27,10 +53,7 @@ var creepRole = {
 
         ATTACKER: { id: 300, },
         HEALER: { id: 310, },
-
-    },
-
-    memoryCheck: function() {
+        SCAPEGOAT: { id: 350 },
 
     },
 }

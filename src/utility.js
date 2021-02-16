@@ -125,6 +125,7 @@ var utility = {
         utility.runForAllRooms(room => {
             room.memory
             room.memory.sources = {}
+            room.memory.links = {}
             room.memory.containers = {}
             room.memory.roads = {}
         })
