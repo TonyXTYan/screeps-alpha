@@ -106,6 +106,7 @@ var utility = {
             Memory[key] = undefined
         }
         utility.memorySetup()
+        // Memory.taskManager = undefined
         console.log('💥💥💥💥💥utility.resetMemory: finished')
     },
 
@@ -126,6 +127,7 @@ var utility = {
         utility.runForAllRooms(room => {
             room.memory
             room.memory.sources = {}
+            room.memory.controller = {}
             room.memory.storages = {}
             room.memory.links = {}
             room.memory.containers = {}
@@ -146,6 +148,7 @@ var utility = {
         if (Memory.taskManager.memoryAudit === undefined) { Memory.taskManager.memoryAudit = {} }
         if (Memory.spawns.spawnnedThisTick === undefined) { Memory.spawns.spawnnedThisTick = 0 }
         if (Memory.MY_USERNAME === undefined) { Memory.MY_USERNAME = Game.spawns[Object.keys(Game.spawns)[0]].owner.username }
+        if (Memory.DEBUG === undefined) { Memory.DEBUG = true }
         // if (Memory.memorySetup === undefined) { Memory.memorySetup = { utility: Game.time } }
         // if (Memory.memoryAudit === undefined) { Memory.memoryAudit = {} }
 

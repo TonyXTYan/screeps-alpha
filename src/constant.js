@@ -19,14 +19,14 @@ const CONSTANT = {
 
     HITS_MAX_LIMIT: function(rcl) {
         switch (rcl) {
-            case 1: return 1e3
-            case 2: return 10e3
-            case 3: return 50e3
-            case 4: return 100e3
-            case 5: return 500e3
-            case 6: return 1e6
-            case 7: return 10e6
-            case 8: return 100e6
+            case 1:  return 1e3
+            case 2:  return 10e3
+            case 3:  return 50e3
+            case 4:  return 100e3
+            case 5:  return 500e3
+            case 6:  return 1e6
+            case 7:  return 10e6
+            case 8:  return 100e6
             default: return 100e6
         }
     },
@@ -81,14 +81,16 @@ const CONSTANT = {
 
 
 
-    SITE_KIND: {
-        RESOURCE_ENERGY: "source",
-        RESOURCE_MINERAL: "mineral",
-        STORAGE: "storage",
-        UPGRADE_RC: "upgrade",
-        BASECAMP: "basecamp",
-
-    }
+    // SITE_KIND: {
+    //     RESOURCE_ENERGY: "source",
+    //     RESOURCE_MINERAL: "mineral",
+    //     // RESOURCE_R_RC: "source-rc", // room controller right next to a source
+    //     // RESOURCE_M_RC: "mineral-rc",
+    // 
+    //     STORAGE: "storage",
+    //     UPGRADE_RC: "upgrade",
+    //     BASECAMP: "basecamp",
+    // }
 
 
 
