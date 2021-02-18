@@ -14,7 +14,7 @@ var roomManager = {
         // let sources = room.find(FIND_SOURCES)
         let sourcesCount = Object.keys(room.memory.sources).length
         console.log('sources: ' + sourcesCount)
-        
+
 
     },
 
@@ -31,7 +31,7 @@ var roomManager = {
 
     memoryCheckForRoom: function(room) {
         roomManager.computeSourcePropertyInRoom(room)
-        roomManager.computeSourceSpawnPropertyInRoom(room)
+        roomManager.computeSpawnPathPropertyInRoom(room)
         roomManager.computeStoragePropertyInRoom(room)
         roomManager.computeControllerPropertyInRoom(room)
     },
@@ -168,84 +168,52 @@ var roomManager = {
 
     },
 
-    computeSourceSpawnPropertyInRoom: function(room) {
-        // console.log('rM.cSourceSpawnPIR: called on ' + room.name)
-        // let goals = _.map(room.find(FIND_SOURCES), function(source) {
-        //     // We can't actually walk on sources-- set `range` to 1
-        //     // so we path next to it.
-        //     return { pos: source.pos, range: 1 };
-        // });
-
+    computeSpawnPathPropertyInRoom: function(room) {
         let sources = room.find(FIND_SOURCES);
-
-        // console.log(goals, goals[0])
+        let minerals = room.find(FIND_MINERALS)
+        let controller = room.controller
         let spawns = room.find(FIND_MY_SPAWNS)
-        for (let i in spawns) {
-            // console.log(spawns[i])
-            let spawn = spawns[i]
 
-            for (let j in sources) {
-                let source = sources[j]
-                let goal = { pos: source.pos, range: 1}
+        function search(spawn, targets, type) {
+            for (let j in targets) {
+                let target = targets[j]
+                let goal = { pos: target.pos, range: 1}
                 let ret = PathFinder.search( spawn.pos, goal, {
-                    // We need to set the defaults costs higher so that we
-                    // can set the road cost lower in `roomCallback`
                     plainCost: 2,
                     swampCost: 10,
-
                     maxRooms: 1,
-
-                    // roomCallback: function() {
-                    //     console.log('got here')
-                    // },
-
                     roomCallback: function(roomName) {
-                        // console.log('inside')
-                        // console.log(roomName)
                         let room = Game.rooms[roomName];
-                        // In this example `room` will always exist, but since
-                        // PathFinder supports searches which span multiple rooms
-                        // you should be careful!
                         if (!room) return;
                         let costs = new PathFinder.CostMatrix;
 
                         room.find(FIND_STRUCTURES).forEach(function(struct) {
                             if (struct.structureType === STRUCTURE_ROAD) {
-                                // Favor roads over plain tiles
-                                costs.set(struct.pos.x, struct.pos.y, 1);
+                                costs.set(struct.pos.x, struct.pos.y, 1); // Favor roads over plain tiles
                             } else if (struct.structureType !== STRUCTURE_CONTAINER &&
-                                (struct.structureType !== STRUCTURE_RAMPART || !struct.my)) {
-                                // Can't walk through non-walkable buildings
-                                costs.set(struct.pos.x, struct.pos.y, 0xff);
+                                      (struct.structureType !== STRUCTURE_RAMPART || !struct.my)) {
+                                costs.set(struct.pos.x, struct.pos.y, 0xff); // Can't walk through non-walkable buildings
                             }
                         });
-
-                        // Avoid creeps in the room
-                        // room.find(FIND_CREEPS).forEach(function(creep) {
-                        //     costs.set(creep.pos.x, creep.pos.y, 0xff);
-                        // });
-
                         return costs;
                     },
                 });
-                // console.log('result ret:', ret, ret.path[0], ret.path.length, ret.cost)
-                // console.log(JSON.stringify(ret).length)
-                // console.log(JSON.stringify(goal))
-                // console.log(goal.pos.look().source)
-                // console.log(JSON.stringify(goal.pos.look()))
-                // let source = goal.pos.look().source
-                // console.log(source, ret.incomplete)
-                if (ret.incomplete) {
-                    console.log('rM.cSourceSpawnPIR: path incomplete in room: ' + room.name + ', source: ' + source.id + ', spawn: ' + spawn)
-                }
-                // console.log()
-                if (spawn.memory.pathToSource[source.id] === undefined) { spawn.memory.pathToSource[source.id] = {} }
-                // if (Memory.DEBUG) { spawn.memory.pathToSource[source.id].path = ret.path }
-                spawn.memory.pathToSource[source.id].pathLen = ret.path.length
-                // spawn.memory.pathToSource[source.id].ops = ret.ops
-                spawn.memory.pathToSource[source.id].cost = ret.cost
 
+                if (ret.incomplete) { console.log('rM.cSourceSpawnPIR: path incomplete in room: ' + room.name + ', target: ' + target.id + ', spawn: ' + spawn) }
+                if (spawn.memory.pathTo[target.id] === undefined) { spawn.memory.pathTo[target.id] = {} }
+                spawn.memory.pathTo[target.id].pathLen = ret.path.length
+                spawn.memory.pathTo[target.id].cost = ret.cost
+                spawn.memory.pathTo[target.id].type = type
             }
+        }
+
+
+        for (let i in spawns) {
+            // console.log(spawns[i])
+            let spawn = spawns[i]
+            search(spawn, sources, 'source')
+            search(spawn, minerals, 'mineral')
+            search(spawn, [controller], 'controller')
         }
 
     },

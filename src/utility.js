@@ -122,7 +122,7 @@ var utility = {
         utility.runForAllSpawns(spawn => {
             // console.log(spawn)
             spawn.memory
-            spawn.memory.pathToSource = {}
+            spawn.memory.pathTo = {}
             // spawn.memory.queue = {}
         })
         utility.runForAllFlags(flag => flag.memory)
