@@ -3,6 +3,7 @@ var colonyDirector = require('colony.director');
 var colonyManager = require('colony.manager');
 var roomManager = require('room.manager');
 var creepManager = require('creep.manager');
+var CONSTANT = require('constant')
 
 const CPU_TASK = {
     EVERY_TICK: { // routine checks
@@ -13,12 +14,29 @@ const CPU_TASK = {
         ROOM: roomManager.manage,
     },
 
-    MEMORY_CHECK: { // setup and check the memory
-        UTILITY: utility.memorySetup,
-        COLONY_MGR: colonyManager.memoryCheck,
-        COLONY_DIR: colonyDirector.memoryCheck,
-        ROOM_MGR: roomManager.memoryCheck,
-        CREEP_MGR: creepManager.memoryCheck,
+    MEMORY: { // setup and check the memory
+        // UTILITY: utility,
+        // COLONY_MGR: colonyManager,
+        // COLONY_DIR: colonyDirector,
+        // ROOM_MGR: roomManager,
+        // CREEP_MGR: creepManager,
+
+        UTILITY: {
+            CHECK: utility.memorySetup,
+        },
+        COLONY_MGR: {
+            CHECK: colonyManager.memoryCheck,
+        },
+        COLONY_DIR: {
+            CHECK: colonyDirector.memoryCheck,
+        },
+        ROOM_MGR: {
+            CHECK: roomManager.memoryCheck,
+            AUDIT: roomManager.memoryAuditCheck,
+        },
+        CREEP_MGR: {
+            CHECK: creepManager.memoryCheck,
+        },
     },
 }
 
@@ -27,12 +45,23 @@ var cpuTaskManager = {
         cpuTaskManager.everyTickTasks()
         cpuTaskManager.memoryCheckTasks()
         cpuTaskManager.managementTasks()
+        cpuTaskManager.midFreqTasks()
     },
 
     everyTickTasks: function() {
         for (let name in CPU_TASK.EVERY_TICK) {
             let func = CPU_TASK.EVERY_TICK[name]
             func()
+        }
+    },
+
+    midFreqTasks: function() {
+        if (Game.time % CONSTANT.FREQ_MID == utility.getRandomInt(-2,2)) {
+            for (let name in CPU_TASK.MEMORY) {
+                let obj = CPU_TASK.MEMORY[name]
+                let audit = CPU_TASK.MEMORY[name].AUDIT
+                if (audit) { audit() }
+            }
         }
     },
 
@@ -47,13 +76,18 @@ var cpuTaskManager = {
         // DEBUGGING
         // Memory.taskManager.memoryAudit.ROOM_MGR = 0
         // Memory.taskManager.memoryAudit.UTILITY = 0
-        for (let name in CPU_TASK.MEMORY_CHECK) {
-            let func = CPU_TASK.MEMORY_CHECK[name]
-            if (Memory.taskManager.memoryCheck[name] === undefined ||
-                Memory.taskManager.memoryAudit[name] !== undefined) {
-                    func()
-                    Memory.taskManager.memoryCheck[name] = Game.time
-                    Memory.taskManager.memoryAudit[name] = undefined
+        for (let name in CPU_TASK.MEMORY) {
+            let obj = CPU_TASK.MEMORY[name]
+            if (Memory.taskManager.memory.checked[name] === undefined ||
+                Memory.taskManager.memory.needAudit[name] < Game.time) {
+                    let a = Game.cpu.getUsed()
+                    obj.CHECK()
+                    let b = Game.cpu.getUsed()
+                    // console.log(b - a)
+                    Memory.taskManager.memory.checked[name] = Game.time
+                    Memory.taskManager.memory.cost[name] = b - a
+                    // if (Memory.IN_SIMULATION_ROOM) { Memory.taskManager.memory.cost[name] = utility.getRandomInt(1,10) }
+                    Memory.taskManager.memory.needAudit[name] = undefined
                 } else { continue }
             }
     },

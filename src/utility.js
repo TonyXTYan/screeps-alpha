@@ -59,7 +59,7 @@ var utility = {
 
     lookAroundPosFor: function(pos, structureType, delta = 1) {
         // let pos = source.pos
-        // console.log('utility.computeSourcePropertyInRoom: called', pos, structure)
+        // console.log('utility.lookAroundPosFor: called', pos, structureType)
         let room = Game.rooms[pos.roomName]
         let lookResult = room.lookForAtArea(LOOK_TERRAIN, Math.max(0,  pos.y-delta), Math.max(0,  pos.x-delta)
                                                         , Math.min(49, pos.y+delta), Math.min(49, pos.x+delta), true)
@@ -120,12 +120,17 @@ var utility = {
 
         utility.runForAllCreeps(creep => creep.memory)
         utility.runForAllSpawns(spawn => {
+            // console.log(spawn)
             spawn.memory
-            spawn.memory.queue = {}
+            spawn.memory.pathToSource = {}
+            // spawn.memory.queue = {}
         })
         utility.runForAllFlags(flag => flag.memory)
         utility.runForAllRooms(room => {
             room.memory
+            room.memory.creepSpawnJointQueue = {}
+            room.memory.creepRenewJointQueue = {} // TODO: check if needed
+            room.memory.creepDesignated = {}
             room.memory.sources = {}
             room.memory.controller = {}
             room.memory.storages = {}
@@ -142,11 +147,18 @@ var utility = {
         // if (Memory.jobs.contracts === undefined) { Memory.jobs.contracts = {} }
         // if (Memory.jobs.kind === undefined) { Memory.jobs.kind = {} }
         // Memory.jobs.createdThisTick = 0
-        if (Memory.taskManager === undefined) { Memory.taskManager = {} }
         if (Memory.colony === undefined) { Memory.colony = {} }
-        if (Memory.taskManager.memoryCheck === undefined) { Memory.taskManager.memoryCheck = {} }
-        if (Memory.taskManager.memoryAudit === undefined) { Memory.taskManager.memoryAudit = {} }
+
+        if (Memory.taskManager === undefined) { Memory.taskManager = {} }
+        if (Memory.taskManager.memory === undefined)           { Memory.taskManager.memory = {} }
+        if (Memory.taskManager.memory.checked === undefined)   { Memory.taskManager.memory.checked = {} }
+        if (Memory.taskManager.memory.needAudit === undefined) { Memory.taskManager.memory.needAudit = {} }
+        if (Memory.taskManager.memory.cost === undefined)      { Memory.taskManager.memory.cost = {} }
+        // if (Memory.taskManager.memoryCheckCost === undefined) { Memory.taskManager.memoryCheckCost = {} }
+        // if (Memory.taskManager.memoryAudit === undefined) { Memory.taskManager.memoryAudit = {} }
+
         if (Memory.spawns.spawnnedThisTick === undefined) { Memory.spawns.spawnnedThisTick = 0 }
+
         if (Memory.MY_USERNAME === undefined) { Memory.MY_USERNAME = Game.spawns[Object.keys(Game.spawns)[0]].owner.username }
         if (Memory.DEBUG === undefined) { Memory.DEBUG = true }
         // if (Memory.memorySetup === undefined) { Memory.memorySetup = { utility: Game.time } }
