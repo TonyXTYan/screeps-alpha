@@ -72,9 +72,9 @@ var cpuTaskManager = {
         // Memory.taskManager.management.needRecompute.ROOM_MGR = 0
 
 
-        cpuTaskManager.everyTickTasks()
         cpuTaskManager.memoryCheckTasks()
         cpuTaskManager.managementTasks()
+        cpuTaskManager.everyTickTasks()
         // cpuTaskManager.midFreqTasks()
     },
 
@@ -85,7 +85,8 @@ var cpuTaskManager = {
         }
 
         for (let name in CPU_TASK.EXECUTION) {
-            CPU_TASK.EXECUTION[name]()
+            let func = CPU_TASK.EXECUTION[name]
+            func()
         }
     },
 

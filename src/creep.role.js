@@ -1,13 +1,13 @@
 var creepRole = {
 
-    Role: class {
-        constructor(roleTypeID) {
-            this.roleTypeID = roleTypeID
-            // this.id =
-            this.createdTime = Game.time
-            this.priority = 0
-        }
-    },
+    // Role: class {
+    //     constructor(roleTypeID) {
+    //         this.roleTypeID = roleTypeID
+    //         // this.id =
+    //         this.createdTime = Game.time
+    //         this.priority = 0
+    //     }
+    // },
 
     // CREEP_BODY: {
     //     WORKER: { id: "worker",
@@ -31,13 +31,33 @@ var creepRole = {
     // },
 
     ROLE_TYPE: {
-        // GENERAL_WORKER: { id: 100, },
+        GENERAL_WORKER: { id: 100, // the default kind, able to at least keep the colony sustainable
+            bodyFromSpawn: function(spawn) { // generate the body parts requirement to spawn this creep
+                return [WORK, CARRY, MOVE]
+            },
+            transferable: function(creep) { // inspect creep's body parts and decide whether the creep can take on this job
+            },
+        },
 
         HARVESTER: { id: 120,
-            bodyFromSpawn: function(spawn) { },
-            transferable: function(creep) { },
+            bodyFromSpawn: function(spawn) {
+                console.log('creepRole..HARVESTER.bodyFromSpawn: called on ' + spawn.name)
+                let room = spawn.room
+                let energyAvailable = room.energyAvailable
+                let energyCapacity  = room.energyCapacityAvailable
+
+                console.log('room: ' + room.name + ', eA: ' + energyAvailable + ', eC: ' + energyCapacity)
+
+
+
+            },
+            transferable: function(creep) {
+
+            },
         },
         HARVESTER_S: { id: 121, // Smart harvester with container and link usage
+            bodyFromSpawn: function(spawn) { creepRole.ROLE_TYPE.HARVESTER.bodyFromSpawn(spawn) },
+            transferable: function(creep) { },
         },
         // HARVESTER_CL: { id: 122, },
 
