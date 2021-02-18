@@ -64,7 +64,7 @@ var utility = {
         let lookResult = room.lookForAtArea(LOOK_TERRAIN, Math.max(0,  pos.y-delta), Math.max(0,  pos.x-delta)
                                                         , Math.min(49, pos.y+delta), Math.min(49, pos.x+delta), true)
         var reachableSpaceCounter = 0
-        var structuresNearby = []
+        var nearbyStructures = []
         for (let index in lookResult) {
             let item = lookResult[index]
             // console.log('(' + item.x + ', ' + item.y + ') is ' + item.terrain)
@@ -77,13 +77,13 @@ var utility = {
                 for (let index_found in found) {
                     let structure = found[index_found]
                     if (structure.structureType == structureType) {
-                        structuresNearby.push(structure.id)
+                        nearbyStructures.push(structure.id)
                     }
                 }
 
             }
         }
-        return {freeSpaceCount: reachableSpaceCounter, structuresNearby: structuresNearby}
+        return {freeSpaceCount: reachableSpaceCounter, nearbyStructures: nearbyStructures}
     },
 
 
@@ -98,6 +98,10 @@ var utility = {
 
     memoryTickReset: function() {
          Memory.spawns.spawnnedThisTick = 0
+    },
+
+    memoryAudit: function() {
+
     },
 
     resetMemory: function() {
@@ -128,8 +132,9 @@ var utility = {
         utility.runForAllFlags(flag => flag.memory)
         utility.runForAllRooms(room => {
             room.memory
-            room.memory.creepSpawnJointQueue = {}
-            room.memory.creepRenewJointQueue = {} // TODO: check if needed
+            room.memory.creepSpawnJointQueue = []
+            // room.memory.creepRenewJointQueue = {} // TODO: check if needed
+            room.memory.creepRoleTarget = {}
             room.memory.creepDesignated = {}
             room.memory.sources = {}
             room.memory.controller = {}
@@ -149,11 +154,22 @@ var utility = {
         // Memory.jobs.createdThisTick = 0
         if (Memory.colony === undefined) { Memory.colony = {} }
 
+        // if (Memory.count === undefined) { Memory.count = {} }
+        // if (Memory.count.creeps === undefined) { Memory.count.creeps = Object.keys(Game.creeps).length }
+        // if (Memory.count.spawns === undefined) { Memory.count.spawns = Object.keys(Game.spawns).length }
+        // if (Memory.count.structures === undefined) { Memory.count.structures = Object.keys(Game.structures).length }
+        // if (Memory.count.conSites === undefined) { Memory.count.conSites = Object.keys(Game.constructionSites).length }
+
         if (Memory.taskManager === undefined) { Memory.taskManager = {} }
-        if (Memory.taskManager.memory === undefined)           { Memory.taskManager.memory = {} }
-        if (Memory.taskManager.memory.checked === undefined)   { Memory.taskManager.memory.checked = {} }
-        if (Memory.taskManager.memory.needAudit === undefined) { Memory.taskManager.memory.needAudit = {} }
-        if (Memory.taskManager.memory.cost === undefined)      { Memory.taskManager.memory.cost = {} }
+        if (Memory.taskManager.memory === undefined)            { Memory.taskManager.memory = {} }
+        if (Memory.taskManager.memory.called === undefined)    { Memory.taskManager.memory.called = {} }
+        if (Memory.taskManager.memory.needAudit === undefined)  { Memory.taskManager.memory.needAudit = {} }
+        if (Memory.taskManager.memory.needRecompute === undefined)  { Memory.taskManager.memory.needRecompute = {} }
+        if (Memory.taskManager.memory.cost === undefined)       { Memory.taskManager.memory.cost = {} }
+        if (Memory.taskManager.management === undefined)            { Memory.taskManager.management = {} }
+        if (Memory.taskManager.management.called === undefined)     { Memory.taskManager.management.called = {} }
+        if (Memory.taskManager.management.cost === undefined)       { Memory.taskManager.management.cost = {} }
+        if (Memory.taskManager.management.needRecompute === undefined)    { Memory.taskManager.management.needRecompute = {} }
         // if (Memory.taskManager.memoryCheckCost === undefined) { Memory.taskManager.memoryCheckCost = {} }
         // if (Memory.taskManager.memoryAudit === undefined) { Memory.taskManager.memoryAudit = {} }
 
@@ -209,6 +225,7 @@ var utility = {
     // },
 
     arrayDeleteOne: function(array, value) {
+        //require('utility').arrayDeleteOne([1,1,2,3,3,4],3)
         var index = array.indexOf(value);
         if (index > -1) {
             array.splice(index, 1);

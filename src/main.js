@@ -22,7 +22,8 @@ module.exports.loop = function () {
         console.log(CONSTANT.BANNER.CODE_UPDATED)
     }
 
-    // var numberFormatter =
+
+
     var stats = ('\n✅ Tick: ' + Game.time + ' script: ' + Memory.SCRIPT_VERSION + ' ----------------------------------\n');
     stats += ('CPU tickLimit: ' + Game.cpu.tickLimit + ', bucket: ' + Game.cpu.bucket + '\n');
     stats += ('Shard: ' + Game.shard.name + ', ptr = ' + Game.shard.ptr + ', branch: grunt\n')
@@ -34,11 +35,12 @@ module.exports.loop = function () {
     // stats += ('Jobs: ' + jobUtility.jobCount().all + '\n');
     stats += ('Memory: ' + utility.numberFormatter.format(RawMemory.get().length) + ' bytes\n');
 
+
     console.log(stats)
 
-    if (Game.cpu.bucket >= 10000) { // FIXME: move to task manager
-        console.log('Game.cpu.generatePixel: 🟥 returned ' + Game.cpu.generatePixel());
-    }
+    // if (Game.cpu.bucket >= 10000) { // FIXME: move to task manager
+    //     console.log('Game.cpu.generatePixel: 🟥 returned ' + Game.cpu.generatePixel());
+    // }
 
     cpuTaskManager.run()
 

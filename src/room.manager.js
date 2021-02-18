@@ -5,22 +5,110 @@ var roomManager = {
 
     manage: function() {
         utility.runForAllRooms(roomManager.checkSpawnInRoom)
+        utility.runForAllRooms(roomManager.postSpawnJointQueueInRoom)
+        // utility.runForAllRooms(roomManager.roomJointSpawnQueueValidate)
         // utility.runForAllSpawns(roomManager.check)
     },
 
     checkSpawnInRoom: function(room) {
         console.log('roomManager.checkSpawnInRoom: called ' + room.name)
+        if (!room.controller.my) {
+            console.log('roomManager.checkSpawnInRoom: ❌ HAVE NOT YET IMPLEMENTED')
+            return
+        }
         let energyAvailable = room.energyAvailable
-        // let sources = room.find(FIND_SOURCES)
-        let sourcesCount = Object.keys(room.memory.sources).length
-        console.log('sources: ' + sourcesCount)
+        let energyCapacity = room.energyCapacityAvailable
+        let sources = room.find(FIND_SOURCES)
+        let minerals = room.find(FIND_MINERALS)
+        let creeps = room.find(FIND_MY_CREEPS)
+        let constructions = room.find(FIND_MY_CONSTRUCTION_SITES)
+        // let sourcesCount = Object.keys(room.memory.sources).length
+        // console.log('sources: ' + sourcesCount)
 
+        function starter() {
+            room.memory.creepRoleTarget.HARVESTER = sources.length + 1
+            room.memory.creepRoleTarget.UPGRADER = 1
+            room.memory.creepRoleTarget.BUILDER = 1
+        }
+
+        function developing() {
+            var harvester_s_count = 0
+            for (let hash in room.memory.sources) {
+                // let source = Game.getObjectById(roo)
+                if (room.memory.sources[hash].nearbyContainers.length > 0 ||
+                    room.memory.sources[hash].nearbyLinks.length > 0) {
+                    harvester_s_count++
+                }
+            }
+            // console.log('smart = ' + harvester_s_count)
+            room.memory.creepRoleTarget.HARVESTER_S = harvester_s_count
+            room.memory.creepRoleTarget.HARVESTER = Math.max(0, sources.length - harvester_s_count)
+            room.memory.creepRoleTarget.UPGRADER = 1
+            room.memory.creepRoleTarget.BUILDER = 1
+            room.memory.creepRoleTarget.QUEEN = 1
+        }
+
+        function developed() {
+            developing()
+            console.log('roomManager.checkSpawnInRoom: in ' + room.name + ' HAVE NOT IMPLEMENTED THIS')
+        }
+
+        switch (room.controller.level) {
+            case 1:
+            case 2: { starter(); break }
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7: { developing(); break }
+            case 7: { developed(); break }
+        }
+    },
+
+    postSpawnJointQueueInRoom: function(room) {
+        console.log('roomManager.postSpawnJointQueueInRoom: called on ' + room.name)
+        // console.log(room.memory.creepSpawnJointQueue)
+
+        // var queue = []
+        var count = {}
+        for (let role in room.memory.creepRoleTarget) {
+            // console.log(room.memory.creepRoleTarget[role])
+            // for (var i = 0; i < room.memory.creepRoleTarget[role]; i++){
+            //     queue.push(role)
+            // }
+            count[role] = room.memory.creepRoleTarget[role]
+        }
+        // console.log(queue)
+
+        for (let i in room.memory.creepSpawnJointQueue) {
+            count[room.memory.creepSpawnJointQueue[i]]--
+        }
+
+        for (let creep in room.memory.creepDesignated) {
+            // if (room.memory.creepDesignated[creep])
+            // queue = utility.arrayDeleteOne(queue, room.memory.creepDesignated[creep].role)
+            count[room.memory.creepDesignated[creep].role]--
+        }
+
+        // console.log(JSON.stringify(count))
+        for (let role in count) {
+            for (var i = 0; i < count[role]; i++) {
+                // queue.push(role)
+                room.memory.creepSpawnJointQueue.push(role)
+            }
+        }
+
+    },
+
+    roomJointSpawnQueueValidate: function(room) {
+        console.log('roomManager.roomJointSpawnQueueValidate: called on ' + room.name)
 
     },
 
 
     memoryAuditCheck: function() {
         console.log('roomManager.memoryAuditCheck: called ')
+        utility.runForAllRooms(roomManager.roomJointSpawnQueueValidate)
     },
 
     memoryCheck: function() {
@@ -43,8 +131,8 @@ var roomManager = {
         let controller = room.controller
         // console.log(controller)
         if (!controller) { return }
-        let nearbyContainers = utility.lookAroundPosFor(controller.pos, STRUCTURE_CONTAINER, 3).structuresNearby
-        let nearbyLinks = utility.lookAroundPosFor(controller.pos, STRUCTURE_LINK, 3).structuresNearby
+        let nearbyContainers = utility.lookAroundPosFor(controller.pos, STRUCTURE_CONTAINER, 3).nearbyStructures
+        let nearbyLinks = utility.lookAroundPosFor(controller.pos, STRUCTURE_LINK, 3).nearbyStructures
 
         room.memory.controller.nearbyContainers = nearbyContainers
         room.memory.controller.nearbyLinks = nearbyLinks
@@ -84,8 +172,8 @@ var roomManager = {
         let storage = resultStorage[0]
         // console.log(storage)
 
-        let lookedLink = utility.lookAroundPosFor(storage.pos, STRUCTURE_LINK, 3).structuresNearby
-        let lookedSpawn = utility.lookAroundPosFor(storage.pos, STRUCTURE_SPAWN, 3).structuresNearby
+        let lookedLink = utility.lookAroundPosFor(storage.pos, STRUCTURE_LINK, 3).nearbyStructures
+        let lookedSpawn = utility.lookAroundPosFor(storage.pos, STRUCTURE_SPAWN, 3).nearbyStructures
         // for (let i in lookedLink) {
         //     let link = Game.getObjectById(lookedLink[i])
         //     console.log(link)
@@ -224,7 +312,6 @@ var roomManager = {
 
         function linkSourceMemory(room, source, links, access) {
             // console.log('linkSourceMemory:', links)
-            if (room.memory.sources[source.id].nearbyLinks === undefined) { room.memory.sources[source.id].nearbyLinks = {} }
             for (let index in links) {
                 let linkHash = links[index]
                 // console.log('hash', linkHash)
@@ -238,15 +325,16 @@ var roomManager = {
             let source = sources[name]
             let resultContainer= utility.lookAroundPosFor(source.pos, STRUCTURE_CONTAINER)
             let spaceCounter = resultContainer.freeSpaceCount
-            let containersNearby = resultContainer.structuresNearby
-            // console.log(source + ' at ' + source.pos, spaceCounter, 'and', containersNearby)
+            let nearbyContainers = resultContainer.nearbyStructures
+            // console.log(source + ' at ' + source.pos, spaceCounter, 'and', nearbyContainers)
             if (room.memory.sources[source.id] === undefined) { room.memory.sources[source.id] = {} }
             room.memory.sources[source.id].spaceCounter = spaceCounter
-            room.memory.sources[source.id].containersNearby = containersNearby
+            room.memory.sources[source.id].nearbyContainers = nearbyContainers
+            if (room.memory.sources[source.id].nearbyLinks === undefined) { room.memory.sources[source.id].nearbyLinks = [] }
 
             var linkNearbyFound = false
-            for (let index in containersNearby) {
-                let containerId = containersNearby[index]
+            for (let index in nearbyContainers) {
+                let containerId = nearbyContainers[index]
                 let container = Game.getObjectById(containerId)
                 if (room.memory.containers[container.id] === undefined) { room.memory.containers[container.id] = {} }
                 if (room.memory.containers[container.id].nearbyInterest === undefined) { room.memory.containers[container.id].nearbyInterest = {} }
@@ -254,21 +342,21 @@ var roomManager = {
                 if (Memory.DEBUG) { room.memory.containers[container.id].nearbyInterest[source.id].type = 'source' }
                 let resultLink = utility.lookAroundPosFor(container.pos, STRUCTURE_LINK)
 
-                roomManager.structureLinksNearbyMemoryPairing(room, resultLink.structuresNearby, container, source)
-                if (!linkNearbyFound) { linkNearbyFound = (resultLink.structuresNearby.length > 0) }
-                linkSourceMemory(room, source, resultLink.structuresNearby, container)
+                roomManager.structureLinksNearbyMemoryPairing(room, resultLink.nearbyStructures, container, source)
+                if (!linkNearbyFound) { linkNearbyFound = (resultLink.nearbyStructures.length > 0) }
+                linkSourceMemory(room, source, resultLink.nearbyStructures, container)
             }
             // console.log('linkNearbyFound =', linkNearbyFound )
             if(!linkNearbyFound){
-                let resultRoad = utility.lookAroundPosFor(source.pos, STRUCTURE_ROAD).structuresNearby
+                let resultRoad = utility.lookAroundPosFor(source.pos, STRUCTURE_ROAD).nearbyStructures
                 for (let index in resultRoad) {
                     let roadId = resultRoad[index]
                     let road = Game.getObjectById(roadId)
                     let resultLink = utility.lookAroundPosFor(road.pos, STRUCTURE_LINK)
                     if (room.memory.roads[road.id] === undefined) { room.memory.roads[road.id] = {} }
 
-                    roomManager.structureLinksNearbyMemoryPairing(room, resultLink.structuresNearby, road, source)
-                    linkSourceMemory(room, source, resultLink.structuresNearby, road)
+                    roomManager.structureLinksNearbyMemoryPairing(room, resultLink.nearbyStructures, road, source)
+                    linkSourceMemory(room, source, resultLink.nearbyStructures, road)
                 }
             }
         }

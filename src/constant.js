@@ -49,6 +49,8 @@ const CONSTANT = {
         // USE_DEFAULT_ALTERNATIVE: 201,
         // USE_DEFAULT_COMPLICATED: 202,
         // USE_UNIVERSAL_CALLBACK: 1000,
+        //
+        EXTEND_VALID_TIME: 2000,
 
         // ERRORS
         ERR_PARAMETER_MISSING: -100,
@@ -77,6 +79,7 @@ const CONSTANT = {
         CD: {
             N: "CD_N",
         },
+        B: "B", // basecamp
     },
 
 
@@ -86,7 +89,7 @@ const CONSTANT = {
     //     RESOURCE_MINERAL: "mineral",
     //     // RESOURCE_R_RC: "source-rc", // room controller right next to a source
     //     // RESOURCE_M_RC: "mineral-rc",
-    // 
+    //
     //     STORAGE: "storage",
     //     UPGRADE_RC: "upgrade",
     //     BASECAMP: "basecamp",

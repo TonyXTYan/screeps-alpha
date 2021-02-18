@@ -37,9 +37,9 @@ var creepRole = {
             bodyFromSpawn: function(spawn) { },
             transferable: function(creep) { },
         },
-        HARVESTER_C: { id: 121,
+        HARVESTER_S: { id: 121, // Smart harvester with container and link usage
         },
-        HARVESTER_CL: { id: 122, },
+        // HARVESTER_CL: { id: 122, },
 
         UPGRADER: { id: 130, },
         // UPGRADER_C: {}
