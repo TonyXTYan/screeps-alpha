@@ -12,4 +12,11 @@ var test = {
     }
 }
 
+
+var test2 = {
+    run: function() {
+        RawMemory.setActiveForeignSegment()
+    }
+}
+
 module.exports = test

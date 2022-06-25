@@ -22,7 +22,7 @@ module.exports.loop = function () {
         console.log(CONSTANT.BANNER.CODE_UPDATED)
     }
 
-
+ 
 
     var stats = ('\n✅ Tick: ' + Game.time + ' script: ' + Memory.SCRIPT_VERSION + ' ----------------------------------\n');
     stats += ('CPU tickLimit: ' + Game.cpu.tickLimit + ', bucket: ' + Game.cpu.bucket + '\n');
